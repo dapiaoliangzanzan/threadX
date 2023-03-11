@@ -38,5 +38,21 @@
                 <include>**/*.*</include>
             </includes>
         </fileSet>
+
+        <fileSet>
+            <directory>threadX-log-api/target/threadX</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>threadX-log-log4j/target/threadX</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>

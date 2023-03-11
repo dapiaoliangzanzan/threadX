@@ -35,7 +35,7 @@ public class ModifyThreadPoolExecutorExecuteMethodVisitor extends MethodVisitor 
 
 
         }catch (Throwable w) {
-            System.out.println(w.getMessage());
+            w.printStackTrace();
         }
 
     }

@@ -83,7 +83,7 @@ public class ModifyThreadPoolExecutorClassVisitor extends ClassVisitor {
                 methodVisitor = new ModifyThreadPoolExecutorAfterMethodVisitor(methodVisitor);
             }
         }catch (Throwable w) {
-            System.out.println(w.getMessage());
+            w.printStackTrace();
         }
         return methodVisitor;
     }
