@@ -1,0 +1,42 @@
+<assembly>
+    <id>threadX-build</id>
+    <formats>
+        <format>dir</format>
+        <format>tar.gz</format>
+    </formats>
+    <includeBaseDirectory>false</includeBaseDirectory>
+
+    <fileSets>
+        <fileSet>
+            <directory>threadX-bootstraps/target/threadX</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>threadX-modify-api/target/threadX</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>threadX-event-processor/target/threadX</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+        </fileSet>
+
+        <fileSet>
+            <directory>threadX-modify-asm/target/threadX</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+        </fileSet>
+    </fileSets>
+</assembly>
