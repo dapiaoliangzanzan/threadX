@@ -21,7 +21,13 @@ public class ThreadPoolExecutorState implements Serializable {
 
     public static void init(ThreadPoolExecutor sourceThreadPoolExecutor) {
         Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolExecutorState.class);
-        logger.info("尝试获取代理程序类加载器: {}", AgentContext.getAgentClassLoader());
         logger.info("拦截到线程池创建: {}", sourceThreadPoolExecutor.toString());
+        int activeCount = sourceThreadPoolExecutor.getActiveCount();
+        int corePoolSize = sourceThreadPoolExecutor.getCorePoolSize();
+        String name = sourceThreadPoolExecutor.getQueue().getClass().getName();
+        String rn = sourceThreadPoolExecutor.getRejectedExecutionHandler().getClass().getName();
+        int maximumPoolSize = sourceThreadPoolExecutor.getMaximumPoolSize();
+        logger.info("当前线程池的核心线程数为：{}, 活跃线程数为:{}, 最大线程数为：{}, 队列名称为：{}, 拒绝策略为: {}", corePoolSize, activeCount,maximumPoolSize, name, rn);
+
     }
 }
