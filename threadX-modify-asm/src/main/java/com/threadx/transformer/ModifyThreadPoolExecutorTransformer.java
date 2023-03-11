@@ -1,15 +1,10 @@
 package com.threadx.transformer;
 
-import com.threadx.description.context.AgentContext;
 import com.threadx.visit.ModifyThreadPoolExecutorClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
 
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.lang.instrument.ClassFileTransformer;
-import java.lang.instrument.IllegalClassFormatException;
-import java.lang.reflect.Constructor;
 import java.security.ProtectionDomain;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -20,19 +15,12 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @date 2023/3/9 10:30
  */
 public class ModifyThreadPoolExecutorTransformer implements ClassFileTransformer {
-    private static final String THREAD_POOL_NAME = ThreadPoolExecutor.class.getName().replace(".","/");
-
-    private final AgentContext agentContext;
-
-    public ModifyThreadPoolExecutorTransformer(AgentContext agentContext) {
-        this.agentContext = agentContext;
-    }
-
+    private static final String THREAD_POOL_NAME = ThreadPoolExecutor.class.getName().replace(".", "/");
 
     @Override
-    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) throws IllegalClassFormatException {
+    public byte[] transform(ClassLoader loader, String className, Class<?> classBeingRedefined, ProtectionDomain protectionDomain, byte[] classfileBuffer) {
         try {
-            if(THREAD_POOL_NAME.equals(className)) {
+            if (THREAD_POOL_NAME.equals(className)) {
                 System.out.println("modify " + className);
                 //创建一个字节码读取器
                 ClassReader cr = new ClassReader(classfileBuffer);
@@ -46,7 +34,7 @@ public class ModifyThreadPoolExecutorTransformer implements ClassFileTransformer
                 //将类修改器修改后写入写出器缓冲区的字节写出去
                 return cw.toByteArray();
             }
-        }catch (Throwable w) {
+        } catch (Throwable w) {
             w.printStackTrace();
             System.out.println(w.getMessage());
             throw new RuntimeException(w);

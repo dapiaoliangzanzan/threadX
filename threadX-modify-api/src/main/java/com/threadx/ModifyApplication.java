@@ -11,14 +11,6 @@ import java.lang.instrument.UnmodifiableClassException;
  * @date 2023/3/10 18:10
  */
 public abstract class ModifyApplication {
-    /**
-     * 应用程序上下文
-     */
-    protected final AgentContext agentContext;
-
-    public ModifyApplication(AgentContext agentContext) {
-        this.agentContext = agentContext;
-    }
 
     /**
      * 启动应用程序上下文

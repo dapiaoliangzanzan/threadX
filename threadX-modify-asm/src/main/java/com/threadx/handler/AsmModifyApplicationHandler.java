@@ -14,14 +14,11 @@ import java.util.concurrent.ThreadPoolExecutor;
  * @date 2023/3/10 18:12
  */
 public class AsmModifyApplicationHandler extends ModifyApplication {
-    public AsmModifyApplicationHandler(AgentContext agentContext) {
-        super(agentContext);
-    }
 
     @Override
     public void start() throws Exception {
-        Instrumentation instrumentation = agentContext.getInstrumentation();
-        instrumentation.addTransformer(new ModifyThreadPoolExecutorTransformer(agentContext), true);
+        Instrumentation instrumentation = AgentContext.getInstrumentation();
+        instrumentation.addTransformer(new ModifyThreadPoolExecutorTransformer(), true);
         instrumentation.retransformClasses(ThreadPoolExecutor.class);
     }
 }
