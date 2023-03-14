@@ -22,6 +22,19 @@
             <artifactId>asm</artifactId>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.ow2.asm/asm-commons -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-commons</artifactId>
+        </dependency>
+
+        <!-- https://mvnrepository.com/artifact/org.ow2.asm/asm-util -->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm-util</artifactId>
+        </dependency>
+
+
         <dependency>
             <groupId>com.threadX</groupId>
             <artifactId>threadX-event-processor</artifactId>

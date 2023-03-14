@@ -3,6 +3,7 @@ package com.threadx.transformer;
 import com.threadx.visit.ModifyThreadPoolExecutorClassVisitor;
 import org.objectweb.asm.ClassReader;
 import org.objectweb.asm.ClassWriter;
+import org.objectweb.asm.util.CheckClassAdapter;
 
 import java.lang.instrument.ClassFileTransformer;
 import java.security.ProtectionDomain;
@@ -27,8 +28,10 @@ public class ModifyThreadPoolExecutorTransformer implements ClassFileTransformer
                 ClassWriter cw = new ClassWriter(ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
                 //将写出器委托给类修改器，以便与类修改器将类修改完毕之后，将修改后的字节码字节写入到这个写出器缓冲
                 ModifyThreadPoolExecutorClassVisitor mcv = new ModifyThreadPoolExecutorClassVisitor(cw);
+                //字节码检查
+                CheckClassAdapter checkClassAdapter = new CheckClassAdapter(mcv);
                 //委托入口，读取器将读取到的字节码，委托给类修改器
-                cr.accept(mcv, ClassReader.EXPAND_FRAMES);
+                cr.accept(checkClassAdapter, ClassReader.EXPAND_FRAMES);
                 //将类修改器修改后写入写出器缓冲区的字节写出去
                 return cw.toByteArray();
             }

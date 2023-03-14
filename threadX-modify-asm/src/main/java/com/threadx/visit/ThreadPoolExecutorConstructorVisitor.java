@@ -1,5 +1,6 @@
 package com.threadx.visit;
 
+import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 

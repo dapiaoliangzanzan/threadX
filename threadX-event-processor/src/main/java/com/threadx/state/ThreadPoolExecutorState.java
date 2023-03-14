@@ -1,10 +1,11 @@
 package com.threadx.state;
 
-import com.threadx.description.context.AgentContext;
 import com.threadx.log.Logger;
 import com.threadx.log.factory.ThreadXLoggerFactory;
+import com.threadx.proxy.ThreadXThreadPoolExecutorProxy;
 
 import java.io.Serializable;
+import java.util.Arrays;
 import java.util.concurrent.ThreadPoolExecutor;
 
 /**
@@ -22,12 +23,16 @@ public class ThreadPoolExecutorState implements Serializable {
     public static void init(ThreadPoolExecutor sourceThreadPoolExecutor) {
         Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolExecutorState.class);
         logger.info("拦截到线程池创建: {}", sourceThreadPoolExecutor.toString());
-        int activeCount = sourceThreadPoolExecutor.getActiveCount();
-        int corePoolSize = sourceThreadPoolExecutor.getCorePoolSize();
-        String name = sourceThreadPoolExecutor.getQueue().getClass().getName();
-        String rn = sourceThreadPoolExecutor.getRejectedExecutionHandler().getClass().getName();
-        int maximumPoolSize = sourceThreadPoolExecutor.getMaximumPoolSize();
-        logger.info("当前线程池的核心线程数为：{}, 活跃线程数为:{}, 最大线程数为：{}, 队列名称为：{}, 拒绝策略为: {}", corePoolSize, activeCount,maximumPoolSize, name, rn);
-
+        //生成线程池的名称
+        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
+        StackTraceElement stackTraceElement = stackTrace[stackTrace.length - 1];
+        //获取调用的方法
+        String className = stackTraceElement.getClassName();
+        String fileName = stackTraceElement.getFileName();
+        int lineNumber = stackTraceElement.getLineNumber();
+        String methodName = stackTraceElement.getMethodName();
+        logger.info("className:{}, fileName:{}, lineNumber:{}, methodName:{}", className, fileName, lineNumber, methodName);
+        String threadPoolName = String.format("%s#%s#%d", className, methodName, lineNumber);
+        logger.warn("线程池的名称为：{}",  threadPoolName);
     }
 }
