@@ -1,9 +1,6 @@
 package com.threadx.utils;
 
-import java.util.Collection;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.Map;
+import java.util.*;
 
 /**
  * 集合工具类
@@ -112,5 +109,57 @@ public class ThreadXCollectionUtils {
      */
     public static boolean isNotEmpty(Enumeration<?> enumeration) {
         return null != enumeration && enumeration.hasMoreElements();
+    }
+
+    /**
+     * 遍历集合
+     *
+     * @param list                需要遍历的集合
+     * @param collectionIteration 集合处理器哦
+     * @param reversal            是否倒序
+     * @param <T>                 元素类型
+     */
+    public static <T> void iterationList(List<T> list, ThreadXCollectionIteration<T> collectionIteration, boolean reversal) {
+        if (reversal) {
+            reversalIterationList(list, collectionIteration);
+        } else {
+            iterationList(list, collectionIteration);
+        }
+    }
+
+    /**
+     * 倒序遍历
+     *
+     * @param list          需要遍历的额集合
+     * @param listIteration 迭代器
+     * @param <T>           元素类型
+     */
+    public static <T> void reversalIterationList(List<T> list, ThreadXCollectionIteration<T> listIteration) {
+        for (int i = list.size() - 1; i >= 0; i--) {
+            listIteration.iteration(list.get(i));
+        }
+    }
+
+    /**
+     * 正序遍历
+     *
+     * @param list                需要遍历的集合
+     * @param collectionIteration 迭代器
+     * @param <T>                 元素类型
+     */
+    public static <T> void iterationList(List<T> list, ThreadXCollectionIteration<T> collectionIteration) {
+        for (T t : list) {
+            collectionIteration.iteration(t);
+        }
+    }
+
+
+    public static interface ThreadXCollectionIteration<T> {
+        /**
+         * 迭代器
+         *
+         * @param entity 迭代元素
+         */
+        void iteration(T entity);
     }
 }

@@ -14,17 +14,6 @@ public abstract class ThreadPoolExecutorInterceptCheck {
      *
      * @return 是否拦截
      */
-    public boolean interceptCheck() {
-        StackTraceElement[] stackTrace = Thread.currentThread().getStackTrace();
-        //获取最后一层堆栈信息
-        return doInterceptCheck(stackTrace);
-    }
+    public abstract boolean interceptCheck();
 
-    /**
-     * 是否能够拦截一个检查
-     *
-     * @param stackTrace 堆栈信息的最后一个
-     * @return 是否能够拦截  true拦截  false不拦截
-     */
-    public abstract boolean doInterceptCheck(StackTraceElement[] stackTrace);
 }

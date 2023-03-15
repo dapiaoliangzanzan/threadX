@@ -1,6 +1,5 @@
 package com.threadx.visit;
 
-import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
 
@@ -23,7 +22,6 @@ public class ThreadPoolExecutorConstructorVisitor extends MethodVisitor {
             mv.visitVarInsn(Opcodes.ALOAD, 0);
             mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/threadx/state/ThreadPoolExecutorState", "init", "(Ljava/util/concurrent/ThreadPoolExecutor;)V", false);
         }
-
         super.visitInsn(opcode);
     }
 }

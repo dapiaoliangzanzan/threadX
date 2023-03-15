@@ -1,14 +1,10 @@
 package com.threadx.check.enums;
 
 import com.threadx.check.ThreadPoolExecutorInterceptCheck;
-import com.threadx.check.impl.ProxyCreateThreadPoolExecutorInterceptCheck;
+import com.threadx.check.impl.IncludeTokenThreadPoolExecutorInterceptCheck;
 import com.threadx.log.Logger;
 import com.threadx.log.factory.ThreadXLoggerFactory;
 import com.threadx.utils.ReflectionUtils;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 拦截检查的插件枚举
@@ -20,7 +16,7 @@ public enum InterceptCheckEnum {
     /**
      * 代理新建的检查
      */
-    PROXY_CREATE_CHECK("ProxyCreateThreadPoolExecutorInterceptCheck", ProxyCreateThreadPoolExecutorInterceptCheck.class);
+    PROXY_CREATE_CHECK("ProxyCreateThreadPoolExecutorInterceptCheck", IncludeTokenThreadPoolExecutorInterceptCheck.class);
     ;
     private final String checkName;
     private final Class<? extends ThreadPoolExecutorInterceptCheck> interceptCheckClass;
@@ -41,12 +37,12 @@ public enum InterceptCheckEnum {
             String checkName = interceptCheckEnum.checkName;
             Class<? extends ThreadPoolExecutorInterceptCheck> interceptCheckClass = interceptCheckEnum.interceptCheckClass;
             ThreadPoolExecutorInterceptCheck interceptCheck = ReflectionUtils.newInstanceConstructor(interceptCheckClass);
-            logger.warn("check name: {}" , checkName);
+            logger.debug("check name: {}" , checkName);
             if (!interceptCheck.interceptCheck()) {
-                logger.warn("check name {} not Pass the verification Result" , checkName);
+                logger.debug("check name {} not Pass the verification Result" , checkName);
                 return false;
             }
-            logger.warn("check name {} Pass the verification Result" , checkName);
+            logger.debug("check name {} Pass the verification Result" , checkName);
         }
         return true;
     }
