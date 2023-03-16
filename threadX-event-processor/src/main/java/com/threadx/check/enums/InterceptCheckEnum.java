@@ -44,6 +44,7 @@ public enum InterceptCheckEnum {
             }
             logger.debug("check name {} Pass the verification Result" , checkName);
         }
+        logger.debug("All the tests passed");
         return true;
     }
 }
