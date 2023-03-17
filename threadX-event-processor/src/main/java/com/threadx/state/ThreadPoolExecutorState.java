@@ -1,5 +1,8 @@
 package com.threadx.state;
 
+import com.threadx.cache.ThreadPoolIndexCache;
+import com.threadx.cache.ThreadPoolIndexData;
+import com.threadx.cache.ThreadPoolWeakReferenceCache;
 import com.threadx.log.Logger;
 import com.threadx.log.factory.ThreadXLoggerFactory;
 import com.threadx.utils.ConfirmCheckUtil;
@@ -20,12 +23,8 @@ public class ThreadPoolExecutorState implements Serializable {
     public static void init(ThreadPoolExecutor sourceThreadPoolExecutor) {
         Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolExecutorState.class);
         if(ConfirmCheckUtil.isIntercept()) {
-            //生成线程池的名称
-            String threadPoolGroupName = ThreadXThreadPoolUtil.generateThreadPoolGroupName();
-            logger.info("线程池组的名称为：{}", threadPoolGroupName);
-            logger.info("线程池的名称为：{}", ThreadXThreadPoolUtil.generateThreadPoolName(threadPoolGroupName, sourceThreadPoolExecutor));
-            logger.info("线程池的堆栈快照为：\n{}", ThreadXThreadPoolUtil.getThreadPoolStack());
-            logger.info("================================================================");
+            ThreadPoolIndexData threadPoolIndexData = ThreadPoolWeakReferenceCache.setCache(sourceThreadPoolExecutor);
+            logger.info("add thread Pool index data, thread pool name is {}， thread pool group name is {}", threadPoolIndexData.getThreadPoolName(), threadPoolIndexData.getThreadPoolGroupName());
         }
 
 

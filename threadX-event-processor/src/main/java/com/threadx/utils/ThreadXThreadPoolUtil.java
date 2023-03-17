@@ -20,6 +20,16 @@ public class ThreadXThreadPoolUtil {
     private final static String THREAD_POOL_NAME_TEMPLATE = "%s-%d";
 
     /**
+     * 获取线程池的id
+     *
+     * @param executor 线程池
+     * @return id值
+     */
+    public static String getThreadPoolId(ThreadPoolExecutor executor) {
+        return String.valueOf(System.identityHashCode(executor));
+    }
+
+    /**
      * 返回一个代理标记
      *
      * @return 代理标记
@@ -72,6 +82,16 @@ public class ThreadXThreadPoolUtil {
         return String.format(THREAD_POOL_NAME_TEMPLATE, threadPoolGroupName, System.identityHashCode(poolExecutor));
     }
 
+    /**
+     * 生成线程池的名称
+     *
+     * @param poolExecutor        线程池
+     * @return 返回真正的名称
+     */
+    public static String generateThreadPoolName(ThreadPoolExecutor poolExecutor) {
+        String groupName = generateThreadPoolGroupName();
+        return String.format(THREAD_POOL_NAME_TEMPLATE, groupName, System.identityHashCode(poolExecutor));
+    }
     /**
      * 生成线程池的名称
      *
