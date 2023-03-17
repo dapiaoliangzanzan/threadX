@@ -1,6 +1,8 @@
 package com.threadx.utils;
 
 import java.lang.reflect.Constructor;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 /**
  * 反射工具类
@@ -9,6 +11,28 @@ import java.lang.reflect.Constructor;
  * @date 2023/3/14 15:22
  */
 public class ReflectionUtils {
+
+    /**
+     * 获取泛型参数
+     *
+     * @param sourceClass 源class类型
+     * @return 源class的泛型信息
+     */
+    public static Class<?> getGenericClass(Class<?> sourceClass) {
+        //获取父类泛型
+        Type type = sourceClass.getGenericSuperclass();
+        if (type instanceof ParameterizedType) {
+            ParameterizedType parameterizedType = (ParameterizedType) type;
+            Type[] actualTypeArguments = parameterizedType.getActualTypeArguments();
+            if (actualTypeArguments.length > 0) {
+                Type actualType = actualTypeArguments[0];
+                if (actualType instanceof Class) {
+                    return (Class<?>) actualType;
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * 根据构造函数创建对象
