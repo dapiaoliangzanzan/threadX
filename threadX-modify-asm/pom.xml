@@ -51,7 +51,7 @@
 
         <dependency>
             <groupId>com.threadX</groupId>
-            <artifactId>threadX-log</artifactId>
+            <artifactId>threadX-log-api</artifactId>
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
