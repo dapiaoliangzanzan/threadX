@@ -2,7 +2,9 @@ package com.threadx.cache;
 
 import com.threadx.utils.ThreadXThreadPoolUtil;
 
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ThreadPoolExecutor;
 
@@ -41,6 +43,16 @@ public class ThreadPoolIndexCache {
      */
     public static ThreadPoolIndexData getCache(ThreadPoolExecutor executor) {
         return ThreadPoolIndexCache.getCache(ThreadXThreadPoolUtil.getThreadPoolId(executor));
+    }
+
+
+    /**
+     * 获取所有的索引数据
+     *
+     * @return 返回所有的索引数据
+     */
+    public static Set<ThreadPoolIndexData> getAllData() {
+        return new HashSet<>(INDEX_CACHE.values());
     }
 
     /**

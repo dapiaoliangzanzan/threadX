@@ -1,4 +1,7 @@
-package com.threadx.cache;
+package com.threadx.utils;
+
+import com.threadx.cache.ThreadPoolIndexCache;
+import com.threadx.cache.ThreadPoolWeakReferenceCache;
 
 /**
  * 线程池清空动作
@@ -6,7 +9,7 @@ package com.threadx.cache;
  * @author huangfukexing
  * @date 2023/3/17 12:26
  */
-public class ThreadPoolEmptyCache {
+public class ThreadPoolEmptyUtils {
 
     /**
      * 清理缓存

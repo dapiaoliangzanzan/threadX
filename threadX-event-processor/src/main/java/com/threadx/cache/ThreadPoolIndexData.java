@@ -1,5 +1,6 @@
 package com.threadx.cache;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 /**
@@ -9,6 +10,7 @@ import lombok.Getter;
  * @date 2023/3/17 10:54
  */
 @Getter
+@EqualsAndHashCode
 public class ThreadPoolIndexData {
 
     private final String threadPoolId;

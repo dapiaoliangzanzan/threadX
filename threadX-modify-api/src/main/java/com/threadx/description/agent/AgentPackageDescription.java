@@ -1,6 +1,5 @@
 package com.threadx.description.agent;
 
-import jdk.jfr.Description;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,68 +20,57 @@ import java.util.Properties;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Description("对于agent包的描述")
 public class AgentPackageDescription implements Serializable {
     private static final long serialVersionUID = -3407223672454305756L;
 
     /**
      * agent包的位置，绝对路径
      */
-    @Description("agent包的位置")
     private Path agentDirPath;
 
     /**
      * 依赖的位置，绝对路径
      */
-    @Description("依赖的位置")
     private Path libsDirPath;
 
     /**
      * 依赖信息的集合
      */
-    @Description("依赖信息的集合")
     private List<Path> libsPath;
 
     /**
      * 依赖的集合
      */
-    @Description("依赖的集合 url")
     private List<URL> libsUrls;
 
     /**
      * boot目录的 url
      */
-    @Description("boot目录的 url")
     private Path bootDirPath;
 
     /**
      * boot目录中jar的 url
      */
-    @Description("boot目录中jar的 url")
     private List<File> bootJarFiles;
 
     /**
      * 配置文件夹所在的路径
      */
-    @Description("配置文件夹所在的路径")
     private Path confDirPath;
 
     /**
      * 采集到的数据的路径信息
      */
-    @Description("采集到的数据的路径信息")
     private Path dataDirPath;
 
     /**
      * 插件日志的位置
      */
-    @Description("插件日志的位置")
     private Path logsDirPath;
 
     /**
      * 环境的配置信息
      */
-    @Description("环境的配置信息")
     private Properties envProperties;
 
 

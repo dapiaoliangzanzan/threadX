@@ -56,15 +56,6 @@
                 <version>${asm.version}</version>
             </dependency>
 
-
-            <dependency>
-                <groupId>com.sun</groupId>
-                <artifactId>tools</artifactId>
-                <version>1.8.0</version>
-                <scope>system</scope>
-                <systemPath>/Users/huangfukexing/developTool/java8/lib/tools.jar</systemPath>
-            </dependency>
-
             <dependency>
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>

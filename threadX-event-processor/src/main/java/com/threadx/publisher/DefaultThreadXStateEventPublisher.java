@@ -48,6 +48,6 @@ public class DefaultThreadXStateEventPublisher extends ThreadXStateEventPublishe
 
     @Override
     public void unListener(StatusEventListener<?> statusEventListener) {
-
+        LISTENERS.remove(statusEventListener);
     }
 }

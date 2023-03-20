@@ -3,6 +3,8 @@ package com.threadx.cache;
 
 import com.threadx.log.Logger;
 import com.threadx.log.factory.ThreadXLoggerFactory;
+import com.threadx.utils.ThreadPoolEmptyUtils;
+
 import java.lang.ref.WeakReference;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -49,7 +51,7 @@ public class ThreadPoolWeakReferenceCache {
             //缓存错误
             if (threadPoolExecutorWeakReference == null) {
                 logger.error("thread pool cache error, is thread pool group name is {}, thread pool name is {}", threadPoolIndexData.getThreadPoolGroupName(), threadPoolIndexData.getThreadPoolName());
-                ThreadPoolEmptyCache.cleanCache(cacheKey);
+                ThreadPoolEmptyUtils.cleanCache(cacheKey);
                 return null;
             }
 
@@ -57,13 +59,13 @@ public class ThreadPoolWeakReferenceCache {
             //被回收
             if (threadPoolExecutor == null) {
                 logger.info("The thread pool is gc, and the collected information thread pool group name is {}, thread pool name is {}", threadPoolIndexData.getThreadPoolGroupName(), threadPoolIndexData.getThreadPoolName());
-                ThreadPoolEmptyCache.cleanCache(cacheKey);
+                ThreadPoolEmptyUtils.cleanCache(cacheKey);
                 return null;
             }
             // 已关闭
             if (threadPoolExecutor.isShutdown()) {
                 logger.info("The thread pool has been closed, thread pool group name is {}, thread pool name is {}", threadPoolIndexData.getThreadPoolGroupName(), threadPoolIndexData.getThreadPoolName());
-                ThreadPoolEmptyCache.cleanCache(cacheKey);
+                ThreadPoolEmptyUtils.cleanCache(cacheKey);
                 return null;
             }
             return threadPoolExecutor;
