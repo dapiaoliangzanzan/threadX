@@ -1,5 +1,6 @@
 package com.threadx;
 
+import com.threadx.calculation.ThreadPoolIndicatorCollection;
 import com.threadx.description.agent.AgentPackageDescription;
 import com.threadx.description.context.AgentContext;
 import com.threadx.parse.AgentPathParse;
@@ -83,6 +84,7 @@ public class ThreadxAgentBootstraps {
     private static void start() throws Exception {
         ClassLoader classLoader = AgentContext.getAgentClassLoader();
         if (classLoader != null) {
+            startTargetConsumer(classLoader);
             //获取一个类修改器
             String runIngClassName = getBootStrapClassName();
             //使用自定义类加载器加载，保证他在下层，并且随时可用
@@ -102,7 +104,18 @@ public class ThreadxAgentBootstraps {
             }
             //启动修改器
             modifyApplication.start();
+            //启动线程池指标收集器
+            ThreadPoolIndicatorCollection.collection();
         }
+    }
+
+    /**
+     * 启动消息的广播平台，具体需要根据配置启动一个广播平台
+     *
+     * @param classLoader 类加载器
+     */
+    private static void startTargetConsumer(ClassLoader classLoader) {
+        logger.info("started Target Consumer.");
     }
 
     /**

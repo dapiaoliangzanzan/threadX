@@ -1,14 +1,11 @@
 package com.threadx.state;
 
-import com.threadx.cache.ThreadPoolIndexCache;
 import com.threadx.cache.ThreadPoolIndexData;
 import com.threadx.cache.ThreadPoolWeakReferenceCache;
-import com.threadx.calculation.ThreadPoolIndicatorCollection;
 import com.threadx.log.Logger;
 import com.threadx.log.factory.ThreadXLoggerFactory;
 import com.threadx.thread.BusinessThreadXRejectedExecutionHandler;
 import com.threadx.utils.ConfirmCheckUtil;
-import com.threadx.utils.ThreadXThreadPoolUtil;
 
 import java.io.Serializable;
 import java.util.concurrent.RejectedExecutionHandler;
@@ -33,7 +30,6 @@ public class ThreadPoolExecutorState implements Serializable {
             logger.info("Package rejection strategy: {}", newRejectedExecutionHandler);
             ThreadPoolIndexData threadPoolIndexData = ThreadPoolWeakReferenceCache.setCache(sourceThreadPoolExecutor);
             logger.info("add thread Pool index data, thread pool name is {}， thread pool group name is {}", threadPoolIndexData.getThreadPoolName(), threadPoolIndexData.getThreadPoolGroupName());
-            ThreadPoolIndicatorCollection.collection();
         }
 
 

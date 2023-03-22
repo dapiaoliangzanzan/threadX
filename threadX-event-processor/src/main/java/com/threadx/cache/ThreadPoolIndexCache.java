@@ -31,7 +31,7 @@ public class ThreadPoolIndexCache {
     public static ThreadPoolIndexData setCache(ThreadPoolExecutor executor) {
         String groupName = ThreadXThreadPoolUtil.generateThreadPoolGroupName();
         String threadPoolName = ThreadXThreadPoolUtil.generateThreadPoolName(groupName, executor);
-        String threadPoolId = ThreadXThreadPoolUtil.getThreadPoolId(executor);
+        String threadPoolId = ThreadXThreadPoolUtil.getObjectId(executor);
         return ThreadPoolIndexCache.setCache(threadPoolId, new ThreadPoolIndexData(threadPoolId, threadPoolName, groupName));
     }
 
@@ -42,7 +42,7 @@ public class ThreadPoolIndexCache {
      * @return 线程池的索引信息
      */
     public static ThreadPoolIndexData getCache(ThreadPoolExecutor executor) {
-        return ThreadPoolIndexCache.getCache(ThreadXThreadPoolUtil.getThreadPoolId(executor));
+        return ThreadPoolIndexCache.getCache(ThreadXThreadPoolUtil.getObjectId(executor));
     }
 
 
@@ -62,7 +62,7 @@ public class ThreadPoolIndexCache {
      * @return 索引信息
      */
     public static ThreadPoolIndexData removeCache(ThreadPoolExecutor executor) {
-        return ThreadPoolIndexCache.removeCache(ThreadXThreadPoolUtil.getThreadPoolId(executor));
+        return ThreadPoolIndexCache.removeCache(ThreadXThreadPoolUtil.getObjectId(executor));
     }
 
     /**

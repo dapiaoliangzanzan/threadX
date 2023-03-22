@@ -1,11 +1,11 @@
-package com.threadx.state;
+package com.threadx.publisher.events;
 
+import com.threadx.publisher.ThreadXStatusEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.concurrent.ThreadPoolExecutor;
 
 /**
  * 线程的任务状态，每一个对象唯一绑定一个任务对象，该任务对象生命周期与任务的生命周期相同！
@@ -16,13 +16,32 @@ import java.util.concurrent.ThreadPoolExecutor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ThreadPoolExecutorThreadTaskState implements Serializable {
+public class ThreadPoolExecutorThreadTaskState implements ThreadXStatusEvent, Serializable {
     private static final long serialVersionUID = -8563010018920100713L;
 
     /**
-     * 该任务被那个线程池进行的提交
+     * 任务的id
      */
-    private ThreadPoolExecutor parentPool;
+    private String taskId;
+
+    /**
+     * 线程池的Id
+     */
+    private String threadPoolId;
+    /**
+     * 线程池组的名称
+     */
+    private String threadPoolGroupName;
+
+    /**
+     * 线程池的名称
+     */
+    private String threadPoolName;
+
+    /**
+     * 被那一个线程执行的
+     */
+    private String threadName;
 
     /**
      * 该时间为任务被提交的时间，只要该任务被加载进线程池，这个时间就会被初始化
@@ -68,5 +87,5 @@ public class ThreadPoolExecutorThreadTaskState implements Serializable {
      * 任务的异常信息，当没有异常的时候，这个值为空！
      */
     private Throwable throwable;
-    
+
 }

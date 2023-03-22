@@ -1,15 +1,12 @@
 package com.threadx.publisher.events;
 
-import com.threadx.publisher.StatusEventListener;
 import com.threadx.publisher.ThreadXStatusEvent;
-import com.threadx.utils.ThreadXStateEventManager;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.io.Serializable;
-import java.util.concurrent.*;
 
 /**
  * 线程池指标事件源
@@ -33,6 +30,9 @@ public class ThreadPoolExecutorStatusEvent implements ThreadXStatusEvent, Serial
      */
     private String threadPoolGroupName;
 
+    /**
+     * 核心线程池的数量
+     */
     private Integer corePoolSize;
 
     /**
@@ -49,7 +49,6 @@ public class ThreadPoolExecutorStatusEvent implements ThreadXStatusEvent, Serial
      * 当前线程池的线程数量  包含没有执行任务的线程还没有来得及被销毁的非核心线程
      */
     private Integer thisThreadCount;
-
 
 
     /**

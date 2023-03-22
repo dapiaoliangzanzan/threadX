@@ -20,13 +20,13 @@ public class ThreadXThreadPoolUtil {
     private final static String THREAD_POOL_NAME_TEMPLATE = "%s-%d";
 
     /**
-     * 获取线程池的id
+     * 获取对象的id
      *
-     * @param executor 线程池
+     * @param obj 要运算的对象
      * @return id值
      */
-    public static String getThreadPoolId(ThreadPoolExecutor executor) {
-        return String.valueOf(System.identityHashCode(executor));
+    public static String getObjectId(Object obj) {
+        return String.valueOf(System.identityHashCode(obj));
     }
 
     /**
@@ -85,13 +85,14 @@ public class ThreadXThreadPoolUtil {
     /**
      * 生成线程池的名称
      *
-     * @param poolExecutor        线程池
+     * @param poolExecutor 线程池
      * @return 返回真正的名称
      */
     public static String generateThreadPoolName(ThreadPoolExecutor poolExecutor) {
         String groupName = generateThreadPoolGroupName();
         return String.format(THREAD_POOL_NAME_TEMPLATE, groupName, System.identityHashCode(poolExecutor));
     }
+
     /**
      * 生成线程池的名称
      *
