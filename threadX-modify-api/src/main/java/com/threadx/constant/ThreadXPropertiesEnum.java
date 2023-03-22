@@ -13,6 +13,10 @@ public enum ThreadXPropertiesEnum {
      * 线程池采集间隔
      */
     THREAD_POOL_COLLECTION_INTERVAL("threadx.thread.pool.collection.interval", "3"),
+    /**
+     * 线程池的拦截前缀
+     */
+    THREAD_POOL_INTERCEPT_PREFIX("threadx.thread.pool.intercept.prefix", "not set"),
     ;
 
     /**
