@@ -22,6 +22,15 @@ public class ModifyThreadPoolExecutorBeforeMethodVisitor extends MethodVisitor {
      */
     @Override
     public void visitCode() {
+        try {
+            //将参数压入操作数栈顶
+            mv.visitVarInsn(Opcodes.ALOAD, 1);
+            //将 this压入操作数栈顶
+            mv.visitVarInsn(Opcodes.ALOAD, 2);
+            mv.visitMethodInsn(Opcodes.INVOKESTATIC, "com/threadx/state/ThreadPoolTaskState", "beforeTaskExecution", "(Ljava/lang/Thread;Ljava/lang/Runnable;)V", false);
+        }catch (Throwable w) {
+            w.printStackTrace();
+        }
         super.visitCode();
     }
 }

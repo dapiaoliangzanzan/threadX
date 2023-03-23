@@ -1,6 +1,7 @@
 package com.threadx.utils;
 
 import com.threadx.constant.ThreadPoolProxyMake;
+import com.threadx.thread.BusinessThreadXRunnable;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,6 +27,9 @@ public class ThreadXThreadPoolUtil {
      * @return id值
      */
     public static String getObjectId(Object obj) {
+        if(obj instanceof BusinessThreadXRunnable) {
+            return ((BusinessThreadXRunnable) obj).getTaskId();
+        }
         return String.valueOf(System.identityHashCode(obj));
     }
 
