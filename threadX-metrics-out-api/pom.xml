@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>threadX-event-processor</artifactId>
+    <artifactId>threadX-metrics-out-api</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>
@@ -36,15 +36,7 @@
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
-
-        <dependency>
-            <groupId>com.threadX</groupId>
-            <artifactId>threadX-metrics-out-api</artifactId>
-            <version>${project.parent.version}</version>
-            <scope>provided</scope>
-        </dependency>
     </dependencies>
-
 
     <build>
         <finalName>${artifactId}-${project.parent.version}</finalName>
