@@ -12,6 +12,7 @@ public abstract class ThreadXLoggerFactoryApi {
     public ThreadXLoggerFactoryApi() {
     }
 
+
     /**
      * 获取日志操作类
      *

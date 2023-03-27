@@ -7,7 +7,7 @@ import com.threadx.constant.ThreadXPropertiesEnum;
 import com.threadx.description.agent.AgentPackageDescription;
 import com.threadx.description.context.AgentContext;
 import com.threadx.log.Logger;
-import com.threadx.log.factory.ThreadXLoggerFactory;
+import com.threadx.log.factory.ThreadXAgetySystemLoggerFactory;
 import com.threadx.publisher.events.ThreadPoolExecutorStatusEvent;
 import com.threadx.thread.BusinessThreadXRejectedExecutionHandler;
 import com.threadx.thread.ThreadXThreadFactory;
@@ -30,7 +30,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class ThreadPoolIndicatorCollection {
     private final static ScheduledThreadPoolExecutor EXECUTOR = new ScheduledThreadPoolExecutor(1, new ThreadXThreadFactory("threadXIndicatorCollection"));
     private final static AtomicBoolean RUN = new AtomicBoolean(false);
-
+    private final static Logger logger = ThreadXAgetySystemLoggerFactory.getLogger(ThreadPoolIndicatorCollection.class);
     /**
      * 线程池指标统计
      */
@@ -39,7 +39,7 @@ public class ThreadPoolIndicatorCollection {
         if (!RUN.compareAndSet(false, true)) {
             return;
         }
-        Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolIndicatorCollection.class);
+
         AgentPackageDescription agentPackageDescription = AgentContext.getAgentPackageDescription();
         if (agentPackageDescription == null) {
             logger.error("threadX Meta information parsing failed, the packet is empty, please check whether the installation package is complete! Please refer to the official document deployment!!");
@@ -78,8 +78,6 @@ public class ThreadPoolIndicatorCollection {
      * @return 线程池的指标
      */
     private static ThreadPoolExecutorStatusEvent calculationIndicator(ThreadPoolIndexData indexData) {
-        Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolIndicatorCollection.class);
-
         String threadPoolId = indexData.getThreadPoolId();
         String threadPoolName = indexData.getThreadPoolName();
         String threadPoolGroupName = indexData.getThreadPoolGroupName();

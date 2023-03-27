@@ -11,6 +11,11 @@ import java.util.List;
 public interface MetricsOutApi {
 
     /**
+     * 初始化
+     */
+    void init();
+
+    /**
      * 输出单条指标数据
      *
      * @param metricsData 指标数据
@@ -24,4 +29,16 @@ public interface MetricsOutApi {
      * @param metricsDataList 指标数据列表
      */
     void outMetricsData(List<String> metricsDataList);
+
+    /**
+     * 销毁对象
+     */
+    void destroy();
+
+    /**
+     * 获取指标名称
+     *
+     * @return 返回指标名称
+     */
+    String getMetricsName();
 }

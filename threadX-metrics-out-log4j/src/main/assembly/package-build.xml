@@ -1,5 +1,5 @@
 <assembly>
-    <id>metrics-api-build</id>
+    <id>metrics-log4j-build</id>
     <formats>
         <format>dir</format>
     </formats>
@@ -7,7 +7,7 @@
     <dependencySets>
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
-            <outputDirectory>/boot</outputDirectory>
+            <outputDirectory>/libs</outputDirectory>
             <scope>runtime</scope>
         </dependencySet>
     </dependencySets>
@@ -15,9 +15,9 @@
     <fileSets>
         <fileSet>
             <directory>${project.build.directory}</directory>
-            <outputDirectory>/boot</outputDirectory>
+            <outputDirectory>/libs</outputDirectory>
             <includes>
-                <include>threadX-metrics-out-api*.jar</include>
+                <include>threadX-metrics-out-log4j*.jar</include>
             </includes>
         </fileSet>
     </fileSets>

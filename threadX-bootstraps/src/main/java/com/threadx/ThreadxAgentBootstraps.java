@@ -1,10 +1,13 @@
 package com.threadx;
 
 import com.threadx.calculation.ThreadPoolIndicatorCollection;
+import com.threadx.constant.ThreadXPropertiesEnum;
 import com.threadx.description.agent.AgentPackageDescription;
 import com.threadx.description.context.AgentContext;
+import com.threadx.metrics.api.MetricsOutApi;
 import com.threadx.parse.AgentPathParse;
 import com.threadx.utils.ThreadXCollectionUtils;
+import sun.awt.AppContext;
 
 import java.io.File;
 import java.io.IOException;
@@ -12,6 +15,8 @@ import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Constructor;
 import java.net.URL;
 import java.util.List;
+import java.util.Properties;
+import java.util.ServiceLoader;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
 
@@ -98,6 +103,22 @@ public class ThreadxAgentBootstraps {
                 currentThread.setContextClassLoader(classLoader);
                 Constructor<?> constructor = bootClass.getDeclaredConstructor();
                 modifyApplication = (ModifyApplication) constructor.newInstance();
+                //初始化指标收集器
+                ServiceLoader<MetricsOutApi> metricsOutApis = ServiceLoader.load(MetricsOutApi.class, classLoader);
+                if (ThreadXCollectionUtils.isNotEmpty(metricsOutApis)) {
+                    //获取 使用的指标收集器的名称
+                    Properties envProperties = AgentContext.getAgentPackageDescription().getEnvProperties();
+                    String outModuleName = envProperties.getProperty(ThreadXPropertiesEnum.THREADX_METRICS_OUT_MODEL.getKey(), ThreadXPropertiesEnum.THREADX_METRICS_OUT_MODEL.getDefaultValue());
+                    for (MetricsOutApi metricsOutApi : metricsOutApis) {
+                        String metricsName = metricsOutApi.getMetricsName();
+                        if (outModuleName.equals(metricsName)) {
+                            metricsOutApi.init();
+                            //将这个指标记录起来
+                            AgentContext.setMetrics(metricsOutApi);
+                            break;
+                        }
+                    }
+                }
             } finally {
                 //恢复原始的类加载器
                 currentThread.setContextClassLoader(before);

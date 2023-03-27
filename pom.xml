@@ -16,7 +16,7 @@
         <module>threadX-bootstraps</module>
         <module>threadX-log-log4j</module>
         <module>threadX-log-api</module>
-        <module>threadX-metrics-out-api</module>
+        <module>threadX-metrics-out-log4j</module>
     </modules>
 
     <properties>

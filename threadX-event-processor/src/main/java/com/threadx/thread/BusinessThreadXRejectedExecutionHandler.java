@@ -2,7 +2,7 @@ package com.threadx.thread;
 
 import com.threadx.cache.ThreadPoolTaskCache;
 import com.threadx.log.Logger;
-import com.threadx.log.factory.ThreadXLoggerFactory;
+import com.threadx.log.factory.ThreadXAgetySystemLoggerFactory;
 import com.threadx.publisher.events.ThreadPoolExecutorThreadTaskState;
 import com.threadx.utils.ThreadXStateEventManager;
 import com.threadx.utils.ThreadXThreadPoolUtil;
@@ -23,6 +23,7 @@ import java.util.concurrent.atomic.AtomicLong;
 public class BusinessThreadXRejectedExecutionHandler implements RejectedExecutionHandler {
     private final RejectedExecutionHandler rejectedExecutionHandler;
     private final AtomicLong COUNT;
+    private final static Logger logger = ThreadXAgetySystemLoggerFactory.getLogger(BusinessThreadXRejectedExecutionHandler.class);
 
     public BusinessThreadXRejectedExecutionHandler(RejectedExecutionHandler rejectedExecutionHandler) {
         this.rejectedExecutionHandler = rejectedExecutionHandler;
@@ -54,7 +55,6 @@ public class BusinessThreadXRejectedExecutionHandler implements RejectedExecutio
      */
     public void rejectTaskInformationSupplementBefore(String taskId) {
         //获取日志信息
-        Logger logger = ThreadXLoggerFactory.getLogger(BusinessThreadXRejectedExecutionHandler.class);
         try {
             //获取 线程任务的缓存信息
             ThreadPoolExecutorThreadTaskState cache = ThreadPoolTaskCache.getCache(taskId);
@@ -73,7 +73,6 @@ public class BusinessThreadXRejectedExecutionHandler implements RejectedExecutio
      * @param taskId 需要补充指标的任务的id
      */
     public void rejectTaskInformationSupplementAfter(String taskId) {
-        Logger logger = ThreadXLoggerFactory.getLogger(BusinessThreadXRejectedExecutionHandler.class);
         try {
             ThreadPoolExecutorThreadTaskState cache = ThreadPoolTaskCache.getCache(taskId);
             if (cache != null) {

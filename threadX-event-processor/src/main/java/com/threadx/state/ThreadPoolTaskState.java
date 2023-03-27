@@ -3,8 +3,9 @@ package com.threadx.state;
 import com.threadx.cache.ThreadPoolIndexCache;
 import com.threadx.cache.ThreadPoolIndexData;
 import com.threadx.cache.ThreadPoolTaskCache;
+import com.threadx.listeners.ThreadPoolTaskEventListener;
 import com.threadx.log.Logger;
-import com.threadx.log.factory.ThreadXLoggerFactory;
+import com.threadx.log.factory.ThreadXAgetySystemLoggerFactory;
 import com.threadx.publisher.events.ThreadPoolExecutorThreadTaskState;
 import com.threadx.thread.BusinessThreadXRunnable;
 import com.threadx.utils.ThreadXStateEventManager;
@@ -12,6 +13,7 @@ import com.threadx.utils.ThreadXThreadPoolUtil;
 import com.threadx.utils.ThreadXThrowableMessageUtil;
 
 import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 /**
  * 线程池任务
@@ -21,6 +23,8 @@ import java.util.concurrent.ThreadPoolExecutor;
  */
 public class ThreadPoolTaskState {
 
+    private final static Logger logger = ThreadXAgetySystemLoggerFactory.getLogger(ThreadPoolExecutorState.class);
+    private static final AtomicBoolean ADD_LISTENERS_STATUS = new AtomicBoolean(false);
     /**
      * 初始化任务，调用时机是任务刚被提交的时候
      *
@@ -28,8 +32,11 @@ public class ThreadPoolTaskState {
      * @param executorPool  使用的线程池
      */
     public static Runnable init(Runnable sourceCommand, ThreadPoolExecutor executorPool) {
+        if(ADD_LISTENERS_STATUS.compareAndSet(false, true)) {
+            ThreadXStateEventManager.addListener(new ThreadPoolTaskEventListener());
+        }
         BusinessThreadXRunnable command = new BusinessThreadXRunnable(sourceCommand);
-        Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolExecutorState.class);
+
         try {
             String threadPoolId = ThreadXThreadPoolUtil.getObjectId(executorPool);
             ThreadPoolIndexData threadPoolIndexData = ThreadPoolIndexCache.getCache(threadPoolId);
@@ -63,7 +70,6 @@ public class ThreadPoolTaskState {
      * @param r 被执行的任务
      */
     public static void beforeTaskExecution(Thread t, Runnable r) {
-        Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolExecutorState.class);
         try {
             String taskId = ThreadXThreadPoolUtil.getObjectId(r);
             ThreadPoolExecutorThreadTaskState threadPoolExecutorThreadTaskState = ThreadPoolTaskCache.getCache(taskId);
@@ -88,7 +94,6 @@ public class ThreadPoolTaskState {
      * @param t 异常信息
      */
     public static void afterTaskExecution(Runnable r, Throwable t) {
-        Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolExecutorState.class);
         String taskId = ThreadXThreadPoolUtil.getObjectId(r);
         ThreadPoolExecutorThreadTaskState threadPoolExecutorThreadTaskState = ThreadPoolTaskCache.getCache(taskId);
         try {

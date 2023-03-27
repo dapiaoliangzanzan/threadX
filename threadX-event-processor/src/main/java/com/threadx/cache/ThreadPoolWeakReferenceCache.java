@@ -2,7 +2,7 @@ package com.threadx.cache;
 
 
 import com.threadx.log.Logger;
-import com.threadx.log.factory.ThreadXLoggerFactory;
+import com.threadx.log.factory.ThreadXAgetySystemLoggerFactory;
 import com.threadx.utils.ThreadPoolEmptyUtils;
 
 import java.lang.ref.WeakReference;
@@ -20,6 +20,7 @@ public class ThreadPoolWeakReferenceCache {
 
     private final static Map<String, WeakReference<ThreadPoolExecutor>> THREAD_POOL_WEAK_REFERENCE_CACHE = new ConcurrentHashMap<>();
 
+    private final static Logger logger = ThreadXAgetySystemLoggerFactory.getLogger(ThreadPoolWeakReferenceCache.class);
     /**
      * 设置缓存 包装完成之后
      *
@@ -42,7 +43,7 @@ public class ThreadPoolWeakReferenceCache {
      * @return 缓存值
      */
     public static ThreadPoolExecutor getCache(String cacheKey) {
-        Logger logger = ThreadXLoggerFactory.getLogger(ThreadPoolWeakReferenceCache.class);
+
         ThreadPoolIndexData threadPoolIndexData = ThreadPoolIndexCache.getCache(cacheKey);
         if (threadPoolIndexData != null) {
 

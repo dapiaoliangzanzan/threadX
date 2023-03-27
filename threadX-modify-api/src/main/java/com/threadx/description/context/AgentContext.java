@@ -1,6 +1,7 @@
 package com.threadx.description.context;
 
 import com.threadx.description.agent.AgentPackageDescription;
+import com.threadx.metrics.api.MetricsOutApi;
 
 import java.lang.instrument.Instrumentation;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -34,6 +35,11 @@ public class AgentContext {
      * agent包描述对象
      */
     private static AgentPackageDescription agentPackageDescription;
+
+    /**
+     * 指标输出
+     */
+    private static MetricsOutApi metrics;
 
     /**
      * 注册一个自定义的类加载器
@@ -94,5 +100,13 @@ public class AgentContext {
      */
     public static boolean start() {
         return BOOTSTRAP_STATE.getAndSet(true);
+    }
+
+    public static MetricsOutApi getMetrics() {
+        return metrics;
+    }
+
+    public static void setMetrics(MetricsOutApi metrics) {
+        AgentContext.metrics = metrics;
     }
 }

@@ -94,10 +94,9 @@ public class ThreadPoolExecutorThreadTaskState implements ThreadXStatusEvent, Se
      * 计算任务的耗时时间  包含  等待时间   运行耗时   总耗时信息
      */
     public void computingTime(){
-        long endTime = this.getStartTime() == null ? System.currentTimeMillis() : this.getStartTime();
         long submitTime = this.getSubmitTime() == null ? System.currentTimeMillis() : this.getSubmitTime();
         //计算任务的运行消耗时间
-        this.setRunIngConsumingTime(this.getStartTime() - endTime);
+        this.setRunIngConsumingTime(endTime - this.getStartTime());
         //计算任务的等待时间
         this.setWaitTime(this.getStartTime() - submitTime);
         //计算任务的总耗时

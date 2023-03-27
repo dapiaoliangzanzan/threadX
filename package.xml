@@ -40,7 +40,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>threadX-metrics-out-api/target/threadX</directory>
+            <directory>threadX-metrics-out-log4j/target/threadX</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>**/*.*</include>

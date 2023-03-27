@@ -12,7 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author huangfukexing
  * @date 2023/3/11 20:57
  */
-public class ThreadXLoggerFactory {
+public class ThreadXAgetySystemLoggerFactory {
 
     private final static ConcurrentHashMap<String, Logger> LOGGER_CACHE = new ConcurrentHashMap<>(8);
 

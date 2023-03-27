@@ -1,14 +1,10 @@
 package com.threadx.log;
 
-import com.threadx.description.agent.AgentPackageDescription;
 import com.threadx.description.context.AgentContext;
-import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LoggerContext;
 import org.apache.logging.log4j.core.config.Configurator;
-import org.apache.logging.log4j.spi.LoggerContext;
 
 import java.io.File;
-import java.nio.file.Path;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 
 /**
@@ -18,8 +14,25 @@ import java.util.concurrent.atomic.AtomicBoolean;
  * @date 2023/3/11 19:43
  */
 public class LoggerSlf4jLog4j2 extends ThreadXLoggerFactoryApi {
-    private final static AtomicBoolean IS_LOAD = new AtomicBoolean(false);
 
+    private final LoggerContext loggerContext;
+
+    public LoggerSlf4jLog4j2() {
+        this(new File(AgentContext.getAgentPackageDescription().getConfDirPath().toFile(), "log4j2.xml").getAbsolutePath());
+    }
+
+    public LoggerSlf4jLog4j2(String log4jConfigPath) {
+        loggerContext = registerLogConfig(log4jConfigPath);
+    }
+
+    /**
+     * 注册日志的配置文件
+     *
+     * @return LoggerContext 日志上下文
+     */
+    private LoggerContext registerLogConfig(String logConfigPath) {
+        return Configurator.initialize("ThreadX-LogConfig", logConfigPath);
+    }
 
     /**
      * 获取一个类加载器
@@ -31,24 +44,12 @@ public class LoggerSlf4jLog4j2 extends ThreadXLoggerFactoryApi {
     public Logger getLogger(Class<?> targetClass) {
 
         try {
-            if (IS_LOAD.compareAndSet(false, true)) {
-                registerLogConfig();
-            }
-            org.apache.logging.log4j.Logger logger = LogManager.getLogger(targetClass);
+            org.apache.logging.log4j.Logger logger = loggerContext.getLogger(targetClass);
             return new Slf4jLoggerProxy(logger);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
     }
 
-    /**
-     * 注册日志的配置文件
-     */
-    private void registerLogConfig() {
-        AgentPackageDescription agentPackageDescription = AgentContext.getAgentPackageDescription();
-        Path confDirPath = agentPackageDescription.getConfDirPath();
-        File logDirPath = confDirPath.toFile();
-        File logConfigFile = new File(logDirPath, "log4j2.xml");
-        Configurator.initialize("ThreadX-LogConfig", logConfigFile.getAbsolutePath());
-    }
+
 }

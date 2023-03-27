@@ -21,6 +21,7 @@
             <groupId>com.threadX</groupId>
             <artifactId>threadX-event-processor</artifactId>
             <version>${project.parent.version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <dependency>
@@ -33,6 +34,7 @@
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
             <version>4.12</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 

@@ -1,7 +1,7 @@
 package com.threadx.thread;
 
 import com.threadx.log.Logger;
-import com.threadx.log.factory.ThreadXLoggerFactory;
+import com.threadx.log.factory.ThreadXAgetySystemLoggerFactory;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -15,6 +15,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ThreadXThreadFactory implements ThreadFactory {
 
     private final AtomicInteger IDX = new AtomicInteger(0);
+    private final static Logger logger = ThreadXAgetySystemLoggerFactory.getLogger(ThreadXThreadFactory.class);
 
     /**
      * 线程名称前缀
@@ -27,7 +28,6 @@ public class ThreadXThreadFactory implements ThreadFactory {
 
     @Override
     public Thread newThread(Runnable r) {
-        Logger logger = ThreadXLoggerFactory.getLogger(ThreadXThreadFactory.class);
         Thread thread = new Thread(r);
         thread.setDaemon(true);
         thread.setName(String.format("%s-%s", threadNamePrefix, IDX.getAndIncrement()));
