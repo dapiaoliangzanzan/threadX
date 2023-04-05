@@ -1,5 +1,8 @@
 package com.threadx.visit;
 
+import com.threadx.log.Logger;
+import com.threadx.log.ThreadXLoggerFactoryApi;
+import com.threadx.log.factory.ThreadXAgetySystemLoggerFactory;
 import org.objectweb.asm.ClassVisitor;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Opcodes;
@@ -11,6 +14,9 @@ import org.objectweb.asm.Opcodes;
  * @date 2023/3/9 10:33
  */
 public class ModifyThreadPoolExecutorClassVisitor extends ClassVisitor {
+
+    private final static Logger LOGGER = ThreadXAgetySystemLoggerFactory.getLogger(ModifyThreadPoolExecutorClassVisitor.class);
+
     /**
      * 构造函数的名称
      */
@@ -69,20 +75,20 @@ public class ModifyThreadPoolExecutorClassVisitor extends ClassVisitor {
     public MethodVisitor visitMethod(int access, String name, String descriptor, String signature, String[] exceptions) {
         MethodVisitor methodVisitor = super.visitMethod(access, name, descriptor, signature, exceptions);
         try {
-            if(CONSTRUCTOR_NAME.equals(name) && CONSTRUCTOR_DESCRIPTOR.equals(descriptor)) {
-                System.out.println("modify ThreadPoolExecutor by method: " + name + " param type: " + descriptor);
+            if (CONSTRUCTOR_NAME.equals(name) && CONSTRUCTOR_DESCRIPTOR.equals(descriptor)) {
+                LOGGER.info("modify ThreadPoolExecutor by method: {} param type: {}", name, descriptor);
                 methodVisitor = new ThreadPoolExecutorConstructorVisitor(methodVisitor);
-            } else if(EXECUTE_METHOD_NAME.equals(name) && EXECUTE_METHOD_DESCRIPTOR.equals(descriptor)) {
-                System.out.println("modify ThreadPoolExecutor by method: " + name + " param type: " + descriptor);
+            } else if (EXECUTE_METHOD_NAME.equals(name) && EXECUTE_METHOD_DESCRIPTOR.equals(descriptor)) {
+                LOGGER.info("modify ThreadPoolExecutor by method: {} param type: {}", name, descriptor);
                 methodVisitor = new ModifyThreadPoolExecutorExecuteMethodVisitor(methodVisitor);
-            }else if(BEFORE_EXECUTE_METHOD_NAME.equals(name) && BEFORE_EXECUTE_METHOD_DESCRIPTOR.equals(descriptor)){
-                System.out.println("modify ThreadPoolExecutor by method: " + name + " param type: " + descriptor);
+            } else if (BEFORE_EXECUTE_METHOD_NAME.equals(name) && BEFORE_EXECUTE_METHOD_DESCRIPTOR.equals(descriptor)) {
+                LOGGER.info("modify ThreadPoolExecutor by method: {} param type: {}", name, descriptor);
                 methodVisitor = new ModifyThreadPoolExecutorBeforeMethodVisitor(methodVisitor);
-            }else if(AFTER_EXECUTE_METHOD_NAME.equals(name) && AFTER_EXECUTE_METHOD_DESCRIPTOR.equals(descriptor)) {
-                System.out.println("modify ThreadPoolExecutor by method: " + name + " param type: " + descriptor);
+            } else if (AFTER_EXECUTE_METHOD_NAME.equals(name) && AFTER_EXECUTE_METHOD_DESCRIPTOR.equals(descriptor)) {
+                LOGGER.info("modify ThreadPoolExecutor by method: {} param type: {}", name, descriptor);
                 methodVisitor = new ModifyThreadPoolExecutorAfterMethodVisitor(methodVisitor);
             }
-        }catch (Throwable w) {
+        } catch (Throwable w) {
             w.printStackTrace();
         }
         return methodVisitor;

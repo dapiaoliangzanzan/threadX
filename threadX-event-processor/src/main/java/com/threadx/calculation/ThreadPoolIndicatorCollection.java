@@ -36,7 +36,6 @@ public class ThreadPoolIndicatorCollection {
      * 线程池指标统计
      */
     public static void collection() {
-        System.out.println(RUN);
         if (!RUN.compareAndSet(false, true)) {
             return;
         }
