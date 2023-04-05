@@ -21,6 +21,16 @@ import java.io.Serializable;
 public class ThreadPoolExecutorStatusEvent implements ThreadXStatusEvent, Serializable {
 
     /**
+     * 服务名称
+     */
+    private String serverName;
+
+    /**
+     * 实例名称
+     */
+    private String instanceName;
+
+    /**
      * 线程池的名称
      */
     private String threadPoolName;

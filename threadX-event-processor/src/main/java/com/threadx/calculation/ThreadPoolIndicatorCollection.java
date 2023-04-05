@@ -31,6 +31,7 @@ public class ThreadPoolIndicatorCollection {
     private final static ScheduledThreadPoolExecutor EXECUTOR = new ScheduledThreadPoolExecutor(1, new ThreadXThreadFactory("threadXIndicatorCollection"));
     private final static AtomicBoolean RUN = new AtomicBoolean(false);
     private final static Logger logger = ThreadXAgetySystemLoggerFactory.getLogger(ThreadPoolIndicatorCollection.class);
+
     /**
      * 线程池指标统计
      */
@@ -65,10 +66,10 @@ public class ThreadPoolIndicatorCollection {
                         }
                     });
                 }
-            }catch (Throwable e) {
+            } catch (Throwable e) {
                 logger.error("Statistical indicator error with error message: {}", e.getMessage());
             }
-        },interval, interval, TimeUnit.SECONDS);
+        }, interval, interval, TimeUnit.SECONDS);
     }
 
     /**
@@ -88,6 +89,8 @@ public class ThreadPoolIndicatorCollection {
         }
 
         ThreadPoolExecutorStatusEvent event = new ThreadPoolExecutorStatusEvent();
+        event.setServerName(AgentContext.getServerName());
+        event.setInstanceName(AgentContext.getInstanceName());
         event.setThreadPoolName(threadPoolName);
         event.setThreadPoolGroupName(threadPoolGroupName);
         //使用的队列类型

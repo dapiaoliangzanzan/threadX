@@ -1,5 +1,6 @@
 package com.threadx.description.context;
 
+import com.threadx.constant.ThreadXPropertiesEnum;
 import com.threadx.description.agent.AgentPackageDescription;
 import com.threadx.metrics.api.MetricsOutApi;
 
@@ -15,6 +16,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class AgentContext {
 
     private static final AtomicBoolean BOOTSTRAP_STATE = new AtomicBoolean(false);
+
+    /**
+     * 服务名称
+     */
+    private static String serverName;
+
+    /**
+     * 实例名称
+     */
+    private static String instanceName;
 
     /**
      * 使用的classLoad
@@ -74,6 +85,8 @@ public class AgentContext {
      * @param agentPackageDescription agent包的解析信息
      */
     public static void registerAgentPackageDescription(AgentPackageDescription agentPackageDescription) {
+        AgentContext.serverName = agentPackageDescription.getEnvProperties().getProperty(ThreadXPropertiesEnum.SERVER_MAKE_NAME.getKey());
+        AgentContext.instanceName = agentPackageDescription.getEnvProperties().getProperty(ThreadXPropertiesEnum.INSTANCE_MAKE_NAME.getKey());
         AgentContext.agentPackageDescription = agentPackageDescription;
     }
 
@@ -108,5 +121,13 @@ public class AgentContext {
 
     public static void setMetrics(MetricsOutApi metrics) {
         AgentContext.metrics = metrics;
+    }
+
+    public static String getServerName() {
+        return serverName;
+    }
+
+    public static String getInstanceName() {
+        return instanceName;
     }
 }

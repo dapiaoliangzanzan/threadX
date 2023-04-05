@@ -20,6 +20,17 @@ import java.io.Serializable;
 public class ThreadPoolExecutorThreadTaskState implements ThreadXStatusEvent, Serializable {
     private static final Long serialVersionUID = -8563010018920100713L;
 
+
+    /**
+     * 服务名称
+     */
+    private String serverName;
+
+    /**
+     * 实例名称
+     */
+    private String instanceName;
+
     /**
      * 任务的id
      */

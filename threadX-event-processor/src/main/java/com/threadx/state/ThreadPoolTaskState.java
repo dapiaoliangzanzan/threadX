@@ -3,6 +3,7 @@ package com.threadx.state;
 import com.threadx.cache.ThreadPoolIndexCache;
 import com.threadx.cache.ThreadPoolIndexData;
 import com.threadx.cache.ThreadPoolTaskCache;
+import com.threadx.description.context.AgentContext;
 import com.threadx.listeners.ThreadPoolTaskEventListener;
 import com.threadx.log.Logger;
 import com.threadx.log.factory.ThreadXAgetySystemLoggerFactory;
@@ -47,6 +48,8 @@ public class ThreadPoolTaskState {
                 logger.debug("thread pool {} submit task.", threadPoolGroupName);
                 //构建数据
                 ThreadPoolExecutorThreadTaskState threadPoolExecutorThreadTaskState = new ThreadPoolExecutorThreadTaskState();
+                threadPoolExecutorThreadTaskState.setServerName(AgentContext.getServerName());
+                threadPoolExecutorThreadTaskState.setInstanceName(AgentContext.getInstanceName());
                 threadPoolExecutorThreadTaskState.setSubmitTime(System.currentTimeMillis());
                 String runnableId = ThreadXThreadPoolUtil.getObjectId(command);
                 threadPoolExecutorThreadTaskState.setTaskId(runnableId);

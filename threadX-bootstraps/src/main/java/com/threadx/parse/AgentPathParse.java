@@ -1,5 +1,6 @@
 package com.threadx.parse;
 
+import com.threadx.constant.ThreadXPropertiesEnum;
 import com.threadx.description.agent.AgentPackageDescription;
 import com.threadx.utils.ThreadXCollectionUtils;
 
@@ -94,7 +95,29 @@ public class AgentPathParse {
         for (String propertyName : propertyNames) {
             properties.put(propertyName, systemProperties.getProperty(propertyName));
         }
+        //参数检查
+        checkConfig(properties);
         return properties;
+    }
+
+    /**
+     * 参数检查
+     *
+     * @param properties 要检查的配置信息
+     */
+    private static void checkConfig(Properties properties) {
+        ThreadXPropertiesEnum[] threadXPropertiesEnums = ThreadXPropertiesEnum.values();
+        for (ThreadXPropertiesEnum propertiesEnum : threadXPropertiesEnums) {
+            if (propertiesEnum.isRequired()) {
+                String propertiesEnumKey = propertiesEnum.getKey();
+                String defaultValue = propertiesEnum.getDefaultValue();
+                String requiredProperty = properties.getProperty(propertiesEnumKey, null);
+                //如果必传的参数为空或者等于默认值 就直接报错
+                if (requiredProperty == null || defaultValue.equals(requiredProperty)) {
+                    throw new RuntimeException("threadX The configuration information is incorrect. The mandatory parameter is null. config name is " + propertiesEnumKey);
+                }
+            }
+        }
     }
 
 
