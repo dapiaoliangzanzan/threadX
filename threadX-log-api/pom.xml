@@ -20,7 +20,7 @@
 
         <dependency>
             <groupId>com.threadX</groupId>
-            <artifactId>threadX-modify-api</artifactId>
+            <artifactId>threadX-modify-core</artifactId>
             <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>

@@ -17,7 +17,7 @@
             <directory>${project.build.directory}</directory>
             <outputDirectory>/boot</outputDirectory>
             <includes>
-                <include>threadX-modify-api*.jar</include>
+                <include>threadX-modify-core*.jar</include>
             </includes>
         </fileSet>
     </fileSets>

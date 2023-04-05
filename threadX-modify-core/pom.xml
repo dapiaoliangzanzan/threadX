@@ -9,7 +9,7 @@
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>threadX-modify-api</artifactId>
+    <artifactId>threadX-modify-core</artifactId>
 
     <properties>
         <maven.compiler.source>8</maven.compiler.source>

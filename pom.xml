@@ -10,13 +10,14 @@
     <packaging>pom</packaging>
     <name>threadX</name>
     <modules>
-        <module>threadX-modify-api</module>
+        <module>threadX-modify-core</module>
         <module>threadX-event-processor</module>
         <module>threadX-modify-asm</module>
         <module>threadX-bootstraps</module>
         <module>threadX-log-log4j</module>
         <module>threadX-log-api</module>
         <module>threadX-metrics-out-log4j</module>
+        <module>threadX-metrics-out-tms</module>
     </modules>
 
     <properties>

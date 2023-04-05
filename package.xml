@@ -16,7 +16,7 @@
         </fileSet>
 
         <fileSet>
-            <directory>threadX-modify-api/target/threadX</directory>
+            <directory>threadX-modify-core/target/threadX</directory>
             <outputDirectory>/</outputDirectory>
             <includes>
                 <include>**/*.*</include>

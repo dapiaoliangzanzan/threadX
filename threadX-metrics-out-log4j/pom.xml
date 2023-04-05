@@ -34,7 +34,7 @@
 
         <dependency>
             <groupId>com.threadX</groupId>
-            <artifactId>threadX-modify-api</artifactId>
+            <artifactId>threadX-modify-core</artifactId>
             <version>1.0-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>

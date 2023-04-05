@@ -26,7 +26,7 @@
 
         <dependency>
             <groupId>com.threadX</groupId>
-            <artifactId>threadX-modify-api</artifactId>
+            <artifactId>threadX-modify-core</artifactId>
             <version>${project.parent.version}</version>
         </dependency>
 
@@ -56,7 +56,7 @@
 
                             <artifactSet>
                                 <includes>
-                                    <include>com.threadX:threadX-modify-api</include>
+                                    <include>com.threadX:threadX-modify-core</include>
                                 </includes>
                             </artifactSet>
                         </configuration>
