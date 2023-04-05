@@ -16,6 +16,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Logger;
 
 /**
@@ -86,7 +87,13 @@ public class AgentPathParse {
             logger.info("Load ${THREADX_HOME}/conf/threadX.properties data.");
             properties.load(reader);
         }
-
+        //获取系统参数
+        Properties systemProperties = System.getProperties();
+        //将系统参数与配置文件参数合并，系统参数优先级高
+        Set<String> propertyNames = systemProperties.stringPropertyNames();
+        for (String propertyName : propertyNames) {
+            properties.put(propertyName, systemProperties.getProperty(propertyName));
+        }
         return properties;
     }
 
