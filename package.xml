@@ -62,5 +62,14 @@
                 <include>**/*.*</include>
             </includes>
         </fileSet>
+
+
+        <fileSet>
+            <directory>threadX-communication/target/threadX</directory>
+            <outputDirectory>/</outputDirectory>
+            <includes>
+                <include>**/*.*</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>
