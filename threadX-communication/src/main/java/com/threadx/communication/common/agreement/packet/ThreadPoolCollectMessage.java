@@ -1,35 +1,23 @@
-package com.threadx.publisher.events;
+package com.threadx.communication.common.agreement.packet;
 
-import com.threadx.publisher.ThreadXStatusEvent;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
-
-import java.io.Serializable;
 
 /**
- * 线程池指标事件源
+ * 线程池数据的采集信息
  *
  * @author huangfukexing
- * @date 2023/3/17 14:33
+ * @date 2023/4/7 13:31
  */
+
 @Data
-@ToString
 @AllArgsConstructor
 @NoArgsConstructor
-public class ThreadPoolExecutorStatusEvent implements ThreadXStatusEvent, Serializable {
-
-    private static final long serialVersionUID = 7953959914662961813L;
-    /**
-     * 服务名称
-     */
-    private String serverName;
-
-    /**
-     * 实例名称
-     */
-    private String instanceName;
+@EqualsAndHashCode(callSuper = true)
+public class ThreadPoolCollectMessage extends Message{
+    private static final long serialVersionUID = 3801673501485117601L;
 
     /**
      * 线程池的名称
@@ -97,5 +85,4 @@ public class ThreadPoolExecutorStatusEvent implements ThreadXStatusEvent, Serial
      * 线程空闲
      */
     private Long keepAliveTime;
-
 }

@@ -18,9 +18,9 @@ import java.io.Serializable;
 @ToString
 @EqualsAndHashCode
 public class ThreadPoolExecutorThreadTaskState implements ThreadXStatusEvent, Serializable {
-    private static final Long serialVersionUID = -8563010018920100713L;
 
 
+    private static final long serialVersionUID = 7974501570560431710L;
     /**
      * 服务名称
      */
