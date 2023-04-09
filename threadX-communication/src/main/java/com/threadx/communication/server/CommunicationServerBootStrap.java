@@ -8,6 +8,7 @@ import com.threadx.communication.common.handlers.PacketCodecHandler;
 import com.threadx.communication.common.utils.NettyEventLoopUtils;
 import com.threadx.communication.server.config.ServerConfig;
 import com.threadx.communication.server.handler.ThreadPoolDataCollectHandler;
+import com.threadx.communication.server.handler.ThreadTaskDataCollectHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -93,6 +94,8 @@ public class CommunicationServerBootStrap {
                         socketChannel.pipeline().addLast("PacketCodecHandler", new PacketCodecHandler(messageCommunicationConfig));
                         //线程池数据处理器
                         socketChannel.pipeline().addLast("ThreadPoolDataCollectHandler", new ThreadPoolDataCollectHandler());
+                        //线程任务处理器
+                        socketChannel.pipeline().addLast("ThreadTaskDataCollectHandler", new ThreadTaskDataCollectHandler());
                     }
                 });
         //获取主机
@@ -109,7 +112,7 @@ public class CommunicationServerBootStrap {
         //等待绑定完成
         channelFuture.syncUninterruptibly();
         channel = channelFuture.channel();
-        logger.info("服务启动成功："+ channel.localAddress());
+        logger.info("服务启动成功：" + channel.localAddress());
     }
 
 

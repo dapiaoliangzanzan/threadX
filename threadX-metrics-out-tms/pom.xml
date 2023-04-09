@@ -21,23 +21,32 @@
         <dependency>
             <groupId>com.threadX</groupId>
             <artifactId>threadX-log-api</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.threadX</groupId>
             <artifactId>threadX-log-log4j</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
 
         <dependency>
             <groupId>com.threadX</groupId>
             <artifactId>threadX-modify-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${project.parent.version}</version>
             <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>com.threadX</groupId>
+            <artifactId>threadX-communication</artifactId>
+            <version>${project.parent.version}</version>
+            <scope>provided</scope>
+        </dependency>
+
+
     </dependencies>
 
     <build>

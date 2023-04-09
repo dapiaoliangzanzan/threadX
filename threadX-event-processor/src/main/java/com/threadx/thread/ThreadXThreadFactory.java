@@ -2,6 +2,7 @@ package com.threadx.thread;
 
 import com.threadx.log.Logger;
 import com.threadx.log.factory.ThreadXAgetySystemLoggerFactory;
+import com.threadx.utils.ThreadXThrowableMessageUtil;
 
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -32,7 +33,7 @@ public class ThreadXThreadFactory implements ThreadFactory {
         thread.setDaemon(true);
         thread.setName(String.format("%s-%s", threadNamePrefix, IDX.getAndIncrement()));
         thread.setUncaughtExceptionHandler((t, e) -> {
-            logger.error("thread {} error , error message is {}", t.getName(), e.getMessage());
+            logger.error("thread {} error , error message is {}", t.getName(), ThreadXThrowableMessageUtil.messageRead(e));
         });
         return thread;
     }

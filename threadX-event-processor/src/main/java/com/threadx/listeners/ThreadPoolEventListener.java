@@ -23,7 +23,7 @@ public class ThreadPoolEventListener implements StatusEventListener<ThreadPoolEx
 
     @Override
     public void doListener(ThreadPoolExecutorStatusEvent event) {
-        METRICS.outMetricsData(event.toString());
+        METRICS.outThreadPoolMetricsData(event);
     }
 
     @Override

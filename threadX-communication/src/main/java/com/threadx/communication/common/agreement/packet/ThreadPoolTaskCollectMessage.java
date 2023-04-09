@@ -2,6 +2,7 @@ package com.threadx.communication.common.agreement.packet;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
@@ -15,7 +16,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ThreadPoolTaskCollectMessage implements Serializable {
+@EqualsAndHashCode(callSuper = true)
+public class ThreadPoolTaskCollectMessage extends Message implements Serializable {
     private static final long serialVersionUID = -3749594733601459738L;
 
     /**

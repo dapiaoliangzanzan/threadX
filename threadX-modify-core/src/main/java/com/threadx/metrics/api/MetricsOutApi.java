@@ -1,5 +1,8 @@
 package com.threadx.metrics.api;
 
+import com.threadx.metrics.ThreadPoolExecutorData;
+import com.threadx.metrics.ThreadTaskExecutorData;
+
 import java.util.List;
 
 /**
@@ -20,7 +23,7 @@ public interface MetricsOutApi {
      *
      * @param metricsData 指标数据
      */
-    void outMetricsData(String metricsData);
+    void outThreadPoolMetricsData(ThreadPoolExecutorData metricsData);
 
 
     /**
@@ -28,7 +31,36 @@ public interface MetricsOutApi {
      *
      * @param metricsDataList 指标数据列表
      */
-    void outMetricsData(List<String> metricsDataList);
+    default void outThreadPoolMetricsData(List<ThreadPoolExecutorData> metricsDataList) {
+        if (metricsDataList != null && metricsDataList.size() > 0) {
+            for (ThreadPoolExecutorData threadPoolExecutorData : metricsDataList) {
+                outThreadPoolMetricsData(threadPoolExecutorData);
+            }
+        }
+    }
+
+
+    /**
+     * 输出单条指标数据
+     *
+     * @param metricsData 指标数据
+     */
+    void outThreadTaskMetricsData(ThreadTaskExecutorData metricsData);
+
+
+    /**
+     * 输出多条指标数据
+     *
+     * @param metricsDataList 指标数据列表
+     */
+    default void outThreadTaskMetricsData(List<ThreadTaskExecutorData> metricsDataList) {
+        if (metricsDataList != null && metricsDataList.size() > 0) {
+            for (ThreadTaskExecutorData threadTaskExecutorData : metricsDataList) {
+                outThreadTaskMetricsData(threadTaskExecutorData);
+            }
+        }
+    }
+
 
     /**
      * 销毁对象
