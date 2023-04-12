@@ -1,5 +1,6 @@
 package com.threadx.communication.server;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.threadx.communication.common.MessageCommunicationConfig;
 import com.threadx.communication.common.agreement.AgreementChoreography;
@@ -7,14 +8,13 @@ import com.threadx.communication.common.agreement.implementation.PacketSegmentat
 import com.threadx.communication.common.handlers.PacketCodecHandler;
 import com.threadx.communication.common.utils.NettyEventLoopUtils;
 import com.threadx.communication.server.config.ServerConfig;
-import com.threadx.communication.server.handler.ThreadPoolDataCollectHandler;
-import com.threadx.communication.server.handler.ThreadTaskDataCollectHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
 
 import java.net.InetSocketAddress;
+import java.util.Map;
 import java.util.logging.Logger;
 
 /**
@@ -62,6 +62,7 @@ public class CommunicationServerBootStrap {
     public void startServer() {
         logger.info("threadX指标收集服务开始启动！");
         MessageCommunicationConfig messageCommunicationConfig = serverConfig.getMessageCommunicationConfig();
+        Map<String, ChannelInboundHandlerAdapter> channelInboundHandlerAdapterMap = serverConfig.getChannelInboundHandlerAdapterMap();
         bossGroup = NettyEventLoopUtils.eventLoopGroup(1, "threadX-server-boss");
         workerGroup = NettyEventLoopUtils.eventLoopGroup(DEFAULT_IO_THREADS, "threadX-server-worker");
 
@@ -92,10 +93,10 @@ public class CommunicationServerBootStrap {
                         socketChannel.pipeline().addLast("PacketSegmentationHandler", packetSegmentationHandler);
                         //写入数据编解码器 将一个完整的包数据进行包编解码
                         socketChannel.pipeline().addLast("PacketCodecHandler", new PacketCodecHandler(messageCommunicationConfig));
-                        //线程池数据处理器
-                        socketChannel.pipeline().addLast("ThreadPoolDataCollectHandler", new ThreadPoolDataCollectHandler());
-                        //线程任务处理器
-                        socketChannel.pipeline().addLast("ThreadTaskDataCollectHandler", new ThreadTaskDataCollectHandler());
+                        //添加处理器
+                        if(CollUtil.isNotEmpty(channelInboundHandlerAdapterMap)) {
+                            channelInboundHandlerAdapterMap.forEach((k,v) -> socketChannel.pipeline().addLast(k, v));
+                        }
                     }
                 });
         //获取主机

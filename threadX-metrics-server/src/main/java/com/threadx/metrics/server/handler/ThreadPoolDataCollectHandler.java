@@ -1,10 +1,11 @@
-package com.threadx.communication.server.handler;
+package com.threadx.metrics.server.handler;
 
 import cn.hutool.json.JSONUtil;
 import com.threadx.communication.common.agreement.packet.ThreadPoolCollectMessage;
-import io.netty.channel.ChannelHandler;
+import com.threadx.communication.common.handlers.ThreadXChannelInboundHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Component;
 
 import java.util.logging.Logger;
 
@@ -15,13 +16,13 @@ import java.util.logging.Logger;
  * @author huangfukexing
  * @date 2023/4/7 13:37
  */
-@ChannelHandler.Sharable
-public class ThreadPoolDataCollectHandler extends SimpleChannelInboundHandler<ThreadPoolCollectMessage> {
+@Slf4j
+@Component
+public class ThreadPoolDataCollectHandler extends ThreadXChannelInboundHandler<ThreadPoolCollectMessage> {
 
-    static final Logger logger = Logger.getGlobal();
 
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ThreadPoolCollectMessage threadPoolCollectMessage) throws Exception {
-        logger.info("接收到数据: "+ JSONUtil.toJsonStr(threadPoolCollectMessage));
+        log.info("接收到数据: "+ JSONUtil.toJsonStr(threadPoolCollectMessage));
     }
 }
