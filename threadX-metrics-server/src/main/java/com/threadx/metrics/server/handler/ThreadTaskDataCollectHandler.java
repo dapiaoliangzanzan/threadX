@@ -4,12 +4,17 @@ import cn.hutool.json.JSONUtil;
 import com.threadx.communication.common.agreement.packet.ThreadPoolCollectMessage;
 import com.threadx.communication.common.agreement.packet.ThreadPoolTaskCollectMessage;
 import com.threadx.communication.common.handlers.ThreadXChannelInboundHandler;
+import com.threadx.communication.common.utils.ChannelUtil;
+import com.threadx.metrics.server.async.ThreadTaskDataRunnable;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
+import java.util.concurrent.ArrayBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 /**
@@ -24,8 +29,14 @@ import java.util.logging.Logger;
 public class ThreadTaskDataCollectHandler extends ThreadXChannelInboundHandler<ThreadPoolTaskCollectMessage> {
 
 
+    private final static int SYSTEM_CORE_COUNT = Runtime.getRuntime().availableProcessors();
+
+    private final static ThreadPoolExecutor THREAD_POOL_EXECUTOR = new ThreadPoolExecutor(SYSTEM_CORE_COUNT, SYSTEM_CORE_COUNT * 4, 60, TimeUnit.SECONDS, new ArrayBlockingQueue<>(1024), new ThreadPoolExecutor.DiscardOldestPolicy());
+
+
+
     @Override
     protected void channelRead0(ChannelHandlerContext channelHandlerContext, ThreadPoolTaskCollectMessage taskCollectMessage) throws Exception {
-        log.info("接收到任务数据: "+ JSONUtil.toJsonStr(taskCollectMessage));
+        THREAD_POOL_EXECUTOR.execute(new ThreadTaskDataRunnable(taskCollectMessage, ChannelUtil.getChannelRemoteAddress(channelHandlerContext.channel())));
     }
 }

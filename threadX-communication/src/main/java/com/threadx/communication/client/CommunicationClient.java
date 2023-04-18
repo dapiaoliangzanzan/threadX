@@ -59,6 +59,16 @@ public class CommunicationClient {
     }
 
     /**
+     * 重新连接
+     *
+     * @throws Throwable 异常信息
+     */
+    public void reConnect() throws Throwable {
+        this.close();
+        connect();
+    }
+
+    /**
      * 连接服务器
      */
     private void connect() {
