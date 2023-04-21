@@ -1,9 +1,13 @@
 package com.threadx.metrics.server.async;
 
+import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
-import com.threadx.communication.common.agreement.packet.ThreadPoolCollectMessage;
 import com.threadx.communication.common.agreement.packet.ThreadPoolTaskCollectMessage;
+import com.threadx.metrics.server.constant.RedisKeyConstant;
+import com.threadx.metrics.server.entity.ThreadTaskData;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.redis.core.StringRedisTemplate;
 
 /**
  * 线程池任务数据异步处理器
@@ -30,6 +34,11 @@ public class ThreadTaskDataRunnable implements Runnable {
 
     @Override
     public void run() {
-        log.info("数据：{}, 数据来源: {}",JSONUtil.toJsonStr(threadPoolTaskCollectMessage), ipaddress);
+        ThreadTaskData threadTaskData = new ThreadTaskData();
+        BeanUtil.copyProperties(threadPoolTaskCollectMessage, threadTaskData);
+        threadTaskData.setAddress(ipaddress);
+        //写入redis
+        StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+        redisTemplate.opsForList().leftPush(RedisKeyConstant.THREAD_TASK_DATA, JSONUtil.toJsonStr(threadTaskData));
     }
 }
