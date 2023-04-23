@@ -7,6 +7,7 @@ import com.threadx.communication.server.config.ServerConfig;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Component;
 
 import java.util.Map;
@@ -18,6 +19,7 @@ import java.util.Map;
  * @date 2023/4/12 16:22
  */
 @Component
+@DependsOn({"threadPoolDataConsumer","threadTaskDataConsumer"})
 public class CommunicationInit implements InitializingBean, DisposableBean {
 
     @Value("${threadx.communication.port}")

@@ -16,6 +16,7 @@
         <maven.compiler.target>8</maven.compiler.target>
 
         <spring.boot-version>2.6.14</spring.boot-version>
+        <mybatis-plus-version>3.5.3.1</mybatis-plus-version>
     </properties>
 
 
@@ -53,6 +54,17 @@
             <groupId>com.threadX</groupId>
             <artifactId>threadX-communication</artifactId>
             <version>${project.parent.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>com.baomidou</groupId>
+            <artifactId>mybatis-plus-boot-starter</artifactId>
+            <version>${mybatis-plus-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
         </dependency>
 
     </dependencies>
