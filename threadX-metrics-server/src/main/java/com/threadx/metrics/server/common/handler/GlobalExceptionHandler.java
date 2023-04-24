@@ -1,6 +1,7 @@
 package com.threadx.metrics.server.common.handler;
 
 import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
+import com.threadx.metrics.server.common.code.IExceptionCode;
 import com.threadx.metrics.server.common.exceptions.IException;
 import com.threadx.metrics.server.common.result.ResponseResult;
 import com.threadx.utils.ThreadXThrowableMessageUtil;
@@ -29,9 +30,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler(IException.class)
     public ResponseResult iExceptionHandler(IException e) {
-        log.error(e.getExceptionCode().defaultMessage());
+        IExceptionCode exceptionCode = e.getExceptionCode();
+        log.error(exceptionCode.defaultMessage());
         log.error(ThreadXThrowableMessageUtil.messageRead(e));
-        return ResponseResult.error(CurrencyRequestEnum.REQUEST_ERROR.getCode(), e.getExceptionCode().getMessage());
+        return ResponseResult.error(exceptionCode.getCode(), exceptionCode.getMessage());
     }
 
     /**
