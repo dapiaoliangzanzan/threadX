@@ -8,6 +8,7 @@ import com.threadx.communication.common.agreement.implementation.PacketSegmentat
 import com.threadx.communication.common.handlers.PacketCodecHandler;
 import com.threadx.communication.common.utils.NettyEventLoopUtils;
 import com.threadx.communication.server.config.ServerConfig;
+import com.threadx.communication.server.handler.ServerHeartbeatHandler;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
@@ -97,6 +98,8 @@ public class CommunicationServerBootStrap {
                         if(CollUtil.isNotEmpty(channelInboundHandlerAdapterMap)) {
                             channelInboundHandlerAdapterMap.forEach((k,v) -> socketChannel.pipeline().addLast(k, v));
                         }
+                        //写入心跳实现
+                        socketChannel.pipeline().addLast("ServerHeartbeatHandler", new ServerHeartbeatHandler());
                     }
                 });
         //获取主机

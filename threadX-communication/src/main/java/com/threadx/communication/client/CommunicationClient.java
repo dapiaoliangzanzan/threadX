@@ -1,6 +1,7 @@
 package com.threadx.communication.client;
 
 import com.threadx.communication.client.config.ClientConfig;
+import com.threadx.communication.client.handler.ClientHeartbeatHandler;
 import com.threadx.communication.common.MessageCommunicationConfig;
 import com.threadx.communication.common.agreement.AgreementChoreography;
 import com.threadx.communication.common.agreement.implementation.PacketSegmentationHandler;
@@ -14,6 +15,7 @@ import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
 
 import java.net.InetSocketAddress;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 /**
@@ -61,9 +63,8 @@ public class CommunicationClient {
     /**
      * 重新连接
      *
-     * @throws Throwable 异常信息
      */
-    public void reConnect() throws Throwable {
+    public void reConnect() {
         this.close();
         connect();
     }
@@ -72,6 +73,7 @@ public class CommunicationClient {
      * 连接服务器
      */
     private void connect() {
+        ReconstructionConnection.reConnectionConfinementConnection();
         bootstrap = new Bootstrap();
         bootstrap.group(EVENT_LOOP_GROUP)
                 //设置通道选项 SO_KEEPALIVE 为 true，表示启用 TCP 的 keepalive 机制，即使长时间没有数据传输也能保持连接。
@@ -100,15 +102,27 @@ public class CommunicationClient {
                 //写入数据编解码器  将一个完整的包数据进行包编解码
                 socketChannel.pipeline().addLast("PacketCodecHandler", new PacketCodecHandler(communicationConfig));
                 //todo 来自服务端的命令处理器
+                //写入心跳实现
+                socketChannel.pipeline().addLast("ClientHeartbeatHandler", new ClientHeartbeatHandler(CommunicationClient.this));
             }
         });
 
         //开始连接服务器
-        ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(clientConfig.getHost(), clientConfig.getPort())).syncUninterruptibly();
-        channel = channelFuture.channel();
-        //获取连接的地址
-        serverAddress = ChannelUtil.getChannelRemoteAddress(channel);
-        logger.info("连接服务端成功：" + serverAddress);
+        ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(clientConfig.getHost(), clientConfig.getPort()));
+        channelFuture.addListener((ChannelFutureListener) cf -> {
+            if (cf.isSuccess()) {
+                channel = cf.channel();
+                //获取连接的地址
+                serverAddress = ChannelUtil.getChannelRemoteAddress(channel);
+                ReconstructionConnection.newActiveConnection(CommunicationClient.this);
+                logger.info("Connecting to the server succeeded. Procedure ：" + serverAddress);
+            }else {
+                //写入坏连接  等待重连
+                ReconstructionConnection.confinementConnection(CommunicationClient.this);
+                logger.log(Level.WARNING, serverAddress + "Connection failed. Bad connection was added. Procedure", cf.cause());
+            }
+        });
+
     }
 
 
@@ -136,12 +150,19 @@ public class CommunicationClient {
     /**
      * 关闭服务端
      *
-     * @throws Throwable 异常信息
      */
-    public void close() throws Throwable {
+    public void close() {
         if (bootstrap != null) {
             EVENT_LOOP_GROUP.shutdownGracefully().syncUninterruptibly();
         }
+        ReconstructionConnection.closeConnection(serverAddress);
+    }
+
+    /**
+     * 将过期的连接放到小黑屋
+     */
+    public void failureThisConnection(){
+        ReconstructionConnection.confinementConnection(this);
     }
 
     /**
