@@ -1,5 +1,6 @@
 package com.threadx.metrics.server.entity;
 
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.threadx.communication.common.agreement.packet.Message;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,6 +16,7 @@ import java.io.Serializable;
  * @date 2023/4/7 13:31
  */
 
+@TableName("thread_pool_data")
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor

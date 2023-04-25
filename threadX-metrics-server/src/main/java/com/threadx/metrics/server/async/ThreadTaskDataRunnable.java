@@ -6,6 +6,7 @@ import cn.hutool.json.JSONUtil;
 import com.threadx.communication.common.agreement.packet.ThreadPoolTaskCollectMessage;
 import com.threadx.metrics.server.constant.RedisKeyConstant;
 import com.threadx.metrics.server.entity.ThreadTaskData;
+import com.threadx.metrics.server.init.ThreadTaskDataConsumer;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
@@ -35,10 +36,9 @@ public class ThreadTaskDataRunnable implements Runnable {
     @Override
     public void run() {
         ThreadTaskData threadTaskData = new ThreadTaskData();
+        threadTaskData.init();
         BeanUtil.copyProperties(threadPoolTaskCollectMessage, threadTaskData);
         threadTaskData.setAddress(ipaddress);
-        //写入redis
-        StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
-        redisTemplate.opsForList().leftPush(RedisKeyConstant.THREAD_TASK_DATA, JSONUtil.toJsonStr(threadTaskData));
+        ThreadTaskDataConsumer.pushData(threadTaskData);
     }
 }

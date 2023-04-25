@@ -1,6 +1,8 @@
 package com.threadx.metrics.server.entity;
 
 import cn.hutool.json.JSONUtil;
+import com.baomidou.mybatisplus.annotation.TableField;
+import com.baomidou.mybatisplus.annotation.TableName;
 import com.threadx.communication.common.agreement.packet.ThreadPoolTaskCollectMessage;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,6 +16,7 @@ import lombok.extern.slf4j.Slf4j;
  * @author huangfukexing
  * @date 2023/4/18 12:42
  */
+@TableName("thread_task_data")
 @EqualsAndHashCode(callSuper = true)
 @Data
 @AllArgsConstructor
@@ -53,6 +56,7 @@ public class ThreadTaskData extends BaseEntity {
     /**
      * 任务的执行耗时
      */
+    @TableField("runIng_consuming_time")
     private Long runIngConsumingTime;
 
     /**
