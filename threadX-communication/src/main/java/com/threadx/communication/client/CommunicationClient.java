@@ -165,8 +165,6 @@ public class CommunicationClient {
      * 将过期的连接放到小黑屋
      */
     public void failureThisConnection() {
-        //关闭客户端
-        close();
         //失效终端
         ConnectionManager.confinementConnection(this);
     }

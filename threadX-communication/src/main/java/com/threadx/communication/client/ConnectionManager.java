@@ -11,6 +11,7 @@ import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.logging.Logger;
 
@@ -28,11 +29,13 @@ public class ConnectionManager {
     private final static ReadWriteLock READ_WRITE_LOCK = new ReentrantReadWriteLock();
     private final static Lock READ_LOCK = READ_WRITE_LOCK.readLock();
     private final static Lock WRITE_LOCK = READ_WRITE_LOCK.writeLock();
+    private final static ReentrantLock lock = new ReentrantLock();
 
     private final static AtomicBoolean IS_START = new AtomicBoolean(false);
     private static ScheduledFuture<?> scheduledFuture = null;
+    private static ScheduledFuture<?> checkConnection = null;
 
-    private final static ScheduledThreadPoolExecutor RE_CONNECTION_POOL = new ScheduledThreadPoolExecutor(1, r -> {
+    private final static ScheduledThreadPoolExecutor RE_CONNECTION_POOL = new ScheduledThreadPoolExecutor(2, r -> {
         Thread thread = new Thread(r);
         thread.setName("re-Connection-Pool");
         return thread;
@@ -65,6 +68,10 @@ public class ConnectionManager {
     public static void closeAll() {
         if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
+        }
+
+        if (checkConnection != null) {
+            checkConnection.cancel(false);
         }
         //开始筛选
         ACTIVE_CONNECTION.forEach((k, v) -> {
@@ -125,7 +132,11 @@ public class ConnectionManager {
     public static void confinementConnection(CommunicationClient communicationClient) {
         WRITE_LOCK.lock();
         try {
-            ACTIVE_CONNECTION.remove(communicationClient.getServerAddress());
+            CommunicationClient remove = ACTIVE_CONNECTION.remove(communicationClient.getServerAddress());
+            if(remove != null) {
+                remove.close();
+            }
+
             FAILURE_CONNECTION.put(communicationClient.getServerAddress(), communicationClient);
         } finally {
             WRITE_LOCK.unlock();
@@ -178,7 +189,10 @@ public class ConnectionManager {
         boolean start = IS_START.get();
         if (!start) {
             IS_START.compareAndSet(false, true);
+
+            //探测坏连接缓存，进行重连操作
             scheduledFuture = RE_CONNECTION_POOL.scheduleWithFixedDelay(() -> {
+                lock.lock();
                 try {
                     if (CollectionUtil.isNotEmpty(FAILURE_CONNECTION)) {
                         logger.warning("存在失效连接， 开始重连任务！");
@@ -186,8 +200,33 @@ public class ConnectionManager {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
+                }finally {
+                    lock.unlock();
                 }
             }, 3, 3, TimeUnit.SECONDS);
+
+            //它存在的意义是防止极端情况发生，因为某些异常原因，导致，连接失效后，没有加入到坏连接缓存中去，导致该连接无法重连
+            checkConnection = RE_CONNECTION_POOL.scheduleWithFixedDelay(() -> {
+                lock.lock();
+                try {
+                    List<CommunicationClient> inActiveConnection = new ArrayList<>();
+                    Map<String, CommunicationClient> allActiveConnection = getAllActiveConnection();
+                    allActiveConnection.forEach((k,v) ->{
+                        if(!v.communicationStatus()) {
+                            inActiveConnection.add(v);
+                        }
+                    });
+                    if (CollectionUtil.isNotEmpty(inActiveConnection)) {
+                        logger.warning("存在失效连接！");
+                        inActiveConnection.forEach(ConnectionManager::confinementConnection);
+
+                    }
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }finally {
+                    lock.unlock();
+                }
+            }, 60, 60, TimeUnit.SECONDS);
         }
     }
 
