@@ -1,6 +1,7 @@
 package com.threadx.communication.client.handler;
 
 import com.threadx.communication.client.CommunicationClient;
+import com.threadx.communication.client.ConnectionManager;
 import com.threadx.communication.common.agreement.packet.HeartbeatMessage;
 import com.threadx.communication.common.handlers.ThreadXChannelInboundHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -27,11 +28,18 @@ public class ClientHeartbeatHandler extends ThreadXChannelInboundHandler<Heartbe
      */
     public static final int HEARTBEAT_TIMEOUT = 10;
 
-
+    /**
+     * 上次心跳时间
+     */
     private final AtomicLong RECEIVE_TIME = new AtomicLong(System.currentTimeMillis());
-
+    /**
+     * 心跳任务
+     */
     private ScheduledFuture<?> schedule;
 
+    /**
+     * 通讯终端
+     */
     private final CommunicationClient communicationClient;
 
     public ClientHeartbeatHandler(CommunicationClient communicationClient) {
@@ -53,12 +61,16 @@ public class ClientHeartbeatHandler extends ThreadXChannelInboundHandler<Heartbe
 
     @Override
     protected void channelRead0(ChannelHandlerContext ctx, HeartbeatMessage msg) throws Exception {
+        //心跳续约
         RECEIVE_TIME.set(System.currentTimeMillis());
     }
 
     @Override
     public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+        //取消心跳任务
         schedule.cancel(true);
+        //失效终端
+        communicationClient.failureThisConnection();
         super.channelInactive(ctx);
     }
 }

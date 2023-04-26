@@ -7,14 +7,14 @@ import com.threadx.communication.common.agreement.AgreementChoreography;
 import com.threadx.communication.common.agreement.implementation.PacketSegmentationHandler;
 import com.threadx.communication.common.agreement.packet.Message;
 import com.threadx.communication.common.handlers.PacketCodecHandler;
-import com.threadx.communication.common.utils.ChannelUtil;
 import com.threadx.communication.common.utils.NettyEventLoopUtils;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.PooledByteBufAllocator;
 import io.netty.channel.*;
 import io.netty.channel.socket.SocketChannel;
+import lombok.EqualsAndHashCode;
 
-import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -24,6 +24,7 @@ import java.util.logging.Logger;
  * @author huangfukexing
  * @date 2023/4/7 14:31
  */
+@EqualsAndHashCode
 public class CommunicationClient {
 
     static final Logger logger = Logger.getGlobal();
@@ -32,7 +33,9 @@ public class CommunicationClient {
 
     private final static int DEFAULT_IO_THREADS = Math.min(Runtime.getRuntime().availableProcessors() + 1, 32);
 
-    private static final EventLoopGroup EVENT_LOOP_GROUP = NettyEventLoopUtils.eventLoopGroup(DEFAULT_IO_THREADS, "threadX-Client-Worker");
+    private EventLoopGroup eventLoopGroup = null;
+
+    private final AtomicBoolean active = new AtomicBoolean(false);
 
     /**
      * 启动器
@@ -45,16 +48,12 @@ public class CommunicationClient {
     private Channel channel;
 
     /**
-     * 连接的服务端的地址
-     */
-    private String serverAddress;
-
-    /**
      * 配置信息
      */
     private final ClientConfig clientConfig;
 
     public CommunicationClient(ClientConfig clientConfig) {
+        ConnectionManager.reConnectionConfinementConnection();
         this.clientConfig = clientConfig;
         //连接服务器
         connect();
@@ -62,7 +61,6 @@ public class CommunicationClient {
 
     /**
      * 重新连接
-     *
      */
     public void reConnect() {
         this.close();
@@ -73,9 +71,9 @@ public class CommunicationClient {
      * 连接服务器
      */
     private void connect() {
-        ReconstructionConnection.reConnectionConfinementConnection();
+        eventLoopGroup = NettyEventLoopUtils.eventLoopGroup(DEFAULT_IO_THREADS, "threadX-Client-Worker");
         bootstrap = new Bootstrap();
-        bootstrap.group(EVENT_LOOP_GROUP)
+        bootstrap.group(eventLoopGroup)
                 //设置通道选项 SO_KEEPALIVE 为 true，表示启用 TCP 的 keepalive 机制，即使长时间没有数据传输也能保持连接。
                 .option(ChannelOption.SO_KEEPALIVE, Boolean.TRUE)
                 //设置通道选项 TCP_NODELAY 为 true，表示禁用 Nagle 算法，可以降低延迟但会增加网络负载。
@@ -83,12 +81,13 @@ public class CommunicationClient {
                 //设置通道选项 ALLOCATOR 为 Netty 提供的对象池化的字节缓冲区分配器，可以减少内存分配和垃圾回收的开销，提高性能。
                 .option(ChannelOption.ALLOCATOR, PooledByteBufAllocator.DEFAULT)
                 //设置通道类型为 NettyEventLoopUtils 工具类提供的套接字通道类型，该类型会根据操作系统的不同选择合适的实现。
-                .channel(NettyEventLoopUtils.socketChannelClass());
+                .channel(NettyEventLoopUtils.socketChannelClass())
+                .remoteAddress(clientConfig.getHost(), clientConfig.getPort());
         bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, DEFAULT_CONNECT_TIMEOUT);
 
         bootstrap.handler(new ChannelInitializer<SocketChannel>() {
             @Override
-            protected void initChannel(SocketChannel socketChannel) throws Exception {
+            protected void initChannel(SocketChannel socketChannel) {
                 //获取消息协议上下文
                 MessageCommunicationConfig communicationConfig = clientConfig.getMessageCommunicationConfig();
 
@@ -108,18 +107,17 @@ public class CommunicationClient {
         });
 
         //开始连接服务器
-        ChannelFuture channelFuture = bootstrap.connect(new InetSocketAddress(clientConfig.getHost(), clientConfig.getPort()));
-        channelFuture.addListener((ChannelFutureListener) cf -> {
+        bootstrap.connect().addListener((ChannelFutureListener) cf -> {
             if (cf.isSuccess()) {
                 channel = cf.channel();
-                //获取连接的地址
-                serverAddress = ChannelUtil.getChannelRemoteAddress(channel);
-                ReconstructionConnection.newActiveConnection(CommunicationClient.this);
-                logger.info("Connecting to the server succeeded. Procedure ：" + serverAddress);
-            }else {
+                ConnectionManager.newActiveConnection(CommunicationClient.this);
+                active.compareAndSet(false, true);
+                logger.info("Connecting to the server succeeded. Procedure ：" + getServerAddress());
+            } else {
                 //写入坏连接  等待重连
-                ReconstructionConnection.confinementConnection(CommunicationClient.this);
-                logger.log(Level.WARNING, serverAddress + "Connection failed. Bad connection was added. Procedure", cf.cause());
+                ConnectionManager.confinementConnection(CommunicationClient.this);
+                active.compareAndSet(true, false);
+                logger.log(Level.WARNING, getServerAddress() + "Connection failed. Bad connection was added. Procedure", cf.cause());
             }
         });
 
@@ -149,20 +147,28 @@ public class CommunicationClient {
 
     /**
      * 关闭服务端
-     *
      */
     public void close() {
-        if (bootstrap != null) {
-            EVENT_LOOP_GROUP.shutdownGracefully().syncUninterruptibly();
+        try {
+            if (bootstrap != null) {
+                eventLoopGroup.shutdownGracefully();
+            }
+            bootstrap = null;
+        }finally {
+            active.compareAndSet(true, false);
         }
-        ReconstructionConnection.closeConnection(serverAddress);
+
+
     }
 
     /**
      * 将过期的连接放到小黑屋
      */
-    public void failureThisConnection(){
-        ReconstructionConnection.confinementConnection(this);
+    public void failureThisConnection() {
+        //关闭客户端
+        close();
+        //失效终端
+        ConnectionManager.confinementConnection(this);
     }
 
     /**
@@ -171,10 +177,14 @@ public class CommunicationClient {
      * @return 是否活跃
      */
     public boolean communicationStatus() {
-        return channel.isOpen() && channel.isActive();
+        return channel.isOpen() && channel.isActive() && active.get();
     }
 
     public String getServerAddress() {
-        return serverAddress;
+        return String.format("%s:%s",clientConfig.getHost(), clientConfig.getPort());
+    }
+
+    public ClientConfig getClientConfig() {
+        return clientConfig;
     }
 }

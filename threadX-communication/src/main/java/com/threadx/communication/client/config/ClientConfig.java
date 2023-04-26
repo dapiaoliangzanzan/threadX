@@ -2,6 +2,8 @@ package com.threadx.communication.client.config;
 
 import com.threadx.communication.common.DefaultMessageCommunicationConfig;
 import com.threadx.communication.common.MessageCommunicationConfig;
+import com.threadx.communication.common.load.RoundRobinThreadXLoadHandler;
+import com.threadx.communication.common.load.ThreadXLoadHandler;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -22,6 +24,7 @@ public class ClientConfig implements Serializable {
      * 启动配置项
      */
     private MessageCommunicationConfig messageCommunicationConfig = new DefaultMessageCommunicationConfig();
+
 
     /**
      * 主机名
