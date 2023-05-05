@@ -29,19 +29,6 @@ public class BaseEntity implements Serializable {
      */
     private Long createTime;
 
-    /**
-     * 服务的名称
-     */
-    private String serverKey;
-    /**
-     * 实例名称
-     */
-    private String instanceKey;
-
-    /**
-     * 采集的机器
-     */
-    private String address;
 
     public void init(){
         this.createTime = System.currentTimeMillis();

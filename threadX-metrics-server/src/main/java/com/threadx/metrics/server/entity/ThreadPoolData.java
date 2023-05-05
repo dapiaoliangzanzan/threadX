@@ -90,4 +90,24 @@ public class ThreadPoolData extends BaseEntity {
      * 线程空闲
      */
     private Long keepAliveTime;
+
+
+    /**
+     * 服务的名称
+     */
+    private String serverKey;
+    /**
+     * 实例名称
+     */
+    private String instanceKey;
+
+    /**
+     * 采集的机器
+     */
+    private String address;
+
+    /**
+     * 实例id
+     */
+    private Long instanceId;
 }
