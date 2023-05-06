@@ -1,0 +1,28 @@
+{
+  "properties": [
+    {
+      "name": "spring.redis.lock.model",
+      "type": "java.lang.String",
+      "description": "分布式锁的模型，可选值为  simple sentinel cluster"
+    }
+  ],
+  "hints": [
+    {
+      "name": "spring.redis.lock.model",
+      "values": [
+        {
+          "value": "simple",
+          "description": "单机版的redis"
+        },
+        {
+          "value": "sentinel",
+          "description": "哨兵版的redis"
+        },
+        {
+          "value": "cluster",
+          "description": "集群版的redis"
+        }
+      ]
+    }
+  ]
+}
