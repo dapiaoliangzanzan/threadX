@@ -1,8 +1,12 @@
 package com.threadx.metrics.server.init;
 
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.threadx.metrics.server.entity.ThreadPoolData;
+import com.threadx.metrics.server.service.InstanceItemService;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import io.netty.util.internal.shaded.org.jctools.queues.MessagePassingQueue;
 import io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueue;
@@ -76,6 +80,10 @@ public class ThreadPoolDataConsumer implements InitializingBean, DisposableBean 
 
     public static void pushData(ThreadPoolData threadPoolData) {
         if (IS_START.get()) {
+            String serverKey = threadPoolData.getServerKey();
+            String instanceKey = threadPoolData.getInstanceKey();
+            InstanceItemService instanceItemService = SpringUtil.getBean(InstanceItemService.class);
+            threadPoolData.setInstanceId(instanceItemService.findByInstanceNameAndServerNameOrCreateOnCache(serverKey, instanceKey));
             if (!THREAD_POOL_DATA.offer(threadPoolData)) {
                 log.warn("Existential task dropping {}, Please set the parameter -Dthread.pool.data.queue.size=value(value greater than {})", JSONUtil.toJsonStr(threadPoolData), QUEUE_SIZE);
             }

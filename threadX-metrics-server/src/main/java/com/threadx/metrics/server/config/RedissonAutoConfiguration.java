@@ -3,6 +3,7 @@ package com.threadx.metrics.server.config;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.json.JSONUtil;
 import com.threadx.metrics.server.config.properties.RedissonProperties;
+import com.threadx.metrics.server.lock.RedisDistributedLockTemplate;
 import lombok.extern.slf4j.Slf4j;
 import org.redisson.Redisson;
 import org.redisson.api.RedissonClient;
@@ -106,5 +107,21 @@ public class RedissonAutoConfiguration {
     public RedissonClient redissonClient(Config config) throws IOException {
         log.info("create RedissonClient, config is : {}", config.toYAML());
         return Redisson.create(config);
+    }
+
+
+
+    /**
+     * 构建Redisson客户端
+     *
+     * @param redissonClient 客户端
+     * @return redisson操作的客户端
+     * @throws IOException io异常
+     */
+    @Bean
+    @ConditionalOnMissingBean
+    @ConditionalOnBean(RedissonClient.class)
+    public RedisDistributedLockTemplate distributedLockTemplate(RedissonClient redissonClient) throws IOException {
+        return new RedisDistributedLockTemplate(redissonClient);
     }
 }
