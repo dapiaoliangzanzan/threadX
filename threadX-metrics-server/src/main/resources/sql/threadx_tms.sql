@@ -14,7 +14,7 @@
  Date: 23/04/2023 15:34:03
 */
 
---DROP DATABASE IF EXISTS threadx_tms;
+-- DROP DATABASE IF EXISTS threadx_tms;
 CREATE DATABASE threadx_tms CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 USE threadx_tms;
 
