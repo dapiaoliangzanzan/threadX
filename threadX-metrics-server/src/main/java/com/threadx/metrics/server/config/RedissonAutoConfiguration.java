@@ -1,7 +1,6 @@
 package com.threadx.metrics.server.config;
 
 import cn.hutool.core.collection.CollUtil;
-import cn.hutool.json.JSONUtil;
 import com.threadx.metrics.server.config.properties.RedissonProperties;
 import com.threadx.metrics.server.lock.RedisDistributedLockTemplate;
 import lombok.extern.slf4j.Slf4j;
@@ -20,7 +19,6 @@ import org.springframework.context.annotation.Configuration;
 import java.io.IOException;
 import java.time.Duration;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * redis分布式锁配置类

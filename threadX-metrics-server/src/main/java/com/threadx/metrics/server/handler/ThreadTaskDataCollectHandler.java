@@ -1,21 +1,16 @@
 package com.threadx.metrics.server.handler;
 
-import cn.hutool.json.JSONUtil;
-import com.threadx.communication.common.agreement.packet.ThreadPoolCollectMessage;
 import com.threadx.communication.common.agreement.packet.ThreadPoolTaskCollectMessage;
 import com.threadx.communication.common.handlers.ThreadXChannelInboundHandler;
 import com.threadx.communication.common.utils.ChannelUtil;
 import com.threadx.metrics.server.async.ThreadTaskDataRunnable;
-import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.SimpleChannelInboundHandler;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Logger;
 
 /**
  * 线程池中的任务数据处理器
