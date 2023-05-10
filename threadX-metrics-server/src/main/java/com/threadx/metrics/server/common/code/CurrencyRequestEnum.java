@@ -4,7 +4,7 @@ package com.threadx.metrics.server.common.code;
  * 常规的、通用的状态码定义
  *
  * @author huangfu
- * @date 2022年11月1日18:17:11
+ * @date 2022年11月1日18:17:12
  */
 public enum CurrencyRequestEnum implements IExceptionCode {
 
