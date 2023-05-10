@@ -19,6 +19,7 @@
         <mybatis-plus-version>3.5.3.1</mybatis-plus-version>
         <redisson-version>3.21.0</redisson-version>
         <guava-version>31.1-jre</guava-version>
+        <knife4j-version>4.0.0</knife4j-version>
     </properties>
 
 
@@ -103,6 +104,13 @@
             <version>${redisson-version}</version>
         </dependency>
 
+
+        <!--引入Knife4j的官方start包,该指南选择Spring Boot版本<3.0,开发者需要注意-->
+        <dependency>
+            <groupId>com.github.xiaoymin</groupId>
+            <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
+            <version>${knife4j-version}</version>
+        </dependency>
 
 
 

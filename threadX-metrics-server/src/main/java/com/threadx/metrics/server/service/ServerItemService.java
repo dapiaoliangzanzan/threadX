@@ -1,6 +1,10 @@
 package com.threadx.metrics.server.service;
 
+import com.threadx.metrics.server.conditions.ServerItemFindConditions;
 import com.threadx.metrics.server.entity.ServerItem;
+import com.threadx.metrics.server.vo.ThreadxPage;
+
+import java.util.List;
 
 /**
  * *************************************************<br/>
@@ -11,6 +15,22 @@ import com.threadx.metrics.server.entity.ServerItem;
  * @date 2023/5/8 16:14
  */
 public interface ServerItemService {
+
+    /**
+     * 查询所有的服务数据
+     *
+     * @param serverItemName 服务名称 为空则查询全部的数据
+     * @return 所有的服务数据
+     */
+    List<ServerItem> findServerItem(String serverItemName);
+
+    /**
+     * 查询服务信息 分页查询
+     *
+     * @param serverItemFindConditions 查询条件
+     * @return 所有的数据
+     */
+    ThreadxPage<ServerItem> findServerItemByPage(ServerItemFindConditions serverItemFindConditions);
 
     /**
      * 查询服务 根据服务名
