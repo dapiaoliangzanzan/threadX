@@ -36,28 +36,28 @@ export default defineComponent({
 
 <style lang="scss" scoped>
     .el-aside{
-        .el-menu {
-            height: 100vh;
-            width: 90px;
-        }
-        .logoClass {
-            width: 90px;
-            height: 90px;
-        }
+      .el-menu {
+          height: 100vh;
+          width: 90px;
+      }
+      .logoClass {
+          width: 90px;
+          height: 90px;
+      }
 
-        .aside-icon-item {
-            color: #ffffff !important; 
-            font-size: 35px !important;
-        }
+      .aside-icon-item {
+          color: #ffffff !important; 
+          font-size: 35px !important;
+      }
 
-        .el-menu-item {
-            width: 90px;
-            height: 90px;
-        }
+      .el-menu-item {
+          width: 90px;
+          height: 90px;
+      }
 
-        .is-active {
-            color: #000;
-        }
+      .is-active {
+          color: #000;
+      }
         
     }
 
