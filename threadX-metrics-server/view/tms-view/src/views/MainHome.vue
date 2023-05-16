@@ -54,11 +54,11 @@ export default defineComponent({
   }
 
   .topDiv {
-    background-color: white;
+    background-color: #f0f0f0;
   }
 
   .mainDiv {
-    background-color: white;
+    background-color: #f0f0f0;
     margin-top: 10px;
   }
 

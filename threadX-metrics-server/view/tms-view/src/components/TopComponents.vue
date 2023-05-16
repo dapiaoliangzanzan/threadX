@@ -1,7 +1,10 @@
 <template>
-    <div class="topClass"> 
-        top
+    <div>
+        <div class="topClass"> 
+            <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
+        </div>
     </div>
+    
 </template>
 
 <script lang="ts">
@@ -18,11 +21,13 @@ export default defineComponent({
 
 <style scoped>
     .topClass {
-        height: 50px;
-        border-radius: 50px !important;
+        border-radius: 10px;
+        background-color: rgb(255, 255, 255);
         display: flex;
-        justify-content: center;
-        justify-items: center;
+        padding: 10px;
+        justify-content: flex-end;
+        
+
 
         
     }
