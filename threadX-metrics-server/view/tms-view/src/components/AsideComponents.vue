@@ -1,6 +1,6 @@
 <template>
     <div>
-      <el-drawer v-model="drawer" offset-x="90px" open-delay="300" close-delay="100" :modal="false" direction="ltr" title="项目" size="20%">
+      <el-drawer v-model="drawer" offset-x="90px" open-delay="40" close-delay="50" :modal="false" direction="ltr" title="项目" size="20%">
         <span class="my-project-text">我的项目</span>
 
         <div class="block-class">
@@ -26,11 +26,11 @@
     >
       <img src="../assets/logo.svg" alt="threadX" class="logoClass">
       <el-menu-item index="1">
-        <i class="icon iconfont  icon-gongzuotai1 aside-icon-item"></i>
+        <i class="icon iconfont  icon-gongzuotai aside-icon-item"></i>
         <template #title>工作台</template>
       </el-menu-item>
 
-      <el-menu-item index="2" @mouseenter="openLeft">
+      <el-menu-item index="2" @click="openLeft">
         <i class="icon iconfont icon-icon-project aside-icon-item"></i>
         <template #title>项目</template>
       </el-menu-item>
@@ -43,7 +43,7 @@
 <script lang="ts">
 import { defineComponent,ref, computed } from 'vue'
 import '../assets/icon/iconfont.css'
-import '../assets/css/index.css'
+import '../assets/css/el-drawer-index.css'
 import { Search } from '@element-plus/icons-vue'
 
 export default defineComponent({

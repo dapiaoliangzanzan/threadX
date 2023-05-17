@@ -1,8 +1,8 @@
 @font-face {
   font-family: "iconfont"; /* Project id 4064967 */
-  src: url('iconfont.woff2?t=1683884684354') format('woff2'),
-       url('iconfont.woff?t=1683884684354') format('woff'),
-       url('iconfont.ttf?t=1683884684354') format('truetype');
+  src: url('iconfont.woff2?t=1684311097423') format('woff2'),
+       url('iconfont.woff?t=1684311097423') format('woff'),
+       url('iconfont.ttf?t=1684311097423') format('truetype');
 }
 
 .iconfont {
@@ -13,7 +13,11 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-gongzuotai1:before {
+.icon-shuaxin:before {
+  content: "\e8b9";
+}
+
+.icon-gongzuotai:before {
   content: "\e636";
 }
 

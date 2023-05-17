@@ -1,5 +1,4 @@
-
-.el-drawer  {
-    background-color: #ffffff;
-    left: 90px !important;
+.mouse-shadow:hover {
+  /* 鼠标移入时的样式 */
+  color: #5d9bfc;
 }
