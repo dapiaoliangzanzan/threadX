@@ -84,11 +84,11 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
 
     @Override
     public Long findByInstanceNameAndServerNameOrCreateOnCache(String serverName, String instanceName) {
-        //先从二级缓存中获取
+        //先从一级缓存中获取
         String cacheKey = String.format(RedisCacheKey.INSTANCE_ID_CACHE, serverName, instanceName);
         Long instanceId = taskCache.getIfPresent(cacheKey);
         if (instanceId == null) {
-            //二级缓存没有从以及缓存中获取
+            //一级缓存没有从二级缓存中获取
             StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
             String instanceIdStr = redisTemplate.opsForValue().get(cacheKey);
             if (StrUtil.isNotBlank(instanceIdStr)) {
@@ -101,9 +101,9 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
                     throw new RuntimeException("serverKey or instanceKey is null.");
                 }
                 instanceId = instanceItem.getId();
-                //写入到二级缓存
-                redisTemplate.opsForValue().set(cacheKey, String.valueOf(instanceId), 1, TimeUnit.DAYS);
             }
+            //写入或者更新到二级缓存
+            redisTemplate.opsForValue().set(cacheKey, String.valueOf(instanceId), 1, TimeUnit.DAYS);
             //写入到一级缓存
             taskCache.put(cacheKey, instanceId);
         }
