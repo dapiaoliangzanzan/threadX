@@ -1,10 +1,15 @@
 package com.threadx.metrics.server.init;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.lang.Assert;
+import cn.hutool.core.util.StrUtil;
+import cn.hutool.crypto.SecureUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.service.InstanceItemService;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
@@ -13,6 +18,7 @@ import io.netty.util.internal.shaded.org.jctools.queues.MpscArrayQueue;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -53,7 +59,7 @@ public class ThreadPoolDataConsumer implements InitializingBean, DisposableBean 
 
     @Override
     public void destroy() throws Exception {
-        if(scheduledFuture != null) {
+        if (scheduledFuture != null) {
             scheduledFuture.cancel(false);
         }
         THREAD_POOL_DATA.clear();
@@ -72,7 +78,7 @@ public class ThreadPoolDataConsumer implements InitializingBean, DisposableBean 
                 if (CollUtil.isNotEmpty(elements)) {
                     threadPoolDataService.batchSave(elements);
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         }, 5, 2, TimeUnit.SECONDS);
@@ -80,6 +86,10 @@ public class ThreadPoolDataConsumer implements InitializingBean, DisposableBean 
 
     public static void pushData(ThreadPoolData threadPoolData) {
         if (IS_START.get()) {
+            //验证是否存在变化
+            if(comparedWithLastTime(threadPoolData)) {
+                return;
+            }
             String serverKey = threadPoolData.getServerKey();
             String instanceKey = threadPoolData.getInstanceKey();
             InstanceItemService instanceItemService = SpringUtil.getBean(InstanceItemService.class);
@@ -87,8 +97,51 @@ public class ThreadPoolDataConsumer implements InitializingBean, DisposableBean 
             if (!THREAD_POOL_DATA.offer(threadPoolData)) {
                 log.warn("Existential task dropping {}, Please set the parameter -Dthread.pool.data.queue.size=value(value greater than {})", JSONUtil.toJsonStr(threadPoolData), QUEUE_SIZE);
             }
-        }else {
+        } else {
             log.error("com.threadx.metrics.server.init.ThreadPoolDataConsumer spring bean Be destroyed.");
         }
+    }
+
+
+    /**
+     * 对当前的线程池数据生成一个md5,与redis内的数据md5做对比，如果相同则返回true,否则返回false
+     *
+     * @param threadPoolData 线程池数据
+     * @return 与上一次的数据是否相同
+     */
+    public static boolean comparedWithLastTime(ThreadPoolData threadPoolData) {
+        if (threadPoolData != null) {
+            //redis取值
+            StringRedisTemplate redisTemplate = SpringUtil.getBean(StringRedisTemplate.class);
+            String serverKey = threadPoolData.getServerKey();
+            String instanceKey = threadPoolData.getInstanceKey();
+            String address = threadPoolData.getAddress();
+            String threadPoolName = threadPoolData.getThreadPoolName();
+            //数据缓存主键
+            String cacheKey = String.format(RedisCacheKey.THREAD_POOL_LAST_DATA_CACHE, serverKey, instanceKey, address, threadPoolName);
+
+            ThreadPoolData threadPoolDataNew = new ThreadPoolData();
+            BeanUtil.copyProperties(threadPoolData, threadPoolDataNew);
+            //置空变化对象
+            threadPoolDataNew.setAddress(null);
+            threadPoolDataNew.setCreateTime(null);
+            threadPoolDataNew.setId(null);
+            threadPoolDataNew.setInstanceId(null);
+            // 获取当前数据的md5
+            String threadPoolDataJson = JSONUtil.toJsonStr(threadPoolDataNew);
+            String threadPoolDataMd5 = SecureUtil.md5(threadPoolDataJson);
+
+            //获取上一次的数据
+            String preThreadDataMd5 = redisTemplate.opsForValue().get(cacheKey);
+            //将本次的数据放到redis中更新
+            redisTemplate.opsForValue().set(cacheKey, threadPoolDataMd5, 1, TimeUnit.DAYS);
+
+
+            if(StrUtil.isNotBlank(preThreadDataMd5)) {
+                return threadPoolDataMd5.equals(preThreadDataMd5);
+            }
+            return false;
+        }
+        return true;
     }
 }
