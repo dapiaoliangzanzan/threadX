@@ -3,13 +3,43 @@
         <el-card class="main-card">
             <template #header>
             <div class="card-header">
-                <span class="card-title">最新服务</span>
+                <span class="card-title">实例信息</span>
                 <i class="icon iconfont  icon-shuaxin mouse-shadow server-shuaxin"></i>
             </div>
             </template>
 
             <div class="card-main">
-                <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
+                <el-table :data="instanceList" stripe style="width: 100%" :max-height="cardMainyHeight" row-key="id">
+                    <el-table-column fixed prop="instanceName" label="实例名称"/>
+                    <el-table-column prop="serverName" label="所属服务"/>
+                    <el-table-column prop="createDate" label="创建时间" />
+                    <el-table-column prop="state" label="存活状态">
+                        <template #default="scope">
+                            <el-popover effect="light" trigger="hover" placement="top" width="auto">
+                            <template #default>
+                                <div  v-if="instanceStateCheck(scope.row.state)">【{{ scope.row.instanceName }}】 正在被持续监控！</div>
+                                <div style="color: red;" v-else>
+                                    【{{ scope.row.instanceName }}】 实例不可用，请检查该实例！
+                                </div>
+                            </template>
+                            <template #reference>
+                                <el-tag :type="instanceStateTagType(scope.row.state)">{{ instanceState(scope.row.state) }}</el-tag>
+                            </template>
+                            </el-popover>
+                        </template>
+                    </el-table-column>
+                </el-table>
+                <div class="page_div">
+                    <el-pagination
+                        small
+                        background
+                        layout="prev, pager, next"
+                        :total="instanceTotalCount"
+                        :page-size="instancePageSize"
+                        :pager-count="5"
+                        :hide-on-single-page="false"
+                    />
+                </div>
             </div>
             
         </el-card>
@@ -94,14 +124,99 @@
 </template>
 
 <script lang="ts">
-import { defineComponent,ref } from 'vue'
+import { defineComponent,ref,computed } from 'vue'
 import '../assets/css/index.css'
 
 export default defineComponent({
     setup () {
-        
+              //当前屏幕的高度
+        const windowHeight = ref(window.innerHeight);
+        //内容的高度
+        const cardMainyHeight = computed(() => {
+            return (windowHeight.value - 381)/2;
+        });
 
-        return {}
+        //返回当前实例的状态  监控中的返回true  断联的返回false
+        const instanceStateCheck = computed(()=>(state:string) => {
+            return state === "0"
+        });
+        // 判断当前 实例是否是运行中
+        const instanceState = computed(()=>(state:string) => {
+            if(instanceStateCheck.value(state)) {
+                return "活跃"
+            }
+            return "断联";
+        });
+        // 返回当前的实例状态的标签的类型  如果正在运行返回  success 否则返回  danger
+        const instanceStateTagType = computed(() =>(state:string)=> {
+            if(instanceStateCheck.value(state)) {
+                return "success"
+            }
+            return "danger";
+        })
+        // 实例数据
+        const instanceList = ref([
+            {
+                "id":"1",
+                "instanceName":"测试用例1",
+                "serverName":"测试服务",
+                "createDate":"2023-05-29 16:00:32",
+                "state":"0"
+            },
+            {
+                "id":"2",
+                "instanceName":"测试用例2",
+                "serverName":"测试服务",
+                "createDate":"2023-05-29 16:00:32",
+                "state":"1"
+            },
+            {
+                "id":"3",
+                "instanceName":"测试用例3",
+                "serverName":"测试服务",
+                "createDate":"2023-05-29 16:00:32",
+                "state":"0"
+            },
+            {
+                "id":"4",
+                "instanceName":"测试用例4",
+                "serverName":"测试服务",
+                "createDate":"2023-05-29 16:00:32",
+                "state":"0"
+            },
+            {
+                "id":"5",
+                "instanceName":"测试用例5",
+                "serverName":"测试服务",
+                "createDate":"2023-05-29 16:00:32",
+                "state":"0"
+            },
+            {
+
+                "id":"6",
+                "instanceName":"测试用例6",
+                "serverName":"测试服务",
+                "createDate":"2023-05-29 16:00:32",
+                "state":"0"
+            }
+        ])
+        // 当前页面
+        const instanceThisPageNum = ref(1);
+        // 每一页显示的条数
+        const instancePageSize = ref(6);
+        // 总条数
+        const instanceTotalCount = ref(62);
+
+        return {
+            instanceList,
+            cardMainyHeight,
+            instanceState,
+            instanceStateCheck,
+            instanceStateTagType,
+            instanceThisPageNum,
+            instancePageSize,
+            instanceTotalCount
+        }
     }
 })
 </script>
@@ -128,6 +243,8 @@ export default defineComponent({
     .main-card {
         width: calc((100% - 20px) / 2);
         height: calc((100vh - 105px) / 2);
+        overflow-x: auto;
+        overflow-y: auto;
     }
 
     .icon-shuaxin {
@@ -143,7 +260,11 @@ export default defineComponent({
     }
 
     .card-main {
-        
+        .page_div {
+            display: flex;
+            justify-content: end;
+            margin-top: 20px;
+        }
     }
 
     .card-title {
