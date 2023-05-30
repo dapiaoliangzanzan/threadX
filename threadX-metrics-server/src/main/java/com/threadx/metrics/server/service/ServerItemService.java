@@ -24,6 +24,15 @@ public interface ServerItemService {
      */
     List<ServerItem> findServerItem(String serverItemName);
 
+
+    /**
+     * 根据服务的id查询数据
+     *
+     * @param serverIds 要查询的服务的id
+     * @return 当前的服务信息
+     */
+    List<ServerItem> findServerItemInId(List<Long> serverIds);
+
     /**
      * 查询服务信息 分页查询
      *

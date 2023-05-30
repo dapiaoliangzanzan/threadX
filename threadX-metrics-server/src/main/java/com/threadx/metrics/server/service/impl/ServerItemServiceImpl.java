@@ -1,5 +1,6 @@
 package com.threadx.metrics.server.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -15,6 +16,8 @@ import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -39,6 +42,16 @@ public class ServerItemServiceImpl extends ServiceImpl<ServerItemMapper, ServerI
     public List<ServerItem> findServerItem(String serverItemName) {
         QueryWrapper<ServerItem> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq(StrUtil.isNotBlank(serverItemName), "server_name", serverItemName);
+        return baseMapper.selectList(queryWrapper);
+    }
+
+    @Override
+    public List<ServerItem> findServerItemInId(List<Long> serverIds) {
+        if(CollUtil.isEmpty(serverIds)) {
+            return new ArrayList<>();
+        }
+        QueryWrapper<ServerItem> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", serverIds);
         return baseMapper.selectList(queryWrapper);
     }
 

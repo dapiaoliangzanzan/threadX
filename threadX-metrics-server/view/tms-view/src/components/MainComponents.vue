@@ -9,8 +9,20 @@
             </template>
 
             <div class="card-main">
-                <el-table :data="instanceList" stripe style="width: 100%" :max-height="cardMainyHeight" row-key="id">
-                    <el-table-column fixed prop="instanceName" label="实例名称"/>
+                <!-- 数据表格组件 -->
+                <el-table :data="instanceList" stripe style="width: 100%;height: 500px;" :max-height="cardMainyHeight" row-key="id">
+                    <el-table-column fixed prop="instanceName" label="实例名称">
+                        <template #default="scope">
+                            <el-button
+                            link
+                            type="primary"
+                            size="small"
+                            @click.prevent="instanceDetailsPage(scope.row.id)"
+                            >
+                            {{ scope.row.instanceName}}
+                            </el-button>
+                        </template>
+                    </el-table-column>
                     <el-table-column prop="serverName" label="所属服务"/>
                     <el-table-column prop="createDate" label="创建时间" />
                     <el-table-column prop="state" label="存活状态">
@@ -29,6 +41,7 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <!-- 分页组件 -->
                 <div class="page_div">
                     <el-pagination
                         small
@@ -38,6 +51,8 @@
                         :page-size="instancePageSize"
                         :pager-count="5"
                         :hide-on-single-page="false"
+                        v-model:current-page="instanceThisPageNum"
+                        @current-change="instancePageChange"
                     />
                 </div>
             </div>
@@ -124,12 +139,16 @@
 </template>
 
 <script lang="ts">
-import { defineComponent,ref,computed } from 'vue'
+import { defineComponent,ref,computed, onMounted, reactive } from 'vue'
+import * as request from '../services/instanceService'
 import '../assets/css/index.css'
 
 export default defineComponent({
     setup () {
-              //当前屏幕的高度
+        onMounted(() =>{
+            findInstanceByPage()
+        });
+        //当前屏幕的高度
         const windowHeight = ref(window.innerHeight);
         //内容的高度
         const cardMainyHeight = computed(() => {
@@ -155,57 +174,35 @@ export default defineComponent({
             return "danger";
         })
         // 实例数据
-        const instanceList = ref([
-            {
-                "id":"1",
-                "instanceName":"测试用例1",
-                "serverName":"测试服务",
-                "createDate":"2023-05-29 16:00:32",
-                "state":"0"
-            },
-            {
-                "id":"2",
-                "instanceName":"测试用例2",
-                "serverName":"测试服务",
-                "createDate":"2023-05-29 16:00:32",
-                "state":"1"
-            },
-            {
-                "id":"3",
-                "instanceName":"测试用例3",
-                "serverName":"测试服务",
-                "createDate":"2023-05-29 16:00:32",
-                "state":"0"
-            },
-            {
-                "id":"4",
-                "instanceName":"测试用例4",
-                "serverName":"测试服务",
-                "createDate":"2023-05-29 16:00:32",
-                "state":"0"
-            },
-            {
-                "id":"5",
-                "instanceName":"测试用例5",
-                "serverName":"测试服务",
-                "createDate":"2023-05-29 16:00:32",
-                "state":"0"
-            },
-            {
-
-                "id":"6",
-                "instanceName":"测试用例6",
-                "serverName":"测试服务",
-                "createDate":"2023-05-29 16:00:32",
-                "state":"0"
-            }
-        ])
+        const instanceList = ref()
         // 当前页面
-        const instanceThisPageNum = ref(1);
+        const instanceThisPageNum = ref();
         // 每一页显示的条数
         const instancePageSize = ref(6);
         // 总条数
-        const instanceTotalCount = ref(62);
+        const instanceTotalCount = ref();
+
+        /**
+         * 实例列表页码变更
+         */
+        const instancePageChange = ()=>{
+            findInstanceByPage()
+        };
+
+        const instanceDetailsPage = (id:any)=>{
+            console.log(id)
+        }
+        /**
+         * 分页查询实例
+         */
+        const findInstanceByPage = async ()=>{
+            const res = await request.getByPage({
+            "pageNumber": instanceThisPageNum.value,
+            "pageSize": instancePageSize.value
+        });
+            instanceList.value = res.data
+            instanceTotalCount.value = res.total
+        }
 
         return {
             instanceList,
@@ -215,7 +212,9 @@ export default defineComponent({
             instanceStateTagType,
             instanceThisPageNum,
             instancePageSize,
-            instanceTotalCount
+            instanceTotalCount,
+            instancePageChange,
+            instanceDetailsPage
         }
     }
 })

@@ -27,4 +27,9 @@ public class InstanceItem extends BaseEntity {
      * 关联的服务id
      */
     private Long serverId;
+
+    /**
+     * 活跃时间
+     */
+    private Long activeTime;
 }

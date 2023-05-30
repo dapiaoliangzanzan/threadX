@@ -1,11 +1,16 @@
 package com.threadx.metrics.server.service.impl;
 
+import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+import com.threadx.metrics.server.conditions.InstanceItemFindConditions;
+import com.threadx.metrics.server.constant.InstanceItemState;
 import com.threadx.metrics.server.constant.LockName;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.entity.InstanceItem;
@@ -14,12 +19,20 @@ import com.threadx.metrics.server.lock.DistributedLockTemplate;
 import com.threadx.metrics.server.mapper.InstanceItemMapper;
 import com.threadx.metrics.server.service.InstanceItemService;
 import com.threadx.metrics.server.service.ServerItemService;
+import com.threadx.metrics.server.vo.InstanceItemVo;
+import com.threadx.metrics.server.vo.ThreadxPage;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * *************************************************<br/>
@@ -37,9 +50,69 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
     private final DistributedLockTemplate distributedLockTemplate;
     private final Cache<String, Long> taskCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build();
 
+    @Value("${threadx.instance.timeout}")
+    private Long instanceTimout;
+
     public InstanceItemServiceImpl(ServerItemService serverItemService, DistributedLockTemplate distributedLockTemplate) {
         this.serverItemService = serverItemService;
         this.distributedLockTemplate = distributedLockTemplate;
+    }
+
+    @Override
+    public ThreadxPage<InstanceItemVo> findByPage(InstanceItemFindConditions conditions) {
+        if (conditions == null) {
+            conditions = new InstanceItemFindConditions();
+        }
+        Integer pageSize = conditions.getPageSize();
+        Integer pageNumber = conditions.getPageNumber();
+        if (pageSize == null) {
+            pageSize = 6;
+        }
+        if (pageNumber == null) {
+            pageNumber = 1;
+        }
+        QueryWrapper<InstanceItem> queryWrapper = new QueryWrapper<>();
+        //获取实例的名称
+        String instanceItemName = conditions.getInstanceItemName();
+        queryWrapper.like(StrUtil.isNotBlank(instanceItemName), "instance_name", instanceItemName);
+        Page<InstanceItem> page = Page.of(pageNumber, pageSize);
+        baseMapper.selectPage(page, queryWrapper);
+        //获取分页查询到的数据
+        List<InstanceItem> instanceItems = page.getRecords();
+        ThreadxPage<InstanceItemVo> threadPage = new ThreadxPage<>();
+        if (CollUtil.isNotEmpty(instanceItems)) {
+            List<Long> serverIds = instanceItems.stream().map(InstanceItem::getServerId).collect(Collectors.toList());
+            //根据服务的id查询服务的名称
+            List<ServerItem> serverItems = serverItemService.findServerItemInId(serverIds);
+            //将数据转换为Map
+            Map<Long, String> serverItemMap = new HashMap<>();
+            for (ServerItem serverItem : serverItems) {
+                serverItemMap.put(serverItem.getId(), serverItem.getServerName());
+            }
+
+            List<InstanceItemVo> instanceItemVoList = instanceItems.stream().map(instanceItem -> {
+                InstanceItemVo instanceItemVo = new InstanceItemVo();
+                instanceItemVo.setState(InstanceItemState.ACTIVE);
+                if (System.currentTimeMillis() - instanceItem.getActiveTime() > instanceTimout) {
+                    instanceItemVo.setState(InstanceItemState.NOT_ACTIVE);
+                }
+                instanceItemVo.setId(instanceItem.getId());
+                //获取服务名称
+                Long serverId = instanceItem.getServerId();
+                String serverName = serverItemMap.getOrDefault(serverId, "未知服务");
+                instanceItemVo.setServerName(serverName);
+                instanceItemVo.setInstanceName(instanceItem.getInstanceName());
+                instanceItemVo.setCreateDate(DateUtil.format(new Date(instanceItem.getCreateTime()), "yyyy-MM-dd HH:mm:ss"));
+                return instanceItemVo;
+            }).collect(Collectors.toList());
+
+            //设置数据
+            threadPage.setData(instanceItemVoList);
+            // 数据总量
+            threadPage.setTotal(page.getTotal());
+        }
+
+        return threadPage;
     }
 
     @Override
@@ -73,6 +146,7 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
                 instanceItem = new InstanceItem();
                 instanceItem.init();
                 instanceItem.setInstanceName(instanceName);
+                instanceItem.setActiveTime(instanceItem.getCreateTime());
                 instanceItem.setServerId(serverItem.getId());
                 ((InstanceItemServiceImpl) AopContext.currentProxy()).save(instanceItem);
             }

@@ -28,6 +28,7 @@ CREATE TABLE `instance_item` (
                                  `id` bigint(32) NOT NULL AUTO_INCREMENT COMMENT '主键',
                                  `instance_name` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '实例名称',
                                  `server_id` bigint(32) NOT NULL COMMENT '所属服务的名称',
+                                 `active_time` bigint(64) NOT NULL COMMENT '活跃时间',
                                  `create_time` bigint(64) NOT NULL COMMENT '创建时间',
                                  PRIMARY KEY (`id`) USING BTREE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='实例名称';
@@ -97,3 +98,4 @@ CREATE TABLE `thread_task_data` (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 ROW_FORMAT=DYNAMIC COMMENT='线程池内任务执行信息';
 
 SET FOREIGN_KEY_CHECKS = 1;
+

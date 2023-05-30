@@ -1,7 +1,10 @@
 package com.threadx.metrics.server.service;
 
+import com.threadx.metrics.server.conditions.InstanceItemFindConditions;
 import com.threadx.metrics.server.entity.InstanceItem;
 import com.threadx.metrics.server.entity.ServerItem;
+import com.threadx.metrics.server.vo.InstanceItemVo;
+import com.threadx.metrics.server.vo.ThreadxPage;
 
 /**
  * *************************************************<br/>
@@ -12,6 +15,14 @@ import com.threadx.metrics.server.entity.ServerItem;
  * @date 2023/5/8 16:14
  */
 public interface InstanceItemService {
+
+    /**
+     * 分页查询 根据条件进行分页查询
+     *
+     * @param conditions 查询条件
+     * @return 分页后的数据
+     */
+    ThreadxPage<InstanceItemVo> findByPage(InstanceItemFindConditions conditions);
 
     /**
      * 查询 根据服务名和实例名称
@@ -40,4 +51,5 @@ public interface InstanceItemService {
      * @return 实例信息
      */
     Long findByInstanceNameAndServerNameOrCreateOnCache(String serverName, String instanceName);
+
 }
