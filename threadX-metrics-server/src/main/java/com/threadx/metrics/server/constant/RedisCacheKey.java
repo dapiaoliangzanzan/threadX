@@ -9,6 +9,11 @@ package com.threadx.metrics.server.constant;
  * @date 2023/5/8 17:00
  */
 public interface RedisCacheKey {
+
+    /**
+     * 用户的token令牌缓存
+     */
+    String USER_TOKEN_CACHE = "threadx:cache:token:%s";
     /**
      * 实例id缓存主键， 占位符为 服务名称   实例名称
      */

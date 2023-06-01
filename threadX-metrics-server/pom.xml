@@ -20,6 +20,7 @@
         <redisson-version>3.21.0</redisson-version>
         <guava-version>31.1-jre</guava-version>
         <knife4j-version>4.0.0</knife4j-version>
+        <jwt-version>0.11.5</jwt-version>
     </properties>
 
 
@@ -103,6 +104,27 @@
             <artifactId>redisson</artifactId>
             <version>${redisson-version}</version>
         </dependency>
+
+        <!-- jwt -->
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-api</artifactId>
+            <version>${jwt-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-impl</artifactId>
+            <version>${jwt-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt-gson</artifactId>
+            <version>${jwt-version}</version>
+        </dependency>
+
+
 
 
         <!--引入Knife4j的官方start包,该指南选择Spring Boot版本<3.0,开发者需要注意-->
