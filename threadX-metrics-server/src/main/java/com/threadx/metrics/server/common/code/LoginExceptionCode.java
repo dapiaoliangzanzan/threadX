@@ -10,7 +10,11 @@ public enum LoginExceptionCode implements IExceptionCode{
     /**
      * 用户名或者密码错误
      */
-    USER_NAME_OR_PASSWORD_ERROR("510000", "用户名或者密码错误！");
+    USER_NAME_OR_PASSWORD_ERROR("510000", "用户名或者密码错误！"),
+    /**
+     * 用户未登录
+     */
+    USER_NOT_LOGIN_ERROR("510001", "用户未登录！");
     ;
 
     ;

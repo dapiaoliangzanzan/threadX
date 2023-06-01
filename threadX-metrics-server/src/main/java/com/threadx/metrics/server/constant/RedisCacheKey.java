@@ -14,6 +14,16 @@ public interface RedisCacheKey {
      * 用户的token令牌缓存
      */
     String USER_TOKEN_CACHE = "threadx:cache:token:%s";
+
+    /**
+     * 用户菜单缓存
+     */
+    String USER_MENU_CACHE = "threadx:cache:authority:menu:%s";
+
+    /**
+     * 用户权限缓存
+     */
+    String USER_PERMISSION_CACHE = "threadx:cache:authority:permission:%s";
     /**
      * 实例id缓存主键， 占位符为 服务名称   实例名称
      */

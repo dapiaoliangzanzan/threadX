@@ -2,6 +2,7 @@ package com.threadx.metrics.server.common.utils;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.crypto.digest.BCrypt;
+import cn.hutool.extra.spring.SpringUtil;
 import com.threadx.metrics.server.common.code.TokenCheckExceptionCode;
 import com.threadx.metrics.server.common.exceptions.TokenCheckException;
 import com.threadx.metrics.server.vo.UserVo;
@@ -11,6 +12,8 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
+import org.springframework.context.EnvironmentAware;
+import org.springframework.core.env.Environment;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -27,8 +30,10 @@ import java.util.concurrent.TimeUnit;
  * @date 2023/6/1 08:30
  */
 @Slf4j
-public class ThreadxJwtUtil {
+public class ThreadxJwtUtil  {
     private static final String PRIVATE_KEY;
+
+
     /**
      * token过期时间
      */
@@ -39,7 +44,7 @@ public class ThreadxJwtUtil {
     private static final Long RENEWAL_THRESHOLD = TimeUnit.MINUTES.toMillis(10);
 
     static {
-        PRIVATE_KEY = IdUtil.fastSimpleUUID() + IdUtil.fastSimpleUUID();
+        PRIVATE_KEY = SpringUtil.getProperty("threadx.web.jwt.privateKey");
     }
 
 
@@ -53,12 +58,12 @@ public class ThreadxJwtUtil {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + EXPIRATION_TIME);
 
-        Map<String, Object> claims = new HashMap<>();
+        Map<String, String> claims = new HashMap<>();
         claims.put("username", userVo.getUserName());
         claims.put("email", userVo.getEmail());
-        claims.put("id", userVo.getId());
+        claims.put("id", userVo.getId() + "");
         claims.put("nickName", userVo.getNickName());
-        claims.put("createTime", userVo.getCreateTime());
+        claims.put("createTime", userVo.getCreateTime() + "");
 
 
         return Jwts.builder()
@@ -76,32 +81,13 @@ public class ThreadxJwtUtil {
 
 
     /**
-     * 验证 解析token
-     *
-     * @param token token信息
-     * @return 返回
-     */
-    public static Map<String, Object> validateParseToken(String token) {
-        try {
-            return Jwts.parserBuilder()
-                    .setSigningKey(generateKey())
-                    .build()
-                    .parseClaimsJws(token)
-                    .getBody();
-        } catch (Exception e) {
-            log.error("token验证失败！");
-            return null;
-        }
-    }
-
-
-    /**
      * token续约
      *
      * @param token      旧的token信息
      * @param renewToken 续约的自定义操作
+     * @return 用户信息
      */
-    public static void renewToken(String token, RenewToken renewToken) {
+    public static UserVo renewParseToken(String token, RenewToken renewToken) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(generateKey())
@@ -113,10 +99,10 @@ public class ThreadxJwtUtil {
             //获取过期时间
             Date expiration = updatedClaims.getExpiration();
             //判断是否需要续约
-            if (System.currentTimeMillis() - expiration.getTime() <= RENEWAL_THRESHOLD) {
+            if ((expiration.getTime() - System.currentTimeMillis()) <= RENEWAL_THRESHOLD) {
                 //重设过期时间
                 updatedClaims.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME));
-                //生成新的token
+                //生成新的token`
                 String newToken = Jwts.builder()
                         .setClaims(updatedClaims)
                         .signWith(generateKey())
@@ -127,14 +113,24 @@ public class ThreadxJwtUtil {
                 }
             }
 
+            UserVo userVo = new UserVo();
+            userVo.setUserName(updatedClaims.get("username", String.class));
+            userVo.setEmail(updatedClaims.get("email", String.class));
+            userVo.setId(Long.parseLong(updatedClaims.get("id", String.class)));
+            userVo.setNickName(updatedClaims.get("nickName", String.class));
+            userVo.setCreateTime(Long.parseLong(updatedClaims.get("createTime", String.class)));
+            return userVo;
+
 
         } catch (Exception e) {
-            throw new TokenCheckException(TokenCheckExceptionCode.TOKEN_CHECK_ERROR);
+            e.printStackTrace();
+            return null;
         }
     }
 
+
     @FunctionalInterface
-    interface RenewToken {
+    public interface RenewToken {
         /**
          * token续约
          *
@@ -145,8 +141,6 @@ public class ThreadxJwtUtil {
 
 
     public static void main(String[] args) {
-        String hashedPassword = BCrypt.hashpw("123456");
-        System.out.println(hashedPassword);
-        System.out.println(BCrypt.checkpw("123456", hashedPassword));
+        System.out.println(IdUtil.fastSimpleUUID() + IdUtil.fastSimpleUUID());
     }
 }

@@ -40,4 +40,9 @@ public class Menu extends BaseEntity {
      */
     private String menuDesc;
 
+    /**
+     * 菜单状态   0  正常   禁用
+     */
+    private String state;
+
 }

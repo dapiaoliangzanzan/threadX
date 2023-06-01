@@ -7,12 +7,14 @@ import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.threadx.metrics.server.common.code.LoginExceptionCode;
+import com.threadx.metrics.server.common.context.LoginContext;
 import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.common.utils.ThreadxJwtUtil;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.entity.User;
 import com.threadx.metrics.server.mapper.UserMapper;
+import com.threadx.metrics.server.service.MenuService;
 import com.threadx.metrics.server.service.UserService;
 import com.threadx.metrics.server.vo.UserVo;
 import org.springframework.aop.framework.AopContext;
@@ -33,9 +35,11 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     private final StringRedisTemplate redisTemplate;
+    private final MenuService menuService;
 
-    public UserServiceImpl(StringRedisTemplate redisTemplate) {
+    public UserServiceImpl(StringRedisTemplate redisTemplate, MenuService menuService) {
         this.redisTemplate = redisTemplate;
+        this.menuService = menuService;
     }
 
     @Override
@@ -50,12 +54,16 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             //生成token
             UserVo userVo = new UserVo();
             BeanUtil.copyProperties(user, userVo);
+            LoginContext.setUserData(userVo);
             String tokenKey = IdUtil.fastSimpleUUID();
             String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, tokenKey);
             //返回生成的token
             String token = ThreadxJwtUtil.generateToken(userVo);
+            //查询菜单信息
+            menuService.findThisUserMenu();
+            //查询权限信息
             //缓存令牌
-            redisTemplate.opsForValue().set(cacheKey, token, 1, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set(cacheKey, token, 1, TimeUnit.HOURS);
             return tokenKey;
 
         } else {

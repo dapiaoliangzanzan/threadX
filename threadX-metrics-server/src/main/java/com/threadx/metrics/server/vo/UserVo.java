@@ -38,9 +38,4 @@ public class UserVo implements Serializable {
      * 用户的创建时间
      */
     private Long createTime;
-
-    /**
-     * 管理员标记
-     */
-    private String adminMake;
 }
