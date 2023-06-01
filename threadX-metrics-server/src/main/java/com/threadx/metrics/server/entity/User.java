@@ -46,9 +46,4 @@ public class User extends BaseEntity implements Serializable {
      * 用户状态  0  冻结  1 正常
      */
     private String state;
-
-    /**
-     * 0 常规用户  1管理员用户
-     */
-    private String adminMake;
 }

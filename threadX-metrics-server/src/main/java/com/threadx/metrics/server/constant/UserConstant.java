@@ -16,14 +16,4 @@ public interface UserConstant {
      * 启用
      */
     String ENABLE = "0";
-
-    /**
-     * 用户标记
-     */
-    String USER_MAKE = "0";
-
-    /**
-     * 管理员标记
-     */
-    String ADMIN_MAKE = "1";
 }

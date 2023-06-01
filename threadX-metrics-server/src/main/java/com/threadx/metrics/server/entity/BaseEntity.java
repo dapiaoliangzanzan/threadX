@@ -42,11 +42,4 @@ public class BaseEntity implements Serializable {
         this.updateTime = System.currentTimeMillis();
     }
 
-    public static void main(String[] args) {
-        String hashpw = BCrypt.hashpw("1234567890");
-        System.out.println(hashpw);
-
-        System.out.println(BCrypt.checkpw("1234567890", "$2a$10$RTqwo.CY0bXUCWH7/CWOM.brIez/S4HPcbz4zdrlgFD3Mk9cglWMO"));
-    }
-
 }
