@@ -15,7 +15,6 @@ public interface MenuService {
     /**
      * 查询菜单信息 根据用户的id查询符合条件的菜单
      *
-     * @param userId 用户id
      * @return 返回符合调价的菜单
      */
     List<Menu> findThisUserMenu();

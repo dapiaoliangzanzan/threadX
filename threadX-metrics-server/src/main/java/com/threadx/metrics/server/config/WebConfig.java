@@ -1,6 +1,7 @@
 package com.threadx.metrics.server.config;
 
 import com.threadx.metrics.server.interceptors.LoginInterceptor;
+import com.threadx.metrics.server.interceptors.PermissionInterception;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -29,7 +30,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
-        registry.addInterceptor(new LoginInterceptor())
-                .addPathPatterns("/**");
+        registry.addInterceptor(new LoginInterceptor()).addPathPatterns("/**");
+        registry.addInterceptor(new PermissionInterception()).addPathPatterns("/**");
     }
 }

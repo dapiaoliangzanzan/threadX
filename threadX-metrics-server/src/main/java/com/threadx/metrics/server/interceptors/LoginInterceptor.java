@@ -39,8 +39,11 @@ public class LoginInterceptor implements HandlerInterceptor {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
                 }
+                //获取用户的id
+                String idStr = tokenKey.substring(tokenKey.length() - 1);
+                int userId = Integer.parseInt(idStr);
                 //根据tokenKey获取redis的token 信息
-                String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, tokenKey);
+                String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, userId, tokenKey);
                 String oldToken = redisTemplate.opsForValue().get(cacheKey);
                 if (StrUtil.isBlank(oldToken)) {
                     response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

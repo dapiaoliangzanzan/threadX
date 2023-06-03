@@ -1,6 +1,9 @@
 package com.threadx.metrics.server.controller;
 
 import com.threadx.metrics.server.common.annotations.GlobalResultPackage;
+import com.threadx.metrics.server.common.annotations.Login;
+import com.threadx.metrics.server.common.annotations.UserPermission;
+import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.service.UserService;
 import io.swagger.annotations.Api;
@@ -18,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @GlobalResultPackage
-@Api(tags = "用户操作")
+@Api(tags = "常规用户操作")
 @RequestMapping("/user")
 public class UserController {
 
@@ -32,5 +35,13 @@ public class UserController {
     @PostMapping("login")
     public String login(@RequestBody UserLoginDto userLoginDto) {
         return userService.login(userLoginDto);
+    }
+
+    @Login
+    @UserPermission("add:user")
+    @ApiOperation(value = "添加用户")
+    @PostMapping("addUser")
+    public void addUser(@RequestBody UserInfoDto userInfoDto){
+        userService.saveUser(userInfoDto);
     }
 }

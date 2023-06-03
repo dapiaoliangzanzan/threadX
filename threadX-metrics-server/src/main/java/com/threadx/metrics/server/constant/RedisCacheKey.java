@@ -9,32 +9,45 @@ package com.threadx.metrics.server.constant;
  * @date 2023/5/8 17:00
  */
 public interface RedisCacheKey {
+    /**
+     * threadX 缓存前缀
+     */
+    String THREADX_CADCHE = "threadx:cache:";
 
     /**
-     * 用户的token令牌缓存
+     * 用户级别缓存前缀
      */
-    String USER_TOKEN_CACHE = "threadx:cache:token:%s";
+    String USER_CACHE = THREADX_CADCHE + "user:";
 
     /**
-     * 用户菜单缓存
+     * 用户的token令牌缓存  占位符为  userId  tokenId
      */
-    String USER_MENU_CACHE = "threadx:cache:authority:menu:%s";
+    String USER_TOKEN_CACHE = USER_CACHE + "%s:token:%s";
 
     /**
-     * 用户权限缓存
+     * 用户菜单缓存  占位符为  userId
      */
-    String USER_PERMISSION_CACHE = "threadx:cache:authority:permission:%s";
+    String USER_MENU_CACHE = USER_CACHE + "%s:authority:menu";
+
+    /**
+     * 用户权限缓存  占位符为  userId
+     */
+    String USER_PERMISSION_CACHE = USER_CACHE + "%s:authority:permission";
+
+
     /**
      * 实例id缓存主键， 占位符为 服务名称   实例名称
      */
-    String INSTANCE_ID_CACHE = "threadx:cache:instance:%s:%s";
+    String INSTANCE_ID_CACHE = THREADX_CADCHE + "instance:%s:%s";
+
+
     /**
      * 服务id缓存主键， 占位符为 服务名称
      */
-    String SERVER_ID_CACHE = "threadx:cache:server:%s";
+    String SERVER_ID_CACHE = THREADX_CADCHE + "server:%s";
 
     /**
      * 线程池最后一次的数据缓存  占位符为  服务名称  实例名称  实例地址  线程池名称
      */
-    String THREAD_POOL_LAST_DATA_CACHE = "threadx:cache:pool:last:%s:%s:%s:%s";
+    String THREAD_POOL_LAST_DATA_CACHE = THREADX_CADCHE + "pool:last:%s:%s:%s:%s";
 }

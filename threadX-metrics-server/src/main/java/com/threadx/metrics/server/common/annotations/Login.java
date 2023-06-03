@@ -12,9 +12,4 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface Login {
-    /**
-     * 是否需要登录
-     * @return 返回访问的方法，是否需要登录！
-     */
-    boolean value() default true;
 }

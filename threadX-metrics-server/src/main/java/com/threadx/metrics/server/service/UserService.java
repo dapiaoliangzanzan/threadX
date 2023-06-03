@@ -1,5 +1,6 @@
 package com.threadx.metrics.server.service;
 
+import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.entity.User;
 
@@ -26,4 +27,11 @@ public interface UserService {
      * @return 用户详情
      */
     User findByUserName(String userName);
+
+    /**
+     * 保存用户
+     *
+     * @param userInfoDto 用户信息
+     */
+    void saveUser(UserInfoDto userInfoDto);
 }

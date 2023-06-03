@@ -10,10 +10,10 @@ public interface UserConstant {
     /**
      * 禁用
      */
-    String DISABLE = "1";
+    String DISABLE = "0";
 
     /**
      * 启用
      */
-    String ENABLE = "0";
+    String ENABLE = "1";
 }

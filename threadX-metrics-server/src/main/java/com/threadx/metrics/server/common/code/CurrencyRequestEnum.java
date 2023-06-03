@@ -15,8 +15,12 @@ public enum CurrencyRequestEnum implements IExceptionCode {
     /**
      * 常规的处理失败的状态码
      */
-    REQUEST_ERROR("500000", "处理失败");
-
+    REQUEST_ERROR("500000", "处理失败"),
+    /**
+     * 参数缺失
+     */
+    PARAMETER_MISSING("500001", "参数缺失"),
+    ;
     /**
      * 状态码
      */

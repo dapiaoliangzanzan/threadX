@@ -14,9 +14,11 @@ public enum LoginExceptionCode implements IExceptionCode{
     /**
      * 用户未登录
      */
-    USER_NOT_LOGIN_ERROR("510001", "用户未登录！");
-    ;
-
+    USER_NOT_LOGIN_ERROR("510001", "用户未登录！"),
+    /**
+     * 用户被冻结
+     */
+    USER_IS_FROZEN("510002", "用户被冻结"),
     ;
     /**
      * 错误吗

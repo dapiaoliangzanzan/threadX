@@ -1,17 +1,18 @@
 package com.threadx.metrics.server.common.code;
 
 /**
- * token验证异常码
+ * *************************************************<br/>
+ * 权限异常的错误码<br/>
+ * ************************************************<br/>
  *
- * @author huangfukexing
- * @date 2023/6/1 09:04
+ * @author huangfu
+ * @date 2023/6/3 13:23
  */
-public enum TokenCheckExceptionCode implements IExceptionCode {
+public enum PermissionExceptionCode implements IExceptionCode {
     /**
-     * 用户登录令牌异常
+     * 未授权操作，拒绝执行！
      */
-    TOKEN_CHECK_ERROR("520000", "用户登录令牌异常！");
-    ;
+    UNAUTHORIZED_OPERATION("530000", "未授权操作，拒绝执行！");
     /**
      * 错误吗
      */
@@ -22,7 +23,7 @@ public enum TokenCheckExceptionCode implements IExceptionCode {
      */
     private final String message;
 
-    TokenCheckExceptionCode(String code, String message) {
+    PermissionExceptionCode(String code, String message) {
         this.code = code;
         this.message = message;
     }

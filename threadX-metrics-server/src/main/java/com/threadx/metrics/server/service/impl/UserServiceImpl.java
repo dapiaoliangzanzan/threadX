@@ -6,15 +6,20 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
 import com.threadx.metrics.server.common.code.LoginExceptionCode;
 import com.threadx.metrics.server.common.context.LoginContext;
+import com.threadx.metrics.server.common.exceptions.GeneralException;
 import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.common.utils.ThreadxJwtUtil;
 import com.threadx.metrics.server.constant.RedisCacheKey;
+import com.threadx.metrics.server.constant.UserConstant;
+import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.entity.User;
 import com.threadx.metrics.server.mapper.UserMapper;
 import com.threadx.metrics.server.service.MenuService;
+import com.threadx.metrics.server.service.PermissionService;
 import com.threadx.metrics.server.service.UserService;
 import com.threadx.metrics.server.vo.UserVo;
 import org.springframework.aop.framework.AopContext;
@@ -36,10 +41,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     private final StringRedisTemplate redisTemplate;
     private final MenuService menuService;
+    private final PermissionService permissionService;
 
-    public UserServiceImpl(StringRedisTemplate redisTemplate, MenuService menuService) {
+    public UserServiceImpl(StringRedisTemplate redisTemplate, MenuService menuService, PermissionService permissionService) {
         this.redisTemplate = redisTemplate;
         this.menuService = menuService;
+        this.permissionService = permissionService;
     }
 
     @Override
@@ -49,19 +56,25 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         if (user == null) {
             throw new LoginException(LoginExceptionCode.USER_NAME_OR_PASSWORD_ERROR);
         }
+        String state = user.getState();
+        if(UserConstant.DISABLE.equals(state)) {
+            throw new LoginException(LoginExceptionCode.USER_IS_FROZEN);
+        }
 
         if (BCrypt.checkpw(userLoginDto.getPassword(), user.getPassword())) {
             //生成token
             UserVo userVo = new UserVo();
             BeanUtil.copyProperties(user, userVo);
             LoginContext.setUserData(userVo);
-            String tokenKey = IdUtil.fastSimpleUUID();
-            String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, tokenKey);
+            Long id = user.getId();
+            String tokenKey = String.format("%s%s",IdUtil.fastSimpleUUID(), id);
+            String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, id, tokenKey);
             //返回生成的token
             String token = ThreadxJwtUtil.generateToken(userVo);
             //查询菜单信息
             menuService.findThisUserMenu();
             //查询权限信息
+            permissionService.findThisUserPermission();
             //缓存令牌
             redisTemplate.opsForValue().set(cacheKey, token, 1, TimeUnit.HOURS);
             return tokenKey;
@@ -79,5 +92,20 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("user_name", userName);
         return baseMapper.selectOne(queryWrapper);
+    }
+
+    @Override
+    public void saveUser(UserInfoDto userInfoDto) {
+        if(userInfoDto == null) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+        }
+        User user = new User();
+        user.init();
+        user.setUserName(userInfoDto.getUserName());
+        user.setNickName(userInfoDto.getNickName());
+        user.setPassword(BCrypt.hashpw(userInfoDto.getPassword()));
+        user.setEmail(userInfoDto.getEmail());
+        user.setState(UserConstant.ENABLE);
+        baseMapper.insert(user);
     }
 }
