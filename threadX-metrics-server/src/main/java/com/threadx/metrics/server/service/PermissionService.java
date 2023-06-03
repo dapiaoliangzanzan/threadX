@@ -1,6 +1,5 @@
 package com.threadx.metrics.server.service;
 
-import com.threadx.metrics.server.entity.Menu;
 import com.threadx.metrics.server.entity.Permission;
 
 import java.util.List;
