@@ -1,6 +1,7 @@
 package com.threadx.metrics.server.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
+import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
@@ -27,6 +28,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -95,17 +97,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
-    public void saveUser(UserInfoDto userInfoDto) {
-        if(userInfoDto == null) {
-            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+    @SuppressWarnings("all")
+    public void logout() {
+        UserVo userData = LoginContext.getUserData();
+        Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, userData.getId()) + "*");
+        if(CollUtil.isNotEmpty(keys)) {
+            keys.forEach(redisTemplate::delete);
         }
-        User user = new User();
-        user.init();
-        user.setUserName(userInfoDto.getUserName());
-        user.setNickName(userInfoDto.getNickName());
-        user.setPassword(BCrypt.hashpw(userInfoDto.getPassword()));
-        user.setEmail(userInfoDto.getEmail());
-        user.setState(UserConstant.ENABLE);
-        baseMapper.insert(user);
+
     }
+
 }

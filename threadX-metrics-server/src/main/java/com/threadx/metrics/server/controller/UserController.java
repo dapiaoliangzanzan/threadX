@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @GlobalResultPackage
-@Api(tags = "常规用户操作")
+@Api(tags = "用户常规操作")
 @RequestMapping("/user")
 public class UserController {
 
@@ -37,11 +37,11 @@ public class UserController {
         return userService.login(userLoginDto);
     }
 
+
     @Login
-    @UserPermission("add:user")
-    @ApiOperation(value = "添加用户")
-    @PostMapping("addUser")
-    public void addUser(@RequestBody UserInfoDto userInfoDto){
-        userService.saveUser(userInfoDto);
+    @ApiOperation(value = "用户登出")
+    @PostMapping("logout")
+    public void logout(){
+        userService.logout();
     }
 }

@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -47,17 +48,17 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         String menuDataStr = redisTemplate.opsForValue().get(menuCacheKey);
 
         List<Menu> menus = new ArrayList<>();
-        if(StrUtil.isNotBlank(menuDataStr)) {
+        if (StrUtil.isNotBlank(menuDataStr)) {
             menus = JSONUtil.toList(menuDataStr, Menu.class);
-        }else {
+        } else {
             List<Long> allByUserId = userMenuService.findAllByUserId(userId);
-            if(CollUtil.isNotEmpty(allByUserId)) {
+            if (CollUtil.isNotEmpty(allByUserId)) {
                 QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
                 queryWrapper.in("id", allByUserId);
                 menus = baseMapper.selectList(queryWrapper);
             }
         }
-        if(CollUtil.isNotEmpty(menus)) {
+        if (CollUtil.isNotEmpty(menus)) {
             redisTemplate.opsForValue().set(menuCacheKey, JSONUtil.toJsonStr(menus), 1, TimeUnit.HOURS);
         }
 

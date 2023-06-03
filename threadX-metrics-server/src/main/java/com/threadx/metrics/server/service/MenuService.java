@@ -18,4 +18,5 @@ public interface MenuService {
      * @return 返回符合调价的菜单
      */
     List<Menu> findThisUserMenu();
+
 }

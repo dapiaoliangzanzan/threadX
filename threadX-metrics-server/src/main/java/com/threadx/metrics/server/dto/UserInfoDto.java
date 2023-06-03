@@ -22,7 +22,6 @@ import java.io.Serializable;
 @ApiModel(description = "用户信息", value = "用户信息")
 public class UserInfoDto implements Serializable {
     private static final long serialVersionUID = -7999645033234241915L;
-
     /**
      * 用户名
      */

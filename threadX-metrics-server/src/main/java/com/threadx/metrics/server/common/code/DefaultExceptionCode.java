@@ -14,7 +14,7 @@ public class DefaultExceptionCode implements IExceptionCode {
 
     @Override
     public String getCode() {
-        return "default-0";
+        return CurrencyRequestEnum.REQUEST_ERROR.getCode();
     }
 
     @Override

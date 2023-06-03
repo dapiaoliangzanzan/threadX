@@ -29,9 +29,7 @@ public interface UserService {
     User findByUserName(String userName);
 
     /**
-     * 保存用户
-     *
-     * @param userInfoDto 用户信息
+     * 当前用户登出
      */
-    void saveUser(UserInfoDto userInfoDto);
+    void logout();
 }

@@ -17,22 +17,22 @@ public interface RedisCacheKey {
     /**
      * 用户级别缓存前缀
      */
-    String USER_CACHE = THREADX_CADCHE + "user:";
+    String USER_CACHE = THREADX_CADCHE + "user:%s:";
 
     /**
      * 用户的token令牌缓存  占位符为  userId  tokenId
      */
-    String USER_TOKEN_CACHE = USER_CACHE + "%s:token:%s";
+    String USER_TOKEN_CACHE = USER_CACHE + "token:%s";
 
     /**
      * 用户菜单缓存  占位符为  userId
      */
-    String USER_MENU_CACHE = USER_CACHE + "%s:authority:menu";
+    String USER_MENU_CACHE = USER_CACHE + "authority:menu";
 
     /**
      * 用户权限缓存  占位符为  userId
      */
-    String USER_PERMISSION_CACHE = USER_CACHE + "%s:authority:permission";
+    String USER_PERMISSION_CACHE = USER_CACHE + "authority:permission";
 
 
     /**
