@@ -6,7 +6,7 @@ package com.threadx.metrics.server.constant;
  * @author huangfukexing
  * @date 2023/6/1 15:07
  */
-public class MenuState {
+public interface MenuState {
 
     /**
      * 禁用

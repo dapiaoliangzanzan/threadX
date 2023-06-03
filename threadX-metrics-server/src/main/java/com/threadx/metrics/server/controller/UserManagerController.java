@@ -1,9 +1,11 @@
 package com.threadx.metrics.server.controller;
 
 import com.threadx.metrics.server.common.annotations.GlobalResultPackage;
+import com.threadx.metrics.server.common.annotations.Log;
 import com.threadx.metrics.server.common.annotations.Login;
 import com.threadx.metrics.server.common.annotations.UserPermission;
 import com.threadx.metrics.server.dto.UserInfoDto;
+import com.threadx.metrics.server.enums.LogEnum;
 import com.threadx.metrics.server.service.UserManagerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -34,6 +36,7 @@ public class UserManagerController {
 
 
     @Login
+    @Log(LogEnum.ADD_USER)
     @UserPermission("add:user")
     @ApiOperation(value = "添加用户")
     @PostMapping("addUser")
@@ -42,6 +45,7 @@ public class UserManagerController {
     }
 
     @Login
+    @Log(LogEnum.MANAGER_UPDATE_USER)
     @UserPermission("update:user")
     @ApiOperation(value = "修改用户信息")
     @PostMapping("updateUser")

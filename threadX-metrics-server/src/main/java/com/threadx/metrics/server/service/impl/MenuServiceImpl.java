@@ -5,7 +5,9 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.json.JSONUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.threadx.metrics.server.common.code.LoginExceptionCode;
 import com.threadx.metrics.server.common.context.LoginContext;
+import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.entity.Menu;
 import com.threadx.metrics.server.mapper.MenuMapper;
@@ -40,6 +42,9 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
     @Override
     public List<Menu> findThisUserMenu() {
         UserVo userData = LoginContext.getUserData();
+        if(userData == null) {
+            throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
+        }
         Long userId = userData.getId();
         //先查询缓存
         String menuCacheKey = String.format(RedisCacheKey.USER_MENU_CACHE, userId);

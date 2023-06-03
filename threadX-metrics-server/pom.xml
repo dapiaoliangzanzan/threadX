@@ -21,6 +21,7 @@
         <guava-version>31.1-jre</guava-version>
         <knife4j-version>4.0.0</knife4j-version>
         <jwt-version>0.11.5</jwt-version>
+        <uasparser-version>0.6.2</uasparser-version>
     </properties>
 
 
@@ -77,21 +78,16 @@
             <optional>true</optional>
         </dependency>
 
-        <!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-aop -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
-
-        <!-- https://mvnrepository.com/artifact/com.google.guava/guava -->
         <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${guava-version}</version>
         </dependency>
-
-
 
         <dependency>
             <groupId>junit</groupId>
@@ -126,12 +122,17 @@
 
 
 
-
         <!--引入Knife4j的官方start包,该指南选择Spring Boot版本<3.0,开发者需要注意-->
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-openapi2-spring-boot-starter</artifactId>
             <version>${knife4j-version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>cz.mallat.uasparser</groupId>
+            <artifactId>uasparser</artifactId>
+            <version>${uasparser-version}</version>
         </dependency>
 
 

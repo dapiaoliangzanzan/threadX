@@ -1,10 +1,12 @@
 package com.threadx.metrics.server.controller;
 
 import com.threadx.metrics.server.common.annotations.GlobalResultPackage;
+import com.threadx.metrics.server.common.annotations.Log;
 import com.threadx.metrics.server.common.annotations.Login;
 import com.threadx.metrics.server.common.annotations.UserPermission;
 import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
+import com.threadx.metrics.server.enums.LogEnum;
 import com.threadx.metrics.server.service.UserService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -31,6 +33,7 @@ public class UserController {
         this.userService = userService;
     }
 
+    @Log(LogEnum.USER_LOGIN)
     @ApiOperation(value = "用户登录")
     @PostMapping("login")
     public String login(@RequestBody UserLoginDto userLoginDto) {
@@ -39,6 +42,7 @@ public class UserController {
 
 
     @Login
+    @Log(LogEnum.USER_LOGOUT)
     @ApiOperation(value = "用户登出")
     @PostMapping("logout")
     public void logout(){

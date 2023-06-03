@@ -7,15 +7,12 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
 import com.threadx.metrics.server.common.code.LoginExceptionCode;
 import com.threadx.metrics.server.common.context.LoginContext;
-import com.threadx.metrics.server.common.exceptions.GeneralException;
 import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.common.utils.ThreadxJwtUtil;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.constant.UserConstant;
-import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.entity.User;
 import com.threadx.metrics.server.mapper.UserMapper;
@@ -59,7 +56,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             throw new LoginException(LoginExceptionCode.USER_NAME_OR_PASSWORD_ERROR);
         }
         String state = user.getState();
-        if(UserConstant.DISABLE.equals(state)) {
+        if (UserConstant.DISABLE.equals(state)) {
             throw new LoginException(LoginExceptionCode.USER_IS_FROZEN);
         }
 
@@ -69,7 +66,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             BeanUtil.copyProperties(user, userVo);
             LoginContext.setUserData(userVo);
             Long id = user.getId();
-            String tokenKey = String.format("%s%s",IdUtil.fastSimpleUUID(), id);
+            String tokenKey = String.format("%s%s", IdUtil.fastSimpleUUID(), id);
             String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, id, tokenKey);
             //返回生成的token
             String token = ThreadxJwtUtil.generateToken(userVo);
@@ -79,6 +76,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             permissionService.findThisUserPermission();
             //缓存令牌
             redisTemplate.opsForValue().set(cacheKey, token, 1, TimeUnit.HOURS);
+            //设置数据
+            LoginContext.setUserData(userVo);
             return tokenKey;
 
         } else {
@@ -100,10 +99,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @SuppressWarnings("all")
     public void logout() {
         UserVo userData = LoginContext.getUserData();
-        Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, userData.getId()) + "*");
-        if(CollUtil.isNotEmpty(keys)) {
-            keys.forEach(redisTemplate::delete);
+        if (userData != null) {
+            Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, userData.getId()) + "*");
+            if (CollUtil.isNotEmpty(keys)) {
+                keys.forEach(redisTemplate::delete);
+            }
         }
+
 
     }
 
