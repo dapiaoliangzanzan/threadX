@@ -16,9 +16,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -56,9 +54,13 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
                 QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
                 queryWrapper.in("id", allByUserId);
                 menus = baseMapper.selectList(queryWrapper);
+                Comparator<Menu> comparator = Comparator.comparingInt(Menu::getSort);
+                menus.sort(comparator);
+
             }
         }
         if (CollUtil.isNotEmpty(menus)) {
+
             redisTemplate.opsForValue().set(menuCacheKey, JSONUtil.toJsonStr(menus), 1, TimeUnit.HOURS);
         }
 

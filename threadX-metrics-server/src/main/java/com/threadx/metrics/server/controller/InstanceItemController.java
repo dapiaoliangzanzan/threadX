@@ -8,10 +8,9 @@ import com.threadx.metrics.server.vo.InstanceItemVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 实例接口
@@ -33,7 +32,14 @@ public class InstanceItemController {
 
     @ApiOperation(value = "分页查询实例数据")
     @PostMapping("findByPage")
-    public ThreadxPage<InstanceItemVo> findByPage(@RequestBody InstanceItemFindConditions conditions){
+    public ThreadxPage<InstanceItemVo> findByPage(@RequestBody InstanceItemFindConditions conditions) {
         return instanceItemService.findByPage(conditions);
+    }
+
+
+    @ApiOperation(value = "常用实例top10")
+    @GetMapping("commonlyUsedTop10")
+    public List<InstanceItemVo> commonlyUsedTop10() {
+        return instanceItemService.commonlyUsedTop10();
     }
 }

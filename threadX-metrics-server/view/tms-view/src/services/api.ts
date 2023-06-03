@@ -8,7 +8,11 @@ class ApiUtils {
     baseURL: 'http://127.0.0.1:8081',
     // 其他Axios配置，如超时时间等
     timeout: 30000,
-    headers: {'Source-Name': 'ThreadX-tms'}
+    headers: {
+      'Source-Name': 'ThreadX-tms',
+      'threadx-token': '5cdb3dadadec4b3d88776e6b02dc3c481'
+    
+    }
   });
 
   /**

@@ -6,6 +6,8 @@ import com.threadx.metrics.server.entity.ServerItem;
 import com.threadx.metrics.server.vo.InstanceItemVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 
+import java.util.List;
+
 /**
  * *************************************************<br/>
  * 实例配置的业务操作<br/>
@@ -23,6 +25,15 @@ public interface InstanceItemService {
      * @return 分页后的数据
      */
     ThreadxPage<InstanceItemVo> findByPage(InstanceItemFindConditions conditions);
+
+
+    /**
+     * 查询最常使用的top10
+     *
+     * @return 当前用户常用的top10
+     */
+    List<InstanceItemVo> commonlyUsedTop10();
+
 
     /**
      * 查询 根据服务名和实例名称

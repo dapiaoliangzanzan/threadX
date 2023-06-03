@@ -12,6 +12,7 @@ export function  getByPage(instanceItemFindConditions:any): Promise<any> {
     })
     .catch((error: any) => {
         // 处理错误情况
-        console.error("请求失败：", error);
-      });
+        console.error("查询实例信息请求失败：", error);
+        return []
+    });
 }

@@ -1,30 +1,30 @@
 <template>
-      <div class="common-layout">
-    <el-container>
-      <el-aside>
-        <AsideComponents/>
-      </el-aside>
+    <div class="common-layout">
+      <el-container>
+        <el-aside>
+          <AsideComponents/>
+        </el-aside>
 
-      <el-main>
-        <div class="topDiv">
-          <el-row>
-          <el-col :span="24">
-            <TopComponents/>
-          </el-col>
-        </el-row>
+        <el-main>
+          <div class="topDiv">
+            <el-row>
+            <el-col :span="24">
+              <TopComponents/>
+            </el-col>
+          </el-row>
 
 
-        </div>
+          </div>
 
-        <div class="mainDiv">
-          <el-row>
-          <el-col :span="24">
-            <MainComponents/>
-          </el-col>
-        </el-row>
-        </div>
-      </el-main>
-    </el-container>
+          <div class="mainDiv">
+            <el-row>
+            <el-col :span="24">
+              <router-view/>
+            </el-col>
+          </el-row>
+          </div>
+        </el-main>
+      </el-container>
   </div>
 </template>
 
@@ -32,7 +32,6 @@
 import { defineComponent } from 'vue'
 import AsideComponents from '@/components/AsideComponents.vue';
 import TopComponents from '@/components/TopComponents.vue';
-import MainComponents from '@/components/MainComponents.vue';
 
 export default defineComponent({
     setup () {
@@ -42,8 +41,7 @@ export default defineComponent({
     },
     components: {
         AsideComponents,
-        TopComponents,
-        MainComponents
+        TopComponents
     }
 })
 </script>

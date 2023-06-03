@@ -116,6 +116,11 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
     }
 
     @Override
+    public List<InstanceItemVo> commonlyUsedTop10() {
+        return null;
+    }
+
+    @Override
     public InstanceItem findByInstanceNameAndServerName(String serverName, String instanceName) {
         if (StrUtil.isBlank(serverName) || StrUtil.isBlank(instanceName)) {
             return null;

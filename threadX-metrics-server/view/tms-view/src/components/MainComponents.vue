@@ -174,7 +174,7 @@ export default defineComponent({
             return "danger";
         })
         // 实例数据
-        const instanceList = ref()
+        const instanceList = ref([])
         // 当前页面
         const instanceThisPageNum = ref();
         // 每一页显示的条数
@@ -197,9 +197,9 @@ export default defineComponent({
          */
         const findInstanceByPage = async ()=>{
             const res = await request.getByPage({
-            "pageNumber": instanceThisPageNum.value,
-            "pageSize": instancePageSize.value
-        });
+                "pageNumber": instanceThisPageNum.value,
+                "pageSize": instancePageSize.value
+            });
             instanceList.value = res.data
             instanceTotalCount.value = res.total
         }
