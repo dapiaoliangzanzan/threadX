@@ -27,6 +27,10 @@ public enum LogEnum {
      */
     USER_LOGOUT("100003", "用户登出"),
 
+    /**
+     * 查询实例详情
+     */
+    QUERY_INSTANCE_DESC("100004", "查询实例详情"),
 
 
     ;

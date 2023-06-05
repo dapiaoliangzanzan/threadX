@@ -17,6 +17,14 @@ import java.util.List;
 public interface ServerItemService {
 
     /**
+     * 根据id查询实例数据
+     *
+     * @param id id信息
+     * @return 服务信息
+     */
+    ServerItem selectById(Long id);
+
+    /**
      * 查询所有的服务数据
      *
      * @param serverItemName 服务名称 为空则查询全部的数据

@@ -51,11 +51,13 @@ public class ThreadPoolExecutorData implements Serializable {
 
     /**
      * 当前活跃的线程数
+     * 当前正在执行任务的线程数量，不包括已创建但尚未执行任务的线程
      */
     private Integer activeCount;
 
     /**
      * 当前线程池的线程数量  包含没有执行任务的线程还没有来得及被销毁的非核心线程
+     * 包括已创建但尚未执行任务的线程，以及正在执行任务的线程，即使它们是空闲的。
      */
     private Integer thisThreadCount;
 

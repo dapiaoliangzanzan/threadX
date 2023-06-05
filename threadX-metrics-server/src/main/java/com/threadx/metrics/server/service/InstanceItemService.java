@@ -1,8 +1,9 @@
 package com.threadx.metrics.server.service;
 
+import com.threadx.metrics.server.conditions.InstanceItemDataConditions;
 import com.threadx.metrics.server.conditions.InstanceItemFindConditions;
 import com.threadx.metrics.server.entity.InstanceItem;
-import com.threadx.metrics.server.entity.ServerItem;
+import com.threadx.metrics.server.vo.InstanceItemDataVo;
 import com.threadx.metrics.server.vo.InstanceItemVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 
@@ -63,4 +64,11 @@ public interface InstanceItemService {
      */
     Long findByInstanceNameAndServerNameOrCreateOnCache(String serverName, String instanceName);
 
+    /**
+     * 实例详情查询
+     *
+     * @param instanceItemDataConditions 查询条件
+     * @return 实例的详情信息
+     */
+    InstanceItemDataVo instanceDetails(InstanceItemDataConditions instanceItemDataConditions);
 }

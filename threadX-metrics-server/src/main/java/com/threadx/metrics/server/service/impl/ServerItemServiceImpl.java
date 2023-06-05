@@ -5,6 +5,8 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
+import com.threadx.metrics.server.common.exceptions.GeneralException;
 import com.threadx.metrics.server.conditions.ServerItemFindConditions;
 import com.threadx.metrics.server.constant.LockName;
 import com.threadx.metrics.server.entity.ServerItem;
@@ -36,6 +38,14 @@ public class ServerItemServiceImpl extends ServiceImpl<ServerItemMapper, ServerI
 
     public ServerItemServiceImpl(DistributedLockTemplate distributedLockTemplate) {
         this.distributedLockTemplate = distributedLockTemplate;
+    }
+
+    @Override
+    public ServerItem selectById(Long id) {
+        if(id == null) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+        }
+        return super.getById(id);
     }
 
     @Override

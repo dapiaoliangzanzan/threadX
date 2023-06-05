@@ -20,6 +20,11 @@ public enum CurrencyRequestEnum implements IExceptionCode {
      * 参数缺失
      */
     PARAMETER_MISSING("500001", "参数缺失"),
+
+    /**
+     * 数据异常
+     */
+    DATA_EXCEPTION("500002", "数据异常"),
     ;
     /**
      * 状态码

@@ -125,6 +125,7 @@ public class ThreadPoolDataConsumer implements InitializingBean, DisposableBean 
             //置空变化对象
             threadPoolDataNew.setAddress(null);
             threadPoolDataNew.setCreateTime(null);
+            threadPoolDataNew.setUpdateTime(null);
             threadPoolDataNew.setId(null);
             threadPoolDataNew.setInstanceId(null);
             // 获取当前数据的md5

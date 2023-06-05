@@ -15,6 +15,11 @@ public interface RedisCacheKey {
     String THREADX_CADCHE = "threadx:cache:";
 
     /**
+     * 用户对于实例的点击计数
+     */
+    String USER_CLICK_INSTANCE_COUNT = THREADX_CADCHE + "user:instance:click";
+
+    /**
      * 用户级别缓存前缀
      */
     String USER_CACHE = THREADX_CADCHE + "user:%s:";
