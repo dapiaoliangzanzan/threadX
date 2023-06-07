@@ -6,6 +6,7 @@ import com.threadx.metrics.server.common.annotations.Login;
 import com.threadx.metrics.server.common.annotations.UserPermission;
 import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.enums.LogEnum;
+import com.threadx.metrics.server.enums.PermissionValue;
 import com.threadx.metrics.server.service.UserManagerService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -37,7 +38,7 @@ public class UserManagerController {
 
     @Login
     @Log(LogEnum.ADD_USER)
-    @UserPermission("add:user")
+    @UserPermission(PermissionValue.USER_ADD)
     @ApiOperation(value = "添加用户")
     @PostMapping("addUser")
     public void addUser(@RequestBody UserInfoDto userInfoDto){
@@ -46,7 +47,7 @@ public class UserManagerController {
 
     @Login
     @Log(LogEnum.MANAGER_UPDATE_USER)
-    @UserPermission("update:user")
+    @UserPermission(PermissionValue.USER_UPDATE)
     @ApiOperation(value = "修改用户信息")
     @PostMapping("updateUser")
     public void updateUser(@RequestBody UserInfoDto userInfoDto){

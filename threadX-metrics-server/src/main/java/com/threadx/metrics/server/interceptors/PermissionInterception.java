@@ -8,6 +8,7 @@ import com.threadx.metrics.server.common.annotations.UserPermission;
 import com.threadx.metrics.server.common.code.PermissionExceptionCode;
 import com.threadx.metrics.server.common.exceptions.PermissionException;
 import com.threadx.metrics.server.entity.Permission;
+import com.threadx.metrics.server.enums.PermissionValue;
 import com.threadx.metrics.server.service.PermissionService;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -35,14 +36,13 @@ public class PermissionInterception implements HandlerInterceptor {
             Method method = handlerMethod.getMethod();
             if (method.isAnnotationPresent(Login.class) && method.isAnnotationPresent(UserPermission.class)) {
                 UserPermission userPermission = method.getDeclaredAnnotation(UserPermission.class);
-                String userPermissionKey = userPermission.value();
-                if (StrUtil.isNotBlank(userPermissionKey)) {
-                    List<Permission> thisUserPermission = permissionService.findThisUserPermission();
-                    List<Permission> permissions = thisUserPermission.stream().filter(e -> userPermissionKey.equals(e.getPermissionKey())).collect(Collectors.toList());
-                    if (CollUtil.isEmpty(permissions)) {
-                        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
-                        throw new PermissionException(PermissionExceptionCode.UNAUTHORIZED_OPERATION);
-                    }
+                PermissionValue userPermissionValue = userPermission.value();
+                String userPermissionKey = userPermissionValue.getPermissionKey();
+                List<Permission> thisUserPermission = permissionService.findThisUserPermission();
+                List<Permission> permissions = thisUserPermission.stream().filter(e -> userPermissionKey.equals(e.getPermissionKey())).collect(Collectors.toList());
+                if (CollUtil.isEmpty(permissions)) {
+                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    throw new PermissionException(PermissionExceptionCode.UNAUTHORIZED_OPERATION);
                 }
 
             }

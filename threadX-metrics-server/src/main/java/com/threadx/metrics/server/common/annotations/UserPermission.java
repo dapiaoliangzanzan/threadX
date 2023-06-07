@@ -1,5 +1,7 @@
 package com.threadx.metrics.server.common.annotations;
 
+import com.threadx.metrics.server.enums.PermissionValue;
+
 import java.lang.annotation.*;
 
 /**
@@ -14,5 +16,5 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Target(ElementType.METHOD)
 public @interface UserPermission {
-    String value();
+    PermissionValue value();
 }
