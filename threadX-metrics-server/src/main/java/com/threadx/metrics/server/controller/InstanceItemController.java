@@ -50,7 +50,6 @@ public class InstanceItemController {
     }
 
     @Login
-    @Log(LogEnum.QUERY_INSTANCE_DESC)
     @ApiOperation(value = "实例详情查询")
     @PostMapping("instanceDetails")
     public InstanceItemDataVo instanceDetails(@RequestBody InstanceItemDataConditions instanceId){
