@@ -125,7 +125,7 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
         return instanceItems.stream().map(instanceItem -> {
             InstanceItemVo instanceItemVo = new InstanceItemVo();
             instanceItemVo.setState(InstanceItemState.ACTIVE);
-            if (System.currentTimeMillis() - instanceItem.getActiveTime() > instanceTimout) {
+            if (System.currentTimeMillis() - instanceItem.getActiveTime() > TimeUnit.SECONDS.toMillis(instanceTimout)) {
                 instanceItemVo.setState(InstanceItemState.NOT_ACTIVE);
             }
             instanceItemVo.setId(instanceItem.getId());

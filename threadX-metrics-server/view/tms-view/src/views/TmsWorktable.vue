@@ -10,7 +10,13 @@
 
             <div class="card-main">
                 <!-- 数据表格组件 -->
-                <el-table :data="instanceList" stripe :style="`width: 100%; height: ${cardMainyHeight-5}px;`" :max-height="cardMainyHeight" row-key="id">
+                <el-table 
+                    :data="instanceList" 
+                    stripe 
+                    :style="`width: 100%; height: ${cardMainyHeight}px;`" 
+                    :max-height="cardMainyHeight" 
+                    row-key="id"
+                    :border="false">
                     <el-table-column fixed prop="instanceName" label="实例名称">
                         <template #default="scope">
                             <el-button
@@ -41,20 +47,6 @@
                         </template>
                     </el-table-column>
                 </el-table>
-                <!-- 分页组件 -->
-                <div class="page_div">
-                    <el-pagination
-                        small
-                        background
-                        layout="prev, pager, next"
-                        :total="instanceTotalCount"
-                        :page-size="instancePageSize"
-                        :pager-count="5"
-                        :hide-on-single-page="false"
-                        v-model:current-page="instanceThisPageNum"
-                        @current-change="instancePageChange"
-                    />
-                </div>
             </div>
             
         </el-card>
@@ -146,13 +138,13 @@ import '../assets/css/index.css'
 export default defineComponent({
     setup () {
         onMounted(() =>{
-            findInstanceByPage()
+            commonlyUsedTop10()
         });
         //当前屏幕的高度
         const windowHeight = ref(window.innerHeight);
         //内容的高度
         const cardMainyHeight = computed(() => {
-            return (windowHeight.value - 381)/2;
+            return (windowHeight.value - 310)/2;
         });
 
         //返回当前实例的状态  监控中的返回true  断联的返回false
@@ -175,33 +167,17 @@ export default defineComponent({
         })
         // 实例数据
         const instanceList = ref([])
-        // 当前页面
-        const instanceThisPageNum = ref();
-        // 每一页显示的条数
-        const instancePageSize = ref(10);
-        // 总条数
-        const instanceTotalCount = ref();
 
-        /**
-         * 实例列表页码变更
-         */
-        const instancePageChange = ()=>{
-            findInstanceByPage()
-        };
 
         const instanceDetailsPage = (id:any)=>{
             console.log(id)
         }
         /**
-         * 分页查询实例
+         * 常用实例查询
          */
-        const findInstanceByPage = async ()=>{
-            const res = await request.getByPage({
-                "pageNumber": instanceThisPageNum.value,
-                "pageSize": instancePageSize.value
-            });
-            instanceList.value = res.data
-            instanceTotalCount.value = res.total
+        const commonlyUsedTop10 = async ()=>{
+            const res = await request.commonlyUsedTop10();
+            instanceList.value = res
         }
 
         return {
@@ -210,10 +186,7 @@ export default defineComponent({
             instanceState,
             instanceStateCheck,
             instanceStateTagType,
-            instanceThisPageNum,
-            instancePageSize,
-            instanceTotalCount,
-            instancePageChange,
+            commonlyUsedTop10,
             instanceDetailsPage
         }
     }

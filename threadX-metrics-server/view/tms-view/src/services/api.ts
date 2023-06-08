@@ -10,7 +10,7 @@ class ApiUtils {
     timeout: 30000,
     headers: {
       'Source-Name': 'ThreadX-tms',
-      'threadx-token': '5cdb3dadadec4b3d88776e6b02dc3c481'
+      'threadx-token': '99abc79af6394850ac9bff775ff136511'
     
     }
   });
@@ -78,8 +78,7 @@ class ApiUtils {
    * @returns 最终的返回结果
    */
   public static async get<T>(url: string, params?: any, config?: any): Promise<T> {
-    const response  = await this.axiosInstance.get(url, { params, ...config });
-    return response.data;
+    return await this.axiosInstance.get(url, { params, ...config });
   }
 }
 

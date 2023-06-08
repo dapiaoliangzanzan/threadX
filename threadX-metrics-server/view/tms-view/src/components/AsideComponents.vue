@@ -22,7 +22,6 @@
 import { defineComponent,ref, computed, onMounted } from 'vue'
 import '../assets/icon/iconfont.css'
 import '../assets/css/el-drawer-index.css'
-import { Search } from '@element-plus/icons-vue'
 import * as request from '../services/menuService'
 
 export default defineComponent({

@@ -5,8 +5,8 @@ import ApiUtils from './api';
  * @param instanceItemFindConditions 查询条件
  * @returns 
  */
-export function  getByPage(instanceItemFindConditions:any): Promise<any> {
-    return ApiUtils.post("/instanceItem/findByPage", instanceItemFindConditions)
+export function commonlyUsedTop10(): Promise<any> {
+    return ApiUtils.get("/instanceItem/commonlyUsedTop10")
     .then((response) =>{
         return response
     })
