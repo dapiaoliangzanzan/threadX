@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.toolkit.Wrappers;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.google.common.cache.Cache;
@@ -53,7 +54,7 @@ import java.util.stream.Collectors;
 public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, InstanceItem> implements InstanceItemService {
 
     @SuppressWarnings("all")
-    private final static RedisScript<List<String>> DEFAULT_REDIS_SCRIPT_INSTANCE_TOP_10 = new DefaultRedisScript(String.format("return redis.call('ZREVRANGE', '%s', 0, 9)", RedisCacheKey.USER_CLICK_INSTANCE_COUNT),List.class);
+    private final static RedisScript<List<String>> DEFAULT_REDIS_SCRIPT_INSTANCE_TOP_10 = new DefaultRedisScript(String.format("return redis.call('ZREVRANGE', '%s', 0, 9)", RedisCacheKey.USER_CLICK_INSTANCE_COUNT), List.class);
 
 
     private final ServerItemService serverItemService;
@@ -106,6 +107,16 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
         return threadPage;
     }
 
+    @Override
+    public List<InstanceItem> findInIds(Collection<Long> ids) {
+        if (CollUtil.isNotEmpty(ids)) {
+            QueryWrapper<InstanceItem> query = Wrappers.query();
+            query.in("id", ids);
+            return baseMapper.selectList(query);
+        }
+        return new ArrayList<>();
+    }
+
     /**
      * 转换未前端映射对象
      *
@@ -143,11 +154,8 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
     @SuppressWarnings("all")
     public List<InstanceItemVo> commonlyUsedTop10() {
         // 检查有序集合是否已过期
-        boolean isExpired = !redisTemplate.hasKey(RedisCacheKey.USER_CLICK_INSTANCE_COUNT);
-        if (isExpired) {
-            // 重新统计用户点击次数
-            // ...
-        } else {
+        boolean has = redisTemplate.hasKey(RedisCacheKey.USER_CLICK_INSTANCE_COUNT);
+        if (has) {
             // 获取前 N 个点击次数最多的记录
             List<String> topRecords = redisTemplate.execute(DEFAULT_REDIS_SCRIPT_INSTANCE_TOP_10, new ArrayList<>());
             //分割出instanceId
@@ -161,14 +169,14 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
                 //对查询出来的数据重新转化未map
                 Map<Long, InstanceItem> mapInstanceItem = new HashMap<>(10);
                 for (InstanceItem instanceItem : instanceItems) {
-                    mapInstanceItem.put(instanceItem.getId() , instanceItem);
+                    mapInstanceItem.put(instanceItem.getId(), instanceItem);
                 }
 
                 //对结果集进行重新排序，使他与redis取的数据顺序一致
                 List<InstanceItem> instanceItemListNew = new ArrayList<>();
                 for (Long id : instanceIdList) {
                     InstanceItem instanceItem = mapInstanceItem.get(id);
-                    if(instanceItem != null) {
+                    if (instanceItem != null) {
                         instanceItemListNew.add(instanceItem);
                     }
                 }
@@ -177,7 +185,7 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
                 return getInstanceItemVos(instanceItemListNew);
             }
         }
-        return null;
+        return new ArrayList<>();
     }
 
     @Override

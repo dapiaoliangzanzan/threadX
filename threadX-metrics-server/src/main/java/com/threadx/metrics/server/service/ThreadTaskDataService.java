@@ -1,9 +1,12 @@
 package com.threadx.metrics.server.service;
 
+import com.threadx.metrics.server.dto.ThreadTaskDataErrorCalculation;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.entity.ThreadTaskData;
+import com.threadx.metrics.server.vo.ThreadTaskDataErrorTop;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * *************************************************<br/>
@@ -14,6 +17,13 @@ import java.util.Collection;
  * @date 2023/4/23 15:09
  */
 public interface ThreadTaskDataService {
+
+    /**
+     * 统计计算线程池线程任务错误计算
+     * @param limit 查询多少条
+     * @return 错误统计
+     */
+    List<ThreadTaskDataErrorTop> findThreadTaskDataErrorCalculation(int limit);
 
     /**
      * 批量保存

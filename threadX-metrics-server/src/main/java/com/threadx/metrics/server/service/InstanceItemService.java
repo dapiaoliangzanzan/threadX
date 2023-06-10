@@ -7,6 +7,7 @@ import com.threadx.metrics.server.vo.InstanceItemDataVo;
 import com.threadx.metrics.server.vo.InstanceItemVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,6 +27,14 @@ public interface InstanceItemService {
      * @return 分页后的数据
      */
     ThreadxPage<InstanceItemVo> findByPage(InstanceItemFindConditions conditions);
+
+    /**
+     * 根据ID查询数据
+     *
+     * @param ids 数据的集合
+     * @return 查询到的数据
+     */
+    List<InstanceItem> findInIds(Collection<Long> ids);
 
 
     /**
