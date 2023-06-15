@@ -4,7 +4,7 @@
             <template #header>
             <div class="card-header">
                 <span class="card-title">常用实例列表</span>
-                <i class="icon iconfont  icon-shuaxin mouse-shadow server-shuaxin"></i>
+                <i class="icon iconfont  icon-shuaxin mouse-shadow server-shuaxin" @click="commonlyUsedTop10"></i>
             </div>
             </template>
 
@@ -16,6 +16,7 @@
                     :style="`width: 100%; height: ${cardMainyHeight}px;`" 
                     :max-height="cardMainyHeight" 
                     row-key="id"
+                    empty-text="近七天无常用实例"
                     :border="false">
                     <el-table-column fixed prop="instanceName" label="实例名称">
                         <template #default="scope">
@@ -54,13 +55,50 @@
         <el-card class="main-card">
             <template #header>
             <div class="card-header">
-                <span class="card-title">异常线程池Top10</span>
-                <i class="icon iconfont  icon-shuaxin mouse-shadow server-shuaxin"></i>
+                <span class="card-title">异常任务数量线程池Top10</span>
+                <i class="icon iconfont  icon-shuaxin mouse-shadow server-shuaxin" @click="errorTaskThreadPoolTop"></i>
             </div>
             </template>
             
             <div class="card-main">
-                <div v-for="o in 4" :key="o" class="text item">{{ 'List item ' + o }}</div>
+                <!-- 数据表格组件 -->
+                <el-table 
+                    :data="errorTaskThreadPoolTopList" 
+                    stripe 
+                    :style="`width: 100%; height: ${cardMainyHeight}px;`" 
+                    :max-height="cardMainyHeight" 
+                    row-key="threadPoolName"
+                    empty-text="恭喜你，线程池没有错误数据"
+                    :border="false"
+                    fit>
+                    
+                    <el-table-column fixed prop="threadPoolName" label="线程池名">
+                        <template #default="scope">
+
+                            <el-tooltip :content="scope.row.threadPoolName" placement="top">
+                                <el-button
+                                link
+                                type="primary"
+                                size="small"
+                                @click.prevent="instanceDetailsPage(scope.row.id)">
+                                    <span class="truncate-text">{{ scope.row.threadPoolName.length > 30 ? scope.row.threadPoolName.substring(0, 30) + '...' : scope.row.threadPoolGroupName }}</span>
+                                </el-button>
+                            </el-tooltip>  
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column prop="threadPoolGroupName" label="线程池组">
+                        <template #default="scope">
+                            <el-tooltip :content="scope.row.threadPoolGroupName" placement="top">
+                                <span class="truncate-text">{{ scope.row.threadPoolGroupName.length > 20 ? scope.row.threadPoolGroupName.substring(0, 20) + '...' : scope.row.threadPoolGroupName }}</span>
+                            </el-tooltip>
+                        </template>
+                    </el-table-column>
+
+                    <el-table-column prop="instanceName" label="所属实例信息" />
+
+                    <el-table-column prop="errorCount" label="错误数量" width="100" align="center"/>
+                </el-table>
             </div>
         </el-card>
     </div>
@@ -132,13 +170,15 @@
 
 <script lang="ts">
 import { defineComponent,ref,computed, onMounted, reactive } from 'vue'
-import * as request from '../services/instanceService'
+import * as instanceRequest from '../services/instanceService'
+import * as taskRequest from '../services/taskService'
 import '../assets/css/index.css'
 
 export default defineComponent({
     setup () {
         onMounted(() =>{
             commonlyUsedTop10()
+            errorTaskThreadPoolTop()
         });
         //当前屏幕的高度
         const windowHeight = ref(window.innerHeight);
@@ -167,6 +207,8 @@ export default defineComponent({
         })
         // 实例数据
         const instanceList = ref([])
+        //异常任务数量线程池数组
+        const errorTaskThreadPoolTopList = ref([])
 
 
         const instanceDetailsPage = (id:any)=>{
@@ -176,17 +218,24 @@ export default defineComponent({
          * 常用实例查询
          */
         const commonlyUsedTop10 = async ()=>{
-            const res = await request.commonlyUsedTop10();
-            instanceList.value = res
+            instanceList.value = await instanceRequest.commonlyUsedTop10();
+        }
+        /**
+         * 异常任务数量线程池Top10查询
+         */
+        const errorTaskThreadPoolTop = async () => {
+            errorTaskThreadPoolTopList.value = await taskRequest.findThreadTaskDataErrorCalculationTop10()
         }
 
         return {
             instanceList,
+            errorTaskThreadPoolTopList,
             cardMainyHeight,
             instanceState,
             instanceStateCheck,
             instanceStateTagType,
             commonlyUsedTop10,
+            errorTaskThreadPoolTop,
             instanceDetailsPage
         }
     }

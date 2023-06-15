@@ -51,7 +51,7 @@ public class ThreadTaskDataServiceImpl extends ServiceImpl<ThreadTaskDataMapper,
             return threadTaskDataErrorCalculations.stream().map(threadTaskDataErrorCalculation -> {
                 ThreadTaskDataErrorTop threadTaskDataErrorTop = new ThreadTaskDataErrorTop();
                 BeanUtil.copyProperties(threadTaskDataErrorCalculation, threadTaskDataErrorTop);
-                threadTaskDataErrorTop.setThreadPoolGroupName(instanceItemIndex.getOrDefault(threadTaskDataErrorCalculation.getInstanceId(), "未知服务"));
+                threadTaskDataErrorTop.setInstanceName(instanceItemIndex.getOrDefault(threadTaskDataErrorCalculation.getInstanceId(), "未知服务"));
                 return threadTaskDataErrorTop;
             }).collect(Collectors.toList());
 
