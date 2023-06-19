@@ -48,8 +48,6 @@ class ApiUtils {
         // 抛出错误提示
         return Promise.reject(new Error(message));
       }
- 
-      return response;
     }, function (error) {
       // 超出 2xx 范围的状态码都会触发该函数。
       // 对响应错误做点什么
