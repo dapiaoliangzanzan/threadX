@@ -40,7 +40,7 @@ public class LoginInterceptor implements HandlerInterceptor {
             if (method.isAnnotationPresent(Login.class)) {
                 String tokenKey = request.getHeader("threadX-token");
                 if (StrUtil.isBlank(tokenKey)) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
                 }
                 //获取用户的id
@@ -50,13 +50,13 @@ public class LoginInterceptor implements HandlerInterceptor {
                 String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, userId, tokenKey);
                 String oldToken = redisTemplate.opsForValue().get(cacheKey);
                 if (StrUtil.isBlank(oldToken)) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
                 }
                 // 进行令牌验证逻辑
                 UserVo userVo = ThreadxJwtUtil.renewParseToken(oldToken, newToken -> redisTemplate.opsForValue().set(cacheKey, newToken, 1, TimeUnit.HOURS));
                 if (userVo == null) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
                 } else {
                     LoginContext.setUserData(userVo);

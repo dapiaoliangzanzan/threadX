@@ -1,6 +1,10 @@
 import axios from 'axios';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
+import { ElMessage } from 'element-plus'
+import {ErrorStatusConstants} from '../constants/ErrorStatusConstants'
+import router from '@/router';
+
 
 
 class ApiUtils {
@@ -37,7 +41,7 @@ class ApiUtils {
       // 2xx 范围内的状态码都会触发该函数。
       //解构数据
       const { code, message, result } = response.data;
-      if (code === '000000') {
+      if (ErrorStatusConstants.SUCCESS === code) {
         // 隐藏进度条
         NProgress.done();
         // 返回成功的data
@@ -45,6 +49,10 @@ class ApiUtils {
       } else {
         // 隐藏进度条
         NProgress.done();
+        ElMessage.error(message)
+        if(ErrorStatusConstants.USER_NOT_LOGIN_ERROR === code) {
+          router.push('/login');
+        }
         // 抛出错误提示
         return Promise.reject(new Error(message));
       }
@@ -53,6 +61,8 @@ class ApiUtils {
       // 对响应错误做点什么
       // 隐藏进度条
       NProgress.done();
+      // console.log(error.response.status)
+      ElMessage.error(error.message)
       return Promise.reject(error);
     });
   }

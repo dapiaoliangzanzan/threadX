@@ -6,6 +6,11 @@ const routes: Array<RouteRecordRaw> = [
     redirect: '/worktable' // 添加重定向规则
   },
   {
+    path: '/login',
+    name: 'login',
+    component: () => import('../views/LoginPage.vue')
+  },
+  {
     path: '/',
     name: 'home',
     component: () => import('../views/MainHome.vue'),
