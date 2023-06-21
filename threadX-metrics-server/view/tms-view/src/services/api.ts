@@ -4,6 +4,7 @@ import 'nprogress/nprogress.css';
 import { ElMessage } from 'element-plus'
 import {ErrorStatusConstants} from '../constants/ErrorStatusConstants'
 import router from '@/router';
+import LocalStorageUtil from '@/common/LocalStorageUtil';
 
 
 
@@ -14,8 +15,7 @@ class ApiUtils {
     timeout: 30000,
     headers: {
       'Source-Name': 'ThreadX-tms',
-      'threadx-token': '37eb8b9b32fe42889adaa9275bc89e511'
-    
+      'threadx-token': LocalStorageUtil.getLoginToken()
     }
   });
 
