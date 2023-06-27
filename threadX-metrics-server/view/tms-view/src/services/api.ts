@@ -5,7 +5,7 @@ import { ElMessage } from 'element-plus'
 import {ErrorStatusConstants} from '../constants/ErrorStatusConstants'
 import router from '@/router';
 import LocalStorageUtil from '@/common/LocalStorageUtil';
-
+import LoginCheck from '@/common/LoginCheck';
 
 
 class ApiUtils {
@@ -75,6 +75,9 @@ class ApiUtils {
    * @returns 最终的返回结果
    */
   public static async post<T>(url: string, data?: any, config?: any): Promise<T> {
+    if(url !== LoginCheck.LOGIN_PATH) {
+      LoginCheck.checkLoginToken()
+    }
     return await this.axiosInstance.post(url, data, config);
   }
 
@@ -86,6 +89,7 @@ class ApiUtils {
    * @returns 最终的返回结果
    */
   public static async get<T>(url: string, params?: any, config?: any): Promise<T> {
+    LoginCheck.checkLoginToken()
     return await this.axiosInstance.get(url, { params, ...config });
   }
 }

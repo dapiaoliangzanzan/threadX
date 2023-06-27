@@ -3,7 +3,7 @@ import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/',
-    redirect: '/worktable' // 添加重定向规则
+    redirect: '/login' // 添加重定向规则
   },
   {
     path: '/login',
