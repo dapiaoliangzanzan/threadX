@@ -20,12 +20,12 @@ public interface RedisCacheKey {
     String USER_CLICK_INSTANCE_COUNT = THREADX_CADCHE + "user:instance:click";
 
     /**
-     * 用户级别缓存前缀
+     * 用户级别缓存前缀  userId
      */
     String USER_CACHE = THREADX_CADCHE + "user:%s:";
 
     /**
-     * 用户的token令牌缓存  占位符为  userId  tokenId
+     * 用户的token令牌缓存  占位符为    tokenId
      */
     String USER_TOKEN_CACHE = USER_CACHE + "token:%s";
 

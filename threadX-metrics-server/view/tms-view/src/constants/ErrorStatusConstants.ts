@@ -3,7 +3,7 @@ export class ErrorStatusConstants {
       /**
      * 成功
      */
-      static readonly SUCCESS = "000000";
+    static readonly SUCCESS = "000000";
     /**
      * 用户名或者密码错误
      */

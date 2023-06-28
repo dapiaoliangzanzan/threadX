@@ -9,20 +9,67 @@
                     <div class="arm arm-r"></div>
                 </div>
             </div>
-            <div class="input-box">
-                <input type="text" placeholder="账号">
-                <input type="password" placeholder="密码" @mouseleave="removePasswordFocus" @mouseenter="passwordFocus" id="password" />
-                <button>登录</button>
-            </div>
+            
+            <el-form
+                ref="ruleFormRef"
+                :model="userLoginForm"
+                :rules="rules"
+                status-icon
+            >
+                <div class="input-box">
+                    <el-form-item label="" prop="userName">
+                        <el-input type="text" @keyup.enter="loginSubmit(ruleFormRef)" v-model="userLoginForm.userName" placeholder="账号"/>
+                    </el-form-item>
+                    <el-form-item label="" prop="password">
+                        <el-input type="password" @keyup.enter="loginSubmit(ruleFormRef)" v-model="userLoginForm.password" placeholder="密码" @mouseleave="removePasswordFocus" @mouseenter="passwordFocus" id="password" />
+                    </el-form-item>
+                    <el-form-item>
+                        <el-button type="primary" @click="loginSubmit(ruleFormRef)">登录</el-button>
+                    </el-form-item>
+                    
+                </div>
+            </el-form>
+
+            
     </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent,ref } from 'vue'
+import { defineComponent,ref,reactive } from 'vue'
+import type { FormInstance, FormRules } from 'element-plus'
+import UserService from '../services/UserService'
 
 export default defineComponent({
     setup () {
+        
+        /**
+         * 创建一个对象
+         */
+        const userLoginForm = reactive({
+            userName: '',
+            password: ''
+        })
+        /**
+         * 规则验证实例
+         */
+        const ruleFormRef = ref<FormInstance>();
+
+        /**
+         * 定义规则实现
+         */
+        const rules = reactive<FormRules>({
+            userName: [
+                { required: true, message: '用户名不能为空', trigger: 'blur' },
+                { min: 5, max: 20, message: '账号最小5个字符，最大20个字符', trigger: 'blur' }
+            ],
+            password: [
+                { required: true, message: '密码不能为空', trigger: 'blur' },
+                { min: 6, max: 20, message: '密码最小6个字符，最大20个字符', trigger: 'blur' }
+            ]
+        });
+
+
         //是否需要追加password class
         const passwordIsHover = ref(false);
 
@@ -33,14 +80,36 @@ export default defineComponent({
             passwordIsHover.value = true
         };
 
+        /**
+         * 当鼠标移出密码框
+         */
         const removePasswordFocus = ()=>{
             passwordIsHover.value = false
         }
+        
+        /**
+         * 登录提交
+         * @param formEl 登录表单
+         */
+        const loginSubmit = async (formEl: FormInstance | undefined) => {
+            if (!formEl) return
+            await formEl.validate((valid, fields) => {
+                if (valid) {
+                    UserService.login(userLoginForm.userName, userLoginForm.password)
+                } else {
+                    console.log('error submit!', fields)
+                }
+            })
+        }
 
         return {
-            passwordFocus,
             passwordIsHover,
-            removePasswordFocus
+            userLoginForm,
+            ruleFormRef,
+            rules,
+            passwordFocus,
+            removePasswordFocus,
+            loginSubmit
         }
     }
 })
@@ -67,25 +136,26 @@ export default defineComponent({
         display: flex;
         flex-direction: column;
     }
-    .input-box input{
+
+    .input-box .el-input{
         height: 40px;
         border-radius: 3px;
         /* 缩进15像素 */
         text-indent: 15px;
         outline: none;
         border: none;
-        margin-bottom: 15px;
     }
-    .input-box input:focus{
+    .input-box .el-input:focus{
         outline: 1px solid lightseagreen;
     }
-    .input-box button{
+    .input-box .el-button{
         border: none;
         height: 45px;
         background-color: lightseagreen;
         color: #fff;
         border-radius: 3px;
         cursor: pointer;
+        width: 100%;
     }
     /* 接下来是猫头鹰的样式 */
     .owl{

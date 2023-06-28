@@ -49,6 +49,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     }
 
     @Override
+    @SuppressWarnings("all")
     public String login(UserLoginDto userLoginDto) {
         //根据用户名查询用户信息
         User user = ((UserServiceImpl) AopContext.currentProxy()).findByUserName(userLoginDto.getUserName());
@@ -61,6 +62,12 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         }
 
         if (BCrypt.checkpw(userLoginDto.getPassword(), user.getPassword())) {
+            //生成当前的用户缓存前缀
+            //清除当前用户的所有缓存信息  只允许单人登录
+            Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, user.getId()) + "*");
+            if(CollUtil.isNotEmpty(keys)) {
+                keys.forEach(redisTemplate::delete);
+            }
             //生成token
             UserVo userVo = new UserVo();
             BeanUtil.copyProperties(user, userVo);

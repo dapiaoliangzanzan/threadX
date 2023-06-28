@@ -16,7 +16,7 @@ const routes: Array<RouteRecordRaw> = [
     component: () => import('../views/MainHome.vue'),
     children: [
       {
-        path: 'worktable',
+        path: '/worktable',
         name: 'worktable',
         component: () => import('../views/TmsWorktable.vue')
       }

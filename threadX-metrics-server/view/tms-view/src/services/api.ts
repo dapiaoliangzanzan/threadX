@@ -14,8 +14,7 @@ class ApiUtils {
     // 其他Axios配置，如超时时间等
     timeout: 30000,
     headers: {
-      'Source-Name': 'ThreadX-tms',
-      'threadx-token': LocalStorageUtil.getLoginToken()
+      'Source-Name': 'ThreadX-tms'
     }
   });
 
@@ -25,6 +24,7 @@ class ApiUtils {
   public static setupInterceptors(): void {
     //请求拦截器
     this.axiosInstance.interceptors.request.use(function (config) {
+      config.headers['threadx-token'] = LocalStorageUtil.getLoginToken()
       // 显示进度条
       NProgress.start();
       return config;
@@ -51,6 +51,7 @@ class ApiUtils {
         NProgress.done();
         ElMessage.error(message)
         if(ErrorStatusConstants.USER_NOT_LOGIN_ERROR === code) {
+          LocalStorageUtil.logoutTokenRemove()
           router.push('/login');
         }
         // 抛出错误提示
@@ -75,6 +76,7 @@ class ApiUtils {
    * @returns 最终的返回结果
    */
   public static async post<T>(url: string, data?: any, config?: any): Promise<T> {
+    //当不是登录的时候，检查是否存在token，不存在token就跳转到登录页面，不在进行请求
     if(url !== LoginCheck.LOGIN_PATH) {
       LoginCheck.checkLoginToken()
     }
