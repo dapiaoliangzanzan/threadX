@@ -53,10 +53,6 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, InstanceItem> implements InstanceItemService {
 
-    @SuppressWarnings("all")
-    private final static RedisScript<List<String>> DEFAULT_REDIS_SCRIPT_INSTANCE_TOP_10 = new DefaultRedisScript(String.format("return redis.call('ZREVRANGE', '%s', 0, 9)", RedisCacheKey.USER_CLICK_INSTANCE_COUNT), List.class);
-
-
     private final ServerItemService serverItemService;
     private final ThreadPoolDataService poolDataService;
     private final DistributedLockTemplate distributedLockTemplate;
@@ -153,15 +149,19 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
     @Override
     @SuppressWarnings("all")
     public List<InstanceItemVo> commonlyUsedTop10() {
+        UserVo userData = LoginContext.getUserData();
+        Long userId = userData.getId();
+        String clickCountCacheKey = String.format(RedisCacheKey.USER_CLICK_INSTANCE_COUNT, userId);
         // 检查有序集合是否已过期
-        boolean has = redisTemplate.hasKey(RedisCacheKey.USER_CLICK_INSTANCE_COUNT);
+        boolean has = redisTemplate.hasKey(clickCountCacheKey);
         if (has) {
+            RedisScript<List<String>> defaultRedisScript = new DefaultRedisScript(String.format("return redis.call('ZREVRANGE', '%s', 0, 9)", clickCountCacheKey), List.class);
             // 获取前 N 个点击次数最多的记录
-            List<String> topRecords = redisTemplate.execute(DEFAULT_REDIS_SCRIPT_INSTANCE_TOP_10, new ArrayList<>());
+            List<String> topRecords = redisTemplate.execute(defaultRedisScript, new ArrayList<>());
             //分割出instanceId
             if (CollUtil.isNotEmpty(topRecords)) {
                 //将实例的id进行分割出来
-                List<Long> instanceIdList = topRecords.stream().map(e -> Long.parseLong(e.split(":")[1])).collect(Collectors.toList());
+                List<Long> instanceIdList = topRecords.stream().map(e -> Long.parseLong(e)).collect(Collectors.toList());
                 //根据实例的id进行查询数据
                 QueryWrapper<InstanceItem> queryWrapper = new QueryWrapper<>();
                 queryWrapper.in("id", instanceIdList);
@@ -318,9 +318,10 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
         //对查看的数据进行计数
         UserVo userData = LoginContext.getUserData();
         Long userId = userData.getId();
+        String clickCountCacheKey = String.format(RedisCacheKey.USER_CLICK_INSTANCE_COUNT, userId);
         //对点击的实例进行累加，以方便计算top10
-        redisTemplate.opsForZSet().incrementScore(RedisCacheKey.USER_CLICK_INSTANCE_COUNT, String.format("%s:%s", userId, instanceId), 1);
-        redisTemplate.expire(RedisCacheKey.USER_CLICK_INSTANCE_COUNT, 7, TimeUnit.DAYS);
+        redisTemplate.opsForZSet().incrementScore(clickCountCacheKey, instanceId + "", 1);
+        redisTemplate.expire(clickCountCacheKey, 7, TimeUnit.DAYS);
 
         return instanceItemDataVo;
     }
