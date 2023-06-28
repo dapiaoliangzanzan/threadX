@@ -11,10 +11,7 @@ import com.threadx.metrics.server.service.UserService;
 import com.threadx.metrics.server.vo.LoginUserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * 用户操作
@@ -45,8 +42,8 @@ public class UserController {
     @Login
     @Log(LogEnum.USER_LOGOUT)
     @ApiOperation(value = "用户登出")
-    @PostMapping("logout")
-    public void logout(){
+    @GetMapping("logout")
+    public void logout() {
         userService.logout();
     }
 }

@@ -22,6 +22,17 @@ class UserService{
         })
         
     }
+
+    /**
+     * 退出登录
+     */
+    public static logout():void {
+        ApiUtils.get('/user/logout').finally(()=>{
+            LocalStorageUtil.logoutDataRemove()
+            router.push('/login')
+        })
+        
+    }
 }
 
 interface UserVo {
