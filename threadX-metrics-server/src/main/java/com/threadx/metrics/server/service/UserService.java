@@ -3,6 +3,7 @@ package com.threadx.metrics.server.service;
 import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.entity.User;
+import com.threadx.metrics.server.vo.LoginUserVo;
 
 /**
  * 用户服务
@@ -18,7 +19,7 @@ public interface UserService {
      * @param userLoginDto 用户登录的参数
      * @return 令牌
      */
-    String login(UserLoginDto userLoginDto);
+    LoginUserVo login(UserLoginDto userLoginDto);
 
     /**
      * 根据用户名查询用户信息

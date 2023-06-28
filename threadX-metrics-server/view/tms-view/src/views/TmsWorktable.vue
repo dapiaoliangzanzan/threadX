@@ -256,14 +256,14 @@ export default defineComponent({
         flex-wrap: wrap;
         justify-content: space-between;
         align-items: flex-end; /* 第二行的垂直对齐 */
-        margin-top: 15px;
+        margin-top: 10px;
        
     }
 
 
     .main-card {
         width: calc((100% - 20px) / 2);
-        height: calc((100vh - 105px) / 2);
+        height: calc((100vh - 99px) / 2);
         overflow-x: auto;
         overflow-y: auto;
     }
@@ -295,7 +295,7 @@ export default defineComponent({
     .welcome-main {
         display: flex;
         box-sizing: border-box;
-        height: 345px;
+        height: 323px;
         
 
     }

@@ -1,20 +1,52 @@
 <template>
     <div>
-        <div class="topClass"> 
-            <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
+        <div class="topClass">
+            <div class="welcomeText">
+                <span>
+                    hi 欢迎回来，{{nickName}}
+                </span>
+            </div>
+            <div class="avatarClass">
+                <el-dropdown>
+                    <el-avatar src="https://cube.elemecdn.com/0/88/03b0d39583f48206768a7534e55bcpng.png"/>
+                    <template #dropdown>
+                        <el-dropdown-menu>
+                            <el-dropdown-item>修改个人资料</el-dropdown-item>
+                            <el-dropdown-item>修改密码</el-dropdown-item>
+                            <el-dropdown-item>退出登录</el-dropdown-item>
+
+                        </el-dropdown-menu>
+                    </template>
+                </el-dropdown>
+            </div>
+            
         </div>
     </div>
     
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent, ref, onMounted } from 'vue'
+import LocalStorageUtil from '@/common/LocalStorageUtil';
 
 export default defineComponent({
     setup () {
-        
+        onMounted(() =>{
+            loadNickName()
+        });
 
-        return {}
+        //定义昵称
+        const nickName = ref('');
+        /**
+         * 加载昵称
+         */
+        const loadNickName = ()=>{
+            nickName.value = LocalStorageUtil.getLoginNickName()
+        }
+
+        return {
+            nickName
+        }
     }
 })
 </script>
@@ -25,10 +57,19 @@ export default defineComponent({
         background-color: rgb(255, 255, 255);
         display: flex;
         padding: 10px;
+       
+    }
+
+    .avatarClass {
+        display: flex;
+        width: 100%;
         justify-content: flex-end;
-        
+    }
 
-
-        
+    .welcomeText {
+        display: flex;
+        width: 100%;
+        justify-content: flex-start;
+        align-items: center;
     }
 </style>

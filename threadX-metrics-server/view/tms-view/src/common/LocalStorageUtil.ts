@@ -5,6 +5,11 @@ class LocalStorageUtil {
     static readonly THREADX_TMS_TOKEN:string = "THREADX_TMS_TOKEN";
 
     /**
+     * 用户名称信息
+     */
+    static readonly THREADX_TMS_USER_NICK_NAME:string = "THREADX_TMS_USER_NICK_NAME";
+
+    /**
      * 设置缓存的值
      * @param key 缓存的主键
      * @param value 缓存的值
@@ -40,15 +45,17 @@ class LocalStorageUtil {
      * 登录的时候存储token  
      * @param token 票据信息
      */
-    static loginTokenSave(token: string): void {
+    static loginDataSave(token: string, nickName:string): void {
         LocalStorageUtil.setItem(LocalStorageUtil.THREADX_TMS_TOKEN, token)
+        LocalStorageUtil.setItem(LocalStorageUtil.THREADX_TMS_USER_NICK_NAME, nickName)
     }
 
     /**
      * 退出登录的时候删除票据
      */
-    static logoutTokenRemove():void {
+    static logoutDataRemove():void {
         LocalStorageUtil.removeItem(LocalStorageUtil.THREADX_TMS_TOKEN)
+        LocalStorageUtil.removeItem(LocalStorageUtil.THREADX_TMS_USER_NICK_NAME)
     }
 
     /**
@@ -58,6 +65,14 @@ class LocalStorageUtil {
     static getLoginToken():string{
         return LocalStorageUtil.getItem(LocalStorageUtil.THREADX_TMS_TOKEN)
     }
+
+    /**
+     * 获取登录的用户名
+     * @returns 登录的用户名
+     */
+      static getLoginNickName():string{
+          return LocalStorageUtil.getItem(LocalStorageUtil.THREADX_TMS_USER_NICK_NAME)
+      }
   }
   //导出缓存工具包
   export default LocalStorageUtil;

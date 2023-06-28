@@ -19,6 +19,7 @@ import com.threadx.metrics.server.mapper.UserMapper;
 import com.threadx.metrics.server.service.MenuService;
 import com.threadx.metrics.server.service.PermissionService;
 import com.threadx.metrics.server.service.UserService;
+import com.threadx.metrics.server.vo.LoginUserVo;
 import com.threadx.metrics.server.vo.UserVo;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -50,7 +51,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @SuppressWarnings("all")
-    public String login(UserLoginDto userLoginDto) {
+    public LoginUserVo login(UserLoginDto userLoginDto) {
         //根据用户名查询用户信息
         User user = ((UserServiceImpl) AopContext.currentProxy()).findByUserName(userLoginDto.getUserName());
         if (user == null) {
@@ -85,7 +86,10 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             redisTemplate.opsForValue().set(cacheKey, token, 1, TimeUnit.HOURS);
             //设置数据
             LoginContext.setUserData(userVo);
-            return tokenKey;
+            LoginUserVo loginUserVo = new LoginUserVo();
+            loginUserVo.setNickName(user.getNickName());
+            loginUserVo.setToken(tokenKey);
+            return loginUserVo;
 
         } else {
             throw new LoginException(LoginExceptionCode.USER_NAME_OR_PASSWORD_ERROR);

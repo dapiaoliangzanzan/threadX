@@ -14,11 +14,19 @@ class UserService{
             "userName":userName,
             "password":password
         }).then((response) =>{
-            LocalStorageUtil.loginTokenSave(response as string)
+            const userVo:UserVo = response as UserVo
+            const token = userVo.token
+            const nickName = userVo.nickName
+            LocalStorageUtil.loginDataSave(token, nickName)
             router.push('/worktable')
         })
         
     }
+}
+
+interface UserVo {
+    token:string,
+    nickName:string
 }
 
 export default UserService;

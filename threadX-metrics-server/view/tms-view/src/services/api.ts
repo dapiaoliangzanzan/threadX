@@ -51,7 +51,7 @@ class ApiUtils {
         NProgress.done();
         ElMessage.error(message)
         if(ErrorStatusConstants.USER_NOT_LOGIN_ERROR === code) {
-          LocalStorageUtil.logoutTokenRemove()
+          LocalStorageUtil.logoutDataRemove()
           router.push('/login');
         }
         // 抛出错误提示

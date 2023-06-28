@@ -8,6 +8,7 @@ import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.enums.LogEnum;
 import com.threadx.metrics.server.service.UserService;
+import com.threadx.metrics.server.vo.LoginUserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,7 @@ public class UserController {
     @Log(LogEnum.USER_LOGIN)
     @ApiOperation(value = "用户登录")
     @PostMapping("login")
-    public String login(@RequestBody UserLoginDto userLoginDto) {
+    public LoginUserVo login(@RequestBody UserLoginDto userLoginDto) {
         return userService.login(userLoginDto);
     }
 
