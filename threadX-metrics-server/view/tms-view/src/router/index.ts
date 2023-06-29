@@ -19,6 +19,10 @@ const routes: Array<RouteRecordRaw> = [
         path: '/worktable',
         name: 'worktable',
         component: () => import('../views/TmsWorktable.vue')
+      },{
+        path: '/threadPoolMonitor',
+        name: 'ThreadPoolMonitor',
+        component: () => import('../views/ThreadPoolMonitorPage.vue')
       }
     ]
   }
