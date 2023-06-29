@@ -7,7 +7,7 @@
       :collapse="true"
       router="true"
     >
-      <img src="../assets/logo.svg" alt="threadX" class="logoClass">
+      <img src="../assets/logo.svg" alt="threadX" class="logoClass" @click="skipHome">
 
       <el-menu-item v-for="item in menuData" :key="item.id" :index="item.menuUrl">
         <i :class="['icon', 'iconfont',  item.menuIcon, 'aside-icon-item']"></i>
@@ -23,6 +23,7 @@ import { defineComponent,ref, computed, onMounted } from 'vue'
 import '../assets/icon/iconfont.css'
 import '../assets/css/el-drawer-index.css'
 import * as request from '../services/menuService'
+import router from '@/router';
 
 export default defineComponent({
     setup () {
@@ -38,11 +39,19 @@ export default defineComponent({
         const res = await request.getLeftMenu();
         menuData.value=res
       };
+
+      /**
+       * 跳转到 worktable 页面
+       */
+      const skipHome = ()=>{
+        router.push('/worktable')
+      }
       
       //返回定义的方法和属性变量
       return {
         menuData,
-        getMenuAllData
+        getMenuAllData,
+        skipHome
       }
     }
     
@@ -59,6 +68,9 @@ export default defineComponent({
       .logoClass {
           width: 90px;
           height: 90px;
+      }
+      .logoClass:hover {
+        cursor: pointer; /* 设置鼠标指针样式为手型 */
       }
 
       .aside-icon-item {
