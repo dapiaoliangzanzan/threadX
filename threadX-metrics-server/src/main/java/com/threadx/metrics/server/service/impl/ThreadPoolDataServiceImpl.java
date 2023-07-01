@@ -8,12 +8,14 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
 import com.threadx.metrics.server.common.exceptions.GeneralException;
+import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
 import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.entity.InstanceItem;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.mapper.ThreadPoolDataMapper;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.vo.ThreadPoolDataVo;
+import com.threadx.metrics.server.vo.ThreadPoolDetailPackVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -93,5 +95,10 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
         }
 
         return threadPoolDataVoThreadxPage;
+    }
+
+    @Override
+    public ThreadPoolDetailPackVo findThreadPoolDetail(ThreadPoolDetailConditions threadPoolDetailConditions) {
+        return null;
     }
 }

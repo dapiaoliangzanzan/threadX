@@ -1,10 +1,10 @@
 <template>
     <div>
         <div></div>
-        <div>
+        <div class="row-div">
             <el-descriptions
                 class="margin-top"
-                :column="6"
+                :column="3"
                 size="small"
                 border
             >
@@ -18,7 +18,7 @@
                             所属服务
                         </el-tooltip>
                     </template>
-                    <el-tag size="small">测试服务</el-tag>
+                    测试服务
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -31,37 +31,8 @@
                             所属实例
                         </el-tooltip>
                     </template>
-                    <el-tag size="small">测试实例</el-tag>
+                    测试实例
                 </el-descriptions-item>
-
-                <el-descriptions-item>
-                    <template #label>
-                        <el-tooltip
-                        effect="dark"
-                        content="当前线程池的状态，活跃证明线程池正在执行任务，否则是等待！"
-                        placement="top-start"
-                        >
-                            线程池状态
-                        </el-tooltip>
-                        
-                    </template>
-                    <el-tag size="small">活跃</el-tag>
-                </el-descriptions-item>
-
-                <el-descriptions-item>
-                    <template #label>
-                        <el-tooltip
-                        effect="dark"
-                        content="给定的健康阈值，当线程池的错误率（包含拒绝任务）(错误数/总数) > 阈值，则触发告警！"
-                        placement="top-start"
-                        >
-                            健康阈值
-                        </el-tooltip>
-                        
-                    </template>
-                    <el-tag size="small">0.89</el-tag>
-                </el-descriptions-item>
-
 
                 <el-descriptions-item>
                     <template #label>
@@ -74,7 +45,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">com.byit.zio.TeestClass#main:32</el-tag>
+                    com.byit.zio.TeestClass#main:32
                 </el-descriptions-item>
 
 
@@ -89,7 +60,79 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">com.byit.zio.TeestClass#main:32-126372136736187</el-tag>
+                    com.byit.zio.TeestClass#main:32-126372136736187
+                </el-descriptions-item>
+
+                <el-descriptions-item>
+                    <template #label>
+                        <el-tooltip
+                        effect="dark"
+                        content="当前线程池的状态，活跃证明线程池正在执行任务，否则是等待！"
+                        placement="top-start"
+                        >
+                            线程池状态
+                        </el-tooltip>
+                        
+                    </template>
+                    活跃
+                </el-descriptions-item>
+
+                <el-descriptions-item>
+                    <template #label>
+                        <el-tooltip
+                        effect="dark"
+                        content="本次监控任务，所有成功与拒绝执行的比例！"
+                        placement="top-start"
+                        >
+                            拒绝比率
+                        </el-tooltip>
+                        
+                    </template>
+                    0%
+                </el-descriptions-item>
+
+                
+                <el-descriptions-item>
+                    <template #label>
+                        <el-tooltip
+                        effect="dark"
+                        content="本次监控任务的成功几率"
+                        placement="top-start"
+                        >
+                            成功率
+                        </el-tooltip>
+                        
+                    </template>
+                    100%
+                </el-descriptions-item>
+
+
+                <el-descriptions-item>
+                    <template #label>
+                        <el-tooltip
+                        effect="dark"
+                        content="本次监控任务，所有成功任务执行的平均耗时（毫秒）"
+                        placement="top-start"
+                        >
+                            任务执行平均耗时
+                        </el-tooltip>
+                        
+                    </template>
+                    478 毫秒
+                </el-descriptions-item>
+
+                <el-descriptions-item>
+                    <template #label>
+                        <el-tooltip
+                        effect="dark"
+                        content="本次监控任务，所有任务从提交到执行的等待的平均耗时（毫秒）"
+                        placement="top-start"
+                        >
+                            任务执行等待耗时
+                        </el-tooltip>
+                        
+                    </template>
+                    20 毫秒
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -103,7 +146,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">32</el-tag>
+                    32
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -116,7 +159,7 @@
                             最大线程数
                         </el-tooltip>
                     </template>
-                    <el-tag size="small">64</el-tag>
+                    64
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -129,7 +172,7 @@
                             当前活跃数
                         </el-tooltip>
                     </template>
-                    <el-tag size="small">18</el-tag>
+                    18
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -143,7 +186,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">20</el-tag>
+                    20
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -157,7 +200,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">63</el-tag>
+                    63
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -171,7 +214,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">0</el-tag>
+                    0
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -185,7 +228,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">565789</el-tag>
+                    565789
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -199,7 +242,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">565642</el-tag>
+                    565642
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -213,7 +256,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">60000</el-tag>
+                    60000
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -227,7 +270,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">10.0.120.217</el-tag>
+                    10.0.120.217
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -241,7 +284,7 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">java.util.concurrent.ArrayBlockingQueue</el-tag>
+                    java.util.concurrent.ArrayBlockingQueue
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -255,34 +298,119 @@
                         </el-tooltip>
                         
                     </template>
-                    <el-tag size="small">java.util.concurrent.ThreadPoolExecutor.AbortPolicy</el-tag>
+                    java.util.concurrent.ThreadPoolExecutor.AbortPolicy
                 </el-descriptions-item>
-
-
-
-
-
-                
-
-                
             </el-descriptions>
         </div>
 
-        <div></div>
+        <div class="row-div search" @keyup.enter="searchTaskData">
+            <div class="block">
+                <el-select v-model="resultStatus"  placeholder="结果状态"  size="large">
+                    <el-option label="成功" value="0"/>
+                    <el-option label="失败" value="1"/>
+                </el-select>
+            </div>
+
+
+            <div class="block">
+
+                <el-config-provider :locale="locale">
+                    <el-date-picker
+                    size="large"
+                    v-model="runTime"
+                    type="datetimerange"
+                    range-separator="-"
+                    start-placeholder="开始时间"
+                    end-placeholder="结束时间"
+                    
+                    />
+                </el-config-provider>
+            </div>
+
+            <div class="block">
+                <el-button type="primary" @click="searchTaskData">检索任务</el-button>
+            </div>
+            
+            
+        </div>
+
+        <div>
+            <el-table :data="taskData" style="width: 100%">
+
+                <el-table-column type="expand">
+                    <template #default="props">
+                        <div>
+                            {{ props.row.throwable === ''? "没有异常": props.row.throwable}}
+                        </div>
+                    </template>
+                </el-table-column>
+
+                <el-table-column prop="threadName" label="线程名" width="180" />
+                <el-table-column prop="submitDate" label="任务提交时间" width="180" />
+                <el-table-column prop="startTime" label="任务开始时间" />
+                <el-table-column prop="endTime" label="任务结束时间" />
+                <el-table-column prop="runIngConsumingTime" label="任务执行耗时" />
+                <el-table-column prop="waitTime" label="任务等待时间" />
+                <el-table-column prop="consumingTime" label="任务总耗时" />
+                <el-table-column prop="refuse" label="是否拒绝" />
+                <el-table-column prop="success" label="是否成功" />
+            </el-table>
+
+            <div class="pagination-block">
+                <el-pagination layout="prev, pager, next" :total="dataCountTotal" />
+            </div>
+        </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue'
+import { defineComponent , ref, reactive} from 'vue'
+import zhCn from "element-plus/lib/locale/lang/zh-cn";
+
 export default defineComponent({
     setup () {
-        
+        const threadPoolData = reactive({
 
-        return {}
+        })
+        const taskData = reactive([])
+        const resultStatus = ref('')
+        const runTime = ref('')
+        const dataCountTotal = ref(0)
+
+        const searchTaskData = ()=> {
+            console.log(123)
+        }
+
+        return {
+            taskData,
+            resultStatus,
+            locale: zhCn,
+            runTime,
+            dataCountTotal,
+            threadPoolData,
+            searchTaskData
+        }
     }
 })
 </script>
 
-<style scoped>
+<style scoped lang="scss">
+    .row-div {
+        margin-bottom: 10px;
+    }
+    .search {
+        display: flex;
+        width: 100%;
+        justify-content: flex-end;
+        align-items: center;
+       .block {
+        margin-left: 10px;
+       }
 
+    }
+
+    .pagination-block {
+        display: flex;
+        justify-content: flex-end;
+    }
 </style>
