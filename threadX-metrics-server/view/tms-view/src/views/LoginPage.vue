@@ -21,7 +21,7 @@
                         <el-input type="text" @keyup.enter="loginSubmit(ruleFormRef)" v-model="userLoginForm.userName" placeholder="账号"/>
                     </el-form-item>
                     <el-form-item label="" prop="password">
-                        <el-input type="password" @keyup.enter="loginSubmit(ruleFormRef)" v-model="userLoginForm.password" placeholder="密码" @mouseleave="removePasswordFocus" @mouseenter="passwordFocus" id="password" />
+                        <el-input type="password" @keyup.enter="loginSubmit(ruleFormRef)" v-model="userLoginForm.password" placeholder="密码" @blur="removePasswordFocus" @focus="passwordFocus" id="password" />
                     </el-form-item>
                     <el-form-item>
                         <el-button type="primary" @click="loginSubmit(ruleFormRef)">登录</el-button>
