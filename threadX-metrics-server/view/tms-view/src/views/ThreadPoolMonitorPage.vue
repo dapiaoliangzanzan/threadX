@@ -357,28 +357,55 @@
             </el-table>
 
             <div class="pagination-block">
-                <el-pagination layout="prev, pager, next" :total="dataCountTotal" />
+                <el-pagination @current-change="changePage" v-model:page-sizes="pageSizes" v-model:current-page="thisPage" pager-count="10" layout="prev, pager, next" :total="dataCountTotal" />
             </div>
         </div>
     </div>
 </template>
 
 <script lang="ts">
-import { defineComponent , ref, reactive} from 'vue'
+import { defineComponent , ref, reactive, onMounted} from 'vue'
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
+import router from '@/router'
 
 export default defineComponent({
     setup () {
-        const threadPoolData = reactive({
-
-        })
+        onMounted(() =>{
+            loadRouterParam()
+        });
+        //定义传递的线程池名称
+        const threadPoolName = ref()
+        //定义传递的实例的id信息
+        const instanceId = ref()
+        //线程池的数据信息
+        const threadPoolData = reactive({})
+        //线程池下的任务信息
         const taskData = reactive([])
+        //单选筛选结果
         const resultStatus = ref('')
+        //筛选事件
         const runTime = ref('')
-        const dataCountTotal = ref(0)
+        //任务信息总条数
+        const dataCountTotal = ref(1000)
+        //当前页码
+        const thisPage = ref(1)
+        //每一页显示10
+        const pageSizes = ref(10)	
 
         const searchTaskData = ()=> {
             console.log(123)
+        }
+
+        const changePage = ()=>{
+            console.log(thisPage.value)
+        }
+
+        /**
+         * 加载路由参数
+         */
+        const loadRouterParam = ()=>{
+            threadPoolName.value = router.currentRoute.value.query.threadPoolName
+            instanceId.value = router.currentRoute.value.query.instanceId
         }
 
         return {
@@ -388,7 +415,10 @@ export default defineComponent({
             runTime,
             dataCountTotal,
             threadPoolData,
-            searchTaskData
+            thisPage,
+            pageSizes,
+            searchTaskData,
+            changePage
         }
     }
 })

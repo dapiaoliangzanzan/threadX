@@ -80,7 +80,7 @@
                                 link
                                 type="primary"
                                 size="small"
-                                @click.prevent="instanceDetailsPage(scope.row.id)">
+                                @click.prevent="threadPoolDetailsPage(scope.row.instanceId, scope.row.threadPoolName)">
                                     <span class="truncate-text">{{ scope.row.threadPoolName.length > 30 ? scope.row.threadPoolName.substring(0, 30) + '...' : scope.row.threadPoolGroupName }}</span>
                                 </el-button>
                             </el-tooltip>  
@@ -173,6 +173,7 @@ import { defineComponent,ref,computed, onMounted, reactive } from 'vue'
 import * as instanceRequest from '../services/instanceService'
 import * as taskRequest from '../services/taskService'
 import '../assets/css/index.css'
+import { useRouter } from 'vue-router';
 
 export default defineComponent({
     setup () {
@@ -180,6 +181,8 @@ export default defineComponent({
             commonlyUsedTop10()
             errorTaskThreadPoolTop()
         });
+        const router = useRouter();
+
         //当前屏幕的高度
         const windowHeight = ref(window.innerHeight);
         //内容的高度
@@ -227,6 +230,21 @@ export default defineComponent({
             errorTaskThreadPoolTopList.value = await taskRequest.findThreadTaskDataErrorCalculationTop10()
         }
 
+        /**
+         * 跳转页面到线程池详情页面，携带线程池的id信息
+         * 
+         * @param threadPoolId 点击的线程池的id
+         */
+        const threadPoolDetailsPage = (instanceId:string, threadPoolName:string)=>{
+            router.push({
+                name:'ThreadPoolMonitor',
+                query: {
+                    instanceId:instanceId,
+                    threadPoolName:threadPoolName
+                }
+            })
+        }
+
         return {
             instanceList,
             errorTaskThreadPoolTopList,
@@ -236,7 +254,8 @@ export default defineComponent({
             instanceStateTagType,
             commonlyUsedTop10,
             errorTaskThreadPoolTop,
-            instanceDetailsPage
+            instanceDetailsPage,
+            threadPoolDetailsPage
         }
     }
 })
