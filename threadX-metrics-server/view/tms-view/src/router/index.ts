@@ -22,8 +22,7 @@ const routes: Array<RouteRecordRaw> = [
       },{
         path: '/threadPoolMonitor',
         name: 'ThreadPoolMonitor',
-        component: () => import('../views/ThreadPoolMonitorPage.vue'),
-        props: route => ({param: route.query.param})
+        component: () => import('../views/ThreadPoolMonitorPage.vue')
       }
     ]
   }

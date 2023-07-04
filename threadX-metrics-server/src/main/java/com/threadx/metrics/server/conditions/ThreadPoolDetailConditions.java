@@ -58,4 +58,16 @@ public class ThreadPoolDetailConditions implements Serializable {
      */
     @ApiModelProperty(name = "resultState", value = "结果状态")
     private String resultState;
+
+    /**
+     * 当前页码
+     */
+    @ApiModelProperty(name = "thisPage", value = "当前页码")
+    private Integer thisPage;
+
+    /**
+     * 当前页码
+     */
+    @ApiModelProperty(name = "pageSizes", value = "每页容量")
+    private Integer pageSizes;
 }

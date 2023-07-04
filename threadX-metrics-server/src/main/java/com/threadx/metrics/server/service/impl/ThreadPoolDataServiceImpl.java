@@ -16,6 +16,7 @@ import com.threadx.metrics.server.mapper.ThreadPoolDataMapper;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.vo.ThreadPoolDataVo;
 import com.threadx.metrics.server.vo.ThreadPoolDetailPackVo;
+import com.threadx.metrics.server.vo.ThreadPoolDetailsVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -99,6 +100,48 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
 
     @Override
     public ThreadPoolDetailPackVo findThreadPoolDetail(ThreadPoolDetailConditions threadPoolDetailConditions) {
+        //先查询最新的线程池的详情信息
+        String threadPoolName = threadPoolDetailConditions.getThreadPoolName();
+        Long instanceId = threadPoolDetailConditions.getInstanceId();
+        Long threadPoolDataId = threadPoolDetailConditions.getThreadPoolDataId();
+
+        if(threadPoolDataId == null) {
+            if (instanceId== null || StrUtil.isBlank(threadPoolName)) {
+                throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+            }
+        }
+        ThreadPoolData threadPoolData;
+        if(threadPoolDataId != null) {
+            QueryWrapper<ThreadPoolData> threadPoolDataQueryWrapper = new QueryWrapper<>();
+            threadPoolDataQueryWrapper.eq("id", threadPoolDataId);
+            threadPoolData = baseMapper.selectOne(threadPoolDataQueryWrapper);
+        }else {
+            threadPoolData = baseMapper.findByMaxIdAndThreadPoolNameAndInstanceId(threadPoolName, instanceId);
+        }
+        ThreadPoolDetailPackVo threadPoolDetailPackVo = new ThreadPoolDetailPackVo();
+        ThreadPoolDetailsVo threadPoolDetailsVo = buildThreadPoolDetail(threadPoolData);
+        threadPoolDetailPackVo.setThreadPoolDetailsVo(threadPoolDetailsVo);
+        return null;
+    }
+
+    private ThreadPoolDetailsVo buildThreadPoolDetail(ThreadPoolData threadPoolData) {
+        ThreadPoolDetailsVo threadPoolDetailsVo = new ThreadPoolDetailsVo();
+        threadPoolDetailsVo.setThreadPoolName(threadPoolData.getThreadPoolName());
+        threadPoolDetailsVo.setActiveCount(threadPoolData.getActiveCount());
+        threadPoolDetailsVo.setThreadPoolGroupName(threadPoolData.getThreadPoolGroupName());
+        threadPoolDetailsVo.setCollectAddress(threadPoolData.getAddress());
+        threadPoolDetailsVo.setCompletedCount(threadPoolData.getCompletedTaskCount());
+        threadPoolDetailsVo.setCoreSize(threadPoolData.getCorePoolSize());
+        threadPoolDetailsVo.setMaxSize(threadPoolData.getMaximumPoolSize());
+        threadPoolDetailsVo.setQueueType(threadPoolData.getQueueType());
+        threadPoolDetailsVo.setRefuseCount(threadPoolData.getRejectedCount());
+        threadPoolDetailsVo.setRefuseType(threadPoolData.getRejectedType());
+        threadPoolDetailsVo.setFreeTime(threadPoolData.getKeepAliveTime());
+        threadPoolDetailsVo.setTaskTotalCount(threadPoolData.getTaskCount());
+        threadPoolDetailsVo.setSurviveThreadCount(threadPoolData.getThisThreadCount());
+        threadPoolDetailsVo.setHistoryMaxThreadCount(threadPoolData.getLargestPoolSize());
+        threadPoolDetailsVo.setInstanceId(threadPoolData.getInstanceId());
+        threadPoolDetailsVo.setInstanceName(threadPoolData.getInstanceKey());
         return null;
     }
 }

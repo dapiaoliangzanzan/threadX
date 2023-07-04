@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.threadx.metrics.server.mapper.ThreadPoolDataMapper">
+
+    <resultMap id="threadPoolData" type="com.threadx.metrics.server.entity.ThreadPoolData">
+        <id property="id" column="id"/>
+        <result property="serverKey" column="server_key"/>
+        <result property="instanceKey" column="instance_key"/>
+        <result property="address" column="address"/>
+        <result property="threadPoolGroupName" column="thread_pool_group_name"/>
+        <result property="threadPoolName" column="thread_pool_name"/>
+        <result property="corePoolSize" column="core_pool_size"/>
+        <result property="maximumPoolSize" column="maximum_pool_size"/>
+        <result property="activeCount" column="active_count"/>
+        <result property="thisThreadCount" column="this_thread_count"/>
+        <result property="largestPoolSize" column="largest_pool_size"/>
+        <result property="rejectedCount" column="rejected_count"/>
+        <result property="taskCount" column="task_count"/>
+        <result property="completedTaskCount" column="completed_task_count"/>
+        <result property="queueType" column="queue_type"/>
+        <result property="rejectedType" column="rejected_type"/>
+        <result property="keepAliveTime" column="keep_alive_time"/>
+        <result property="instanceId" column="instance_id"/>
+        <result property="createTime" column="create_time"/>
+        <result property="updateTime" column="update_time"/>
+    </resultMap>
+
+
+    <select id="findByMaxIdAndThreadPoolNameAndInstanceId" resultMap="threadPoolData">
+        SELECT *
+        FROM thread_pool_data
+        WHERE id = (
+            SELECT MAX(id)
+            FROM thread_pool_data
+            WHERE thread_pool_name = #{threadPoolName} and instance_id = #{instanceId}
+        )
+
+    </select>
+</mapper>
