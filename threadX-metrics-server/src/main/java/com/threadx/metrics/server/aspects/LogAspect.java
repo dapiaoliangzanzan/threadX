@@ -1,5 +1,6 @@
 package com.threadx.metrics.server.aspects;
 
+import cn.hutool.json.JSONUtil;
 import com.threadx.metrics.server.common.annotations.Log;
 import com.threadx.metrics.server.common.context.LoginContext;
 import com.threadx.metrics.server.constant.LogConstant;
@@ -36,6 +37,7 @@ public class LogAspect {
         activeLog.setStartTime(startTime);
         Object result;
         try {
+            getParam(activeLog, joinPoint);
             result = joinPoint.proceed();
             activeLog.setResultState(LogConstant.SUCCESS);
         } catch (Throwable throwable) {
@@ -81,5 +83,23 @@ public class LogAspect {
         }
 
         return result;
+    }
+
+    private void getParam(ActiveLog activeLog, ProceedingJoinPoint joinPoint) {
+        Object[] args = joinPoint.getArgs();
+        MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
+        Method method = methodSignature.getMethod();
+        Class<?>[] parameterTypes = method.getParameterTypes();
+
+        // 遍历方法参数，获取参数信息并转换为字符串
+        StringBuilder paramInfo = new StringBuilder();
+        for (int i = 0; i < args.length; i++) {
+            Object arg = args[i];
+            Class<?> paramType = parameterTypes[i];
+            // 将参数信息转换为字符串
+            String argString = paramType.getSimpleName() + ": " + JSONUtil.toJsonStr(arg);
+            paramInfo.append(argString).append("\n");
+        }
+        activeLog.setParamData(paramInfo.toString());
     }
 }

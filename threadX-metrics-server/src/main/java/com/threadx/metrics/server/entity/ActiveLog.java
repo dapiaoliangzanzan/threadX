@@ -77,5 +77,10 @@ public class ActiveLog extends BaseEntity {
      */
     private String errorMessage;
 
+    /**
+     * 参数信息
+     */
+    private String paramData;
+
 
 }
