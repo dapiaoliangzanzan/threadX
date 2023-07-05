@@ -49,6 +49,7 @@ class ApiUtils {
       } else {
         // 隐藏进度条
         NProgress.done();
+
         ElMessage.error(message)
         if(ErrorStatusConstants.USER_NOT_LOGIN_ERROR === code) {
           LocalStorageUtil.logoutDataRemove()

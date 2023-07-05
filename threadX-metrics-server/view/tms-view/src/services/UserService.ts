@@ -19,6 +19,8 @@ class UserService{
             const nickName = userVo.nickName
             LocalStorageUtil.loginDataSave(token, nickName)
             router.push('/worktable')
+        }).catch(error =>{
+            console.log(error)
         })
         
     }
