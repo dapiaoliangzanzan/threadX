@@ -22,13 +22,6 @@ import java.io.Serializable;
 @ApiModel(description = "线程池数据查询", value = "线程池数据查询")
 public class ThreadPoolDetailConditions implements Serializable {
     private static final long serialVersionUID = -7007445637309401448L;
-
-    /**
-     * 开始时间
-     */
-    @ApiModelProperty(name = "startTime", value = "开始时间")
-    private String startTime;
-
     /**
      * 实例的Id
      */
@@ -47,27 +40,4 @@ public class ThreadPoolDetailConditions implements Serializable {
     @ApiModelProperty(name = "threadPoolName", value = "线程池的名称")
     private String threadPoolName;
 
-    /**
-     * 结束时间
-     */
-    @ApiModelProperty(name = "endTime", value = "结束时间")
-    private String endTime;
-
-    /**
-     * 结果状态
-     */
-    @ApiModelProperty(name = "resultState", value = "结果状态")
-    private String resultState;
-
-    /**
-     * 当前页码
-     */
-    @ApiModelProperty(name = "thisPage", value = "当前页码")
-    private Integer thisPage;
-
-    /**
-     * 当前页码
-     */
-    @ApiModelProperty(name = "pageSizes", value = "每页容量")
-    private Integer pageSizes;
 }

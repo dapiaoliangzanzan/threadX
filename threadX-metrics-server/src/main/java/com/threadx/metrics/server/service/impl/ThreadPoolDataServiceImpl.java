@@ -99,7 +99,7 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
     }
 
     @Override
-    public ThreadPoolDetailPackVo findThreadPoolDetail(ThreadPoolDetailConditions threadPoolDetailConditions) {
+    public ThreadPoolDetailsVo findThreadPoolDetail(ThreadPoolDetailConditions threadPoolDetailConditions) {
         //先查询最新的线程池的详情信息
         String threadPoolName = threadPoolDetailConditions.getThreadPoolName();
         Long instanceId = threadPoolDetailConditions.getInstanceId();
@@ -118,10 +118,7 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
         }else {
             threadPoolData = baseMapper.findByMaxIdAndThreadPoolNameAndInstanceId(threadPoolName, instanceId);
         }
-        ThreadPoolDetailPackVo threadPoolDetailPackVo = new ThreadPoolDetailPackVo();
-        ThreadPoolDetailsVo threadPoolDetailsVo = buildThreadPoolDetail(threadPoolData);
-        threadPoolDetailPackVo.setThreadPoolDetailsVo(threadPoolDetailsVo);
-        return null;
+        return buildThreadPoolDetail(threadPoolData);
     }
 
     private ThreadPoolDetailsVo buildThreadPoolDetail(ThreadPoolData threadPoolData) {
@@ -142,6 +139,7 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
         threadPoolDetailsVo.setHistoryMaxThreadCount(threadPoolData.getLargestPoolSize());
         threadPoolDetailsVo.setInstanceId(threadPoolData.getInstanceId());
         threadPoolDetailsVo.setInstanceName(threadPoolData.getInstanceKey());
-        return null;
+        threadPoolDetailsVo.setServerName(threadPoolData.getServerKey());
+        return threadPoolDetailsVo;
     }
 }

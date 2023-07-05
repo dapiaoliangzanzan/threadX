@@ -5,6 +5,7 @@ import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.vo.ThreadPoolDataVo;
 import com.threadx.metrics.server.vo.ThreadPoolDetailPackVo;
+import com.threadx.metrics.server.vo.ThreadPoolDetailsVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 
 import java.util.Collection;
@@ -41,5 +42,5 @@ public interface ThreadPoolDataService {
      * @param threadPoolDetailConditions 实例详情查询
      * @return 实例的详情
      */
-    ThreadPoolDetailPackVo findThreadPoolDetail(ThreadPoolDetailConditions threadPoolDetailConditions);
+    ThreadPoolDetailsVo findThreadPoolDetail(ThreadPoolDetailConditions threadPoolDetailConditions);
 }

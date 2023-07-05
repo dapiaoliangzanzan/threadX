@@ -5,6 +5,7 @@ import com.threadx.metrics.server.common.annotations.Login;
 import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.vo.ThreadPoolDetailPackVo;
+import com.threadx.metrics.server.vo.ThreadPoolDetailsVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -32,7 +33,7 @@ public class ThreadPoolDataController {
     @Login
     @ApiOperation(value = "查询实例详情")
     @PostMapping("findThreadPoolDetail")
-    public ThreadPoolDetailPackVo findThreadPoolDetail(@RequestBody ThreadPoolDetailConditions threadPoolDetailConditions) {
+    public ThreadPoolDetailsVo findThreadPoolDetail(@RequestBody ThreadPoolDetailConditions threadPoolDetailConditions) {
         return threadPoolDataService.findThreadPoolDetail(threadPoolDetailConditions);
     }
 }

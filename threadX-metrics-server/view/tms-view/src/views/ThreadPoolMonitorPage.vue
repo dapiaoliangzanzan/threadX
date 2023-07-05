@@ -18,7 +18,7 @@
                             所属服务
                         </el-tooltip>
                     </template>
-                    测试服务
+                    {{ threadPoolData.serverName }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -31,7 +31,7 @@
                             所属实例
                         </el-tooltip>
                     </template>
-                    测试实例
+                    {{ threadPoolData.instanceName }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -45,7 +45,7 @@
                         </el-tooltip>
                         
                     </template>
-                    com.byit.zio.TeestClass#main:32
+                    {{ threadPoolData.threadPoolGroupName }}
                 </el-descriptions-item>
 
 
@@ -60,7 +60,7 @@
                         </el-tooltip>
                         
                     </template>
-                    com.byit.zio.TeestClass#main:32-126372136736187
+                    {{ threadPoolData.threadPoolName }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -74,7 +74,7 @@
                         </el-tooltip>
                         
                     </template>
-                    活跃
+                    {{ threadPoolData.state }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -146,7 +146,7 @@
                         </el-tooltip>
                         
                     </template>
-                    32
+                    {{ threadPoolData.coreSize }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -159,7 +159,7 @@
                             最大线程数
                         </el-tooltip>
                     </template>
-                    64
+                    {{ threadPoolData.maxSize }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -172,7 +172,7 @@
                             当前活跃数
                         </el-tooltip>
                     </template>
-                    18
+                    {{ threadPoolData.activeCount }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -182,11 +182,11 @@
                         content="当前线程池从本次监控开始的线程数量，包含没有执行任务的线程还没有来得及被销毁的非核心线程"
                         placement="top-start"
                         >
-                            当前线程数量
+                            存活线程数
                         </el-tooltip>
                         
                     </template>
-                    20
+                    {{ threadPoolData.surviveThreadCount }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -200,7 +200,7 @@
                         </el-tooltip>
                         
                     </template>
-                    63
+                    {{ threadPoolData.historyMaxThreadCount }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -214,7 +214,7 @@
                         </el-tooltip>
                         
                     </template>
-                    0
+                    {{ threadPoolData.refuseCount }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -228,7 +228,7 @@
                         </el-tooltip>
                         
                     </template>
-                    565789
+                    {{ threadPoolData.taskTotalCount }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -242,7 +242,7 @@
                         </el-tooltip>
                         
                     </template>
-                    565642
+                    {{ threadPoolData.completedCount }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -256,7 +256,7 @@
                         </el-tooltip>
                         
                     </template>
-                    60000
+                    {{ threadPoolData.freeTime }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -270,7 +270,7 @@
                         </el-tooltip>
                         
                     </template>
-                    10.0.120.217
+                    {{ threadPoolData.collectAddress }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -284,7 +284,7 @@
                         </el-tooltip>
                         
                     </template>
-                    java.util.concurrent.ArrayBlockingQueue
+                    {{ threadPoolData.queueType }}
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -298,7 +298,7 @@
                         </el-tooltip>
                         
                     </template>
-                    java.util.concurrent.ThreadPoolExecutor.AbortPolicy
+                    {{ threadPoolData.refuseType }}
                 </el-descriptions-item>
             </el-descriptions>
         </div>
@@ -364,23 +364,27 @@
 </template>
 
 <script lang="ts">
-import { defineComponent , ref, reactive, onMounted} from 'vue'
+import { defineComponent , ref, reactive, onMounted, onBeforeMount} from 'vue'
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import router from '@/router'
+import ThreadPoolService from '@/services/ThreadPoolService';
+
 
 export default defineComponent({
     setup () {
         onMounted(() =>{
-            loadRouterParam()
+            loadRouterParam();
+            loadThreadPoolData();
         });
+
         //定义传递的线程池名称
         const threadPoolName = ref()
         //定义传递的实例的id信息
         const instanceId = ref()
         //线程池的数据信息
-        const threadPoolData = reactive({})
+        const threadPoolData = ref({})
         //线程池下的任务信息
-        const taskData = reactive([])
+        const taskData = ref([])
         //单选筛选结果
         const resultStatus = ref('')
         //筛选事件
@@ -401,6 +405,16 @@ export default defineComponent({
         }
 
         /**
+         * 加载线程池的数据
+         */
+        const loadThreadPoolData = async ()=>{
+            threadPoolData.value = await ThreadPoolService.findThreadPoolDetail({
+                instanceId: instanceId.value,
+                threadPoolName: threadPoolName.value
+            })
+        }
+
+        /**
          * 加载路由参数
          */
         const loadRouterParam = ()=>{
@@ -418,7 +432,8 @@ export default defineComponent({
             thisPage,
             pageSizes,
             searchTaskData,
-            changePage
+            changePage,
+            loadThreadPoolData
         }
     }
 })
