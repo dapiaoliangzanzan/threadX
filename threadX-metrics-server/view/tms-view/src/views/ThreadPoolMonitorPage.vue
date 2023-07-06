@@ -84,11 +84,11 @@
                         content="本次监控任务，所有成功与拒绝执行的比例！"
                         placement="top-start"
                         >
-                            拒绝比率
+                            拒绝率
                         </el-tooltip>
                         
                     </template>
-                    0%
+                    {{ threadPoolData.refuseRate }}
                 </el-descriptions-item>
 
                 
@@ -103,7 +103,7 @@
                         </el-tooltip>
                         
                     </template>
-                    100%
+                    {{ threadPoolData.successRate }}
                 </el-descriptions-item>
 
 
@@ -118,7 +118,7 @@
                         </el-tooltip>
                         
                     </template>
-                    478 毫秒
+                    {{ threadPoolData.averageTimeConsuming }} 毫秒
                 </el-descriptions-item>
 
                 <el-descriptions-item>
@@ -132,7 +132,7 @@
                         </el-tooltip>
                         
                     </template>
-                    20 毫秒
+                    {{ threadPoolData.averageWaitTimeConsuming }} 毫秒
                 </el-descriptions-item>
 
                 <el-descriptions-item>

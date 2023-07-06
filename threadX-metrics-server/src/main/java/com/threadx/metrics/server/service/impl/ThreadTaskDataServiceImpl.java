@@ -15,9 +15,7 @@ import com.threadx.metrics.server.entity.ThreadTaskData;
 import com.threadx.metrics.server.mapper.ThreadTaskDataMapper;
 import com.threadx.metrics.server.service.InstanceItemService;
 import com.threadx.metrics.server.service.ThreadTaskDataService;
-import com.threadx.metrics.server.vo.ThreadTaskDataErrorTop;
-import com.threadx.metrics.server.vo.ThreadTaskVo;
-import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -89,24 +87,24 @@ public class ThreadTaskDataServiceImpl extends ServiceImpl<ThreadTaskDataMapper,
         queryWrapper.eq("thread_pool_name", threadPoolName);
         queryWrapper.eq("instance_id", instanceId);
 
-        if(StrUtil.isNotBlank(startTimeStr)) {
+        if (StrUtil.isNotBlank(startTimeStr)) {
             long startTime = DateUtil.parse(startTimeStr, "yyyy-MM-dd HH:mm:ss").getTime();
             queryWrapper.ge("start_time", startTime);
         }
 
-        if(StrUtil.isNotBlank(endTimeStr)) {
+        if (StrUtil.isNotBlank(endTimeStr)) {
             long endTime = DateUtil.parse(endTimeStr, "yyyy-MM-dd HH:mm:ss").getTime();
             queryWrapper.le("end_time", endTime);
         }
 
-        if(StrUtil.isBlank(sortName) || StrUtil.isBlank(sortType)) {
+        if (StrUtil.isBlank(sortName) || StrUtil.isBlank(sortType)) {
             sortName = "create_time";
             sortType = "1";
         }
 
-        if("0".equals(sortType)){
+        if ("0".equals(sortType)) {
             queryWrapper.orderByAsc(sortName);
-        }else {
+        } else {
             queryWrapper.orderByDesc(sortName);
         }
 
@@ -122,9 +120,9 @@ public class ThreadTaskDataServiceImpl extends ServiceImpl<ThreadTaskDataMapper,
             ThreadTaskVo threadTaskVo = new ThreadTaskVo();
             threadTaskVo.setId(record.getId());
             String threadName = record.getThreadName();
-            if(StrUtil.isBlank(threadName)) {
+            if (StrUtil.isBlank(threadName)) {
                 threadTaskVo.setThreadName("X【未分配线程】");
-            }else {
+            } else {
                 threadTaskVo.setThreadName(threadName);
             }
 
@@ -137,7 +135,7 @@ public class ThreadTaskDataServiceImpl extends ServiceImpl<ThreadTaskDataMapper,
             threadTaskVo.setSuccess(record.isSuccess());
             threadTaskVo.setRefuse(record.isRefuse());
             threadTaskVo.setThrowable(record.getThrowable());
-            if(record.isRefuse()) {
+            if (record.isRefuse()) {
                 threadTaskVo.setThrowable("该任务被拒绝执行！");
             }
             return threadTaskVo;
@@ -148,6 +146,16 @@ public class ThreadTaskDataServiceImpl extends ServiceImpl<ThreadTaskDataMapper,
         threadTaskDataThreadxPage.setTotal(page.getTotal());
 
         return threadTaskDataThreadxPage;
+    }
+
+    @Override
+    public ThreadTaskRateVo findRateByInstanceIdAndThreadPoolName(String threadPoolName, Long instanceId) {
+        return baseMapper.findRateByInstanceIdAndThreadPoolName(threadPoolName, instanceId);
+    }
+
+    @Override
+    public ThreadTaskAvgVo findAvgByInstanceIdAndThreadPoolName(String threadPoolName, Long instanceId) {
+        return baseMapper.findAvgByInstanceIdAndThreadPoolName(threadPoolName, instanceId);
     }
 
     @Override

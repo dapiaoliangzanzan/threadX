@@ -32,4 +32,27 @@
             error_count DESC
             LIMIT #{limit};
     </select>
+
+
+    <select id="findRateByInstanceIdAndThreadPoolName" resultType="com.threadx.metrics.server.vo.ThreadTaskRateVo">
+
+        SELECT
+            ROUND(SUM( success ) / COUNT(*), 2 ) * 100 AS successRate,
+            ROUND(SUM( refuse ) / COUNT(*), 2 ) * 100 AS refuseRate
+        FROM
+            thread_task_data
+        WHERE
+            thread_pool_name = #{threadPoolName} AND instance_id = #{instanceId}
+    </select>
+
+
+    <select id="findAvgByInstanceIdAndThreadPoolName" resultType="com.threadx.metrics.server.vo.ThreadTaskAvgVo">
+        SELECT
+            ROUND( AVG( runIng_consuming_time ), 2 ) AS averageTimeConsuming,
+            ROUND( AVG( wait_time ), 2 ) AS averageWaitTimeConsuming
+        FROM
+            thread_task_data
+        WHERE
+            thread_pool_name = #{threadPoolName} AND instance_id = #{instanceId} AND success = '1';
+    </select>
 </mapper>

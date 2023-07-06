@@ -7,24 +7,27 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
+import com.threadx.metrics.server.common.context.LoginContext;
 import com.threadx.metrics.server.common.exceptions.GeneralException;
 import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
 import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
+import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.mapper.ThreadPoolDataMapper;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.service.ThreadTaskDataService;
-import com.threadx.metrics.server.vo.ThreadPoolDataVo;
-import com.threadx.metrics.server.vo.ThreadPoolDetailsVo;
-import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 /**
@@ -44,6 +47,11 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
     @Autowired
     private ThreadTaskDataService threadTaskDataService;
 
+    @Value("${threadx.thread.pool.timeout}")
+    private Long threadPoolTimeOut;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
 
     @Override
     public void batchSave(Collection<ThreadPoolData> collection) {
@@ -124,7 +132,24 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
         }else {
             threadPoolData = baseMapper.findByMaxIdAndThreadPoolNameAndInstanceId(threadPoolName, instanceId);
         }
-        return buildThreadPoolDetail(threadPoolData);
+        ThreadPoolDetailsVo threadPoolDetailsVo = buildThreadPoolDetail(threadPoolData);
+        ThreadTaskAvgVo avgByInstanceIdAndThreadPoolName = threadTaskDataService.findAvgByInstanceIdAndThreadPoolName(threadPoolName, instanceId);
+        ThreadTaskRateVo rateByInstanceIdAndThreadPoolName = threadTaskDataService.findRateByInstanceIdAndThreadPoolName(threadPoolName, instanceId);
+        threadPoolDetailsVo.setAverageTimeConsuming(avgByInstanceIdAndThreadPoolName.getAverageTimeConsuming());
+        threadPoolDetailsVo.setAverageWaitTimeConsuming(avgByInstanceIdAndThreadPoolName.getAverageWaitTimeConsuming());
+        threadPoolDetailsVo.setRefuseRate(rateByInstanceIdAndThreadPoolName.getRefuseRate() + "%");
+        threadPoolDetailsVo.setSuccessRate(rateByInstanceIdAndThreadPoolName.getSuccessRate() + "%");
+
+
+        //对查看的数据进行计数
+        UserVo userData = LoginContext.getUserData();
+        Long userId = userData.getId();
+        String clickCountCacheKey = String.format(RedisCacheKey.USER_CLICK_INSTANCE_COUNT, userId);
+        //对点击的实例进行累加，以方便计算top10
+        redisTemplate.opsForZSet().incrementScore(clickCountCacheKey, instanceId + "", 1);
+        redisTemplate.expire(clickCountCacheKey, 7, TimeUnit.DAYS);
+
+        return threadPoolDetailsVo;
     }
 
     private ThreadPoolDetailsVo buildThreadPoolDetail(ThreadPoolData threadPoolData) {
@@ -146,6 +171,12 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
         threadPoolDetailsVo.setInstanceId(threadPoolData.getInstanceId());
         threadPoolDetailsVo.setInstanceName(threadPoolData.getInstanceKey());
         threadPoolDetailsVo.setServerName(threadPoolData.getServerKey());
+        Long createTime = threadPoolData.getCreateTime();
+        if((System.currentTimeMillis() - createTime) < TimeUnit.SECONDS.toMillis(threadPoolTimeOut)) {
+            threadPoolDetailsVo.setState("活跃");
+        }else {
+            threadPoolDetailsVo.setState("等待任务或断联");
+        }
         return threadPoolDetailsVo;
     }
 }

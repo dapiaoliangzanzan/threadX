@@ -16,6 +16,11 @@
       "description": "监测当前实例过期的时间，也就是页面上显示的是否断联的时间！单位：秒"
     },
     {
+      "name": "threadx.thread.pool.timeout",
+      "type": "java.lang.Long",
+      "description": "监测当前线程池的过期的时间！单位：秒"
+    },
+    {
       "name": "threadx.web.jwt.privateKey",
       "type": "java.lang.String",
       "description": "jwt token 私钥信息"

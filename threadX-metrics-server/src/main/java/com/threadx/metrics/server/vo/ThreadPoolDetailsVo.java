@@ -63,13 +63,13 @@ public class ThreadPoolDetailsVo implements Serializable {
      * 执行平均耗时
      */
     @ApiModelProperty(name = "averageTimeConsuming", value = "执行平均耗时")
-    private Long averageTimeConsuming;
+    private String averageTimeConsuming;
 
     /**
      * 平均等待耗时
      */
     @ApiModelProperty(name = "averageWaitTimeConsuming", value = "平均等待耗时")
-    private Long averageWaitTimeConsuming;
+    private String averageWaitTimeConsuming;
 
     /**
      * 线程池组的名称

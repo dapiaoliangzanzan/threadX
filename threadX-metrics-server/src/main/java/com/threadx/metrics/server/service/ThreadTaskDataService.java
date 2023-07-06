@@ -4,9 +4,8 @@ import com.threadx.metrics.server.conditions.ThreadTaskConditions;
 import com.threadx.metrics.server.dto.ThreadTaskDataErrorCalculation;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.entity.ThreadTaskData;
-import com.threadx.metrics.server.vo.ThreadTaskDataErrorTop;
-import com.threadx.metrics.server.vo.ThreadTaskVo;
-import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.*;
+import org.apache.ibatis.annotations.Param;
 
 import java.util.Collection;
 import java.util.List;
@@ -36,6 +35,24 @@ public interface ThreadTaskDataService {
      * @return 线程任务
      */
     ThreadxPage<ThreadTaskVo> findByThreadTaskConditions(ThreadTaskConditions threadTaskConditions);
+
+
+    /**
+     * 查询 根据实例id和线程池名称查询对象线程池的 成功率和拒绝率
+     * @param threadPoolName 线程池名称
+     * @param instanceId 实例的id
+     * @return 成功率和拒绝率
+     */
+    ThreadTaskRateVo findRateByInstanceIdAndThreadPoolName(String threadPoolName, Long instanceId);
+
+    /**
+     * 查询 根据实例id和线程池名称查询对象线程池的 成功率和拒绝率
+     * @param threadPoolName 线程池名称
+     * @param instanceId 实例的id
+     * @return 成功率和拒绝率
+     */
+    ThreadTaskAvgVo findAvgByInstanceIdAndThreadPoolName(String threadPoolName, Long instanceId);
+
 
     /**
      * 批量保存
