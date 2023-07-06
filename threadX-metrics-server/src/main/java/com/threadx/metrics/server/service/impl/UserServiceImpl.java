@@ -21,6 +21,7 @@ import com.threadx.metrics.server.service.PermissionService;
 import com.threadx.metrics.server.service.UserService;
 import com.threadx.metrics.server.vo.LoginUserVo;
 import com.threadx.metrics.server.vo.UserVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -35,6 +36,7 @@ import java.util.concurrent.TimeUnit;
  * @author huangfukexing
  * @date 2023/6/1 08:13
  */
+@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {

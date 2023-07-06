@@ -13,6 +13,7 @@ import com.threadx.metrics.server.entity.User;
 import com.threadx.metrics.server.mapper.UserMapper;
 import com.threadx.metrics.server.service.UserManagerService;
 import com.threadx.metrics.server.service.UserService;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,6 +28,7 @@ import java.util.Set;
  * @author huangfu
  * @date 2023/6/3 13:59
  */
+@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implements UserManagerService {

@@ -29,6 +29,7 @@ import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.vo.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.script.DefaultRedisScript;
@@ -50,24 +51,25 @@ import java.util.stream.Collectors;
  */
 @Slf4j
 @Service
+@SuppressWarnings("all")
 @Transactional(rollbackFor = Exception.class)
 public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, InstanceItem> implements InstanceItemService {
 
-    private final ServerItemService serverItemService;
-    private final ThreadPoolDataService poolDataService;
-    private final DistributedLockTemplate distributedLockTemplate;
-    private final StringRedisTemplate redisTemplate;
-    private final Cache<String, Long> taskCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build();
+    @Autowired
+    private ServerItemService serverItemService;
+
+    @Autowired
+    private ThreadPoolDataService poolDataService;
+
+    @Autowired
+    private DistributedLockTemplate distributedLockTemplate;
+
+    @Autowired
+    private StringRedisTemplate redisTemplate;
+    private Cache<String, Long> taskCache = CacheBuilder.newBuilder().expireAfterWrite(1, TimeUnit.DAYS).build();
 
     @Value("${threadx.instance.timeout}")
     private Long instanceTimout;
-
-    public InstanceItemServiceImpl(ServerItemService serverItemService, ThreadPoolDataService poolDataService, DistributedLockTemplate distributedLockTemplate, StringRedisTemplate redisTemplate) {
-        this.serverItemService = serverItemService;
-        this.poolDataService = poolDataService;
-        this.distributedLockTemplate = distributedLockTemplate;
-        this.redisTemplate = redisTemplate;
-    }
 
     @Override
     public ThreadxPage<InstanceItemVo> findByPage(InstanceItemFindConditions conditions) {

@@ -55,13 +55,25 @@ public class ThreadTaskConditions  implements Serializable {
      * 当前页码
      */
     @ApiModelProperty(name = "thisPage", value = "当前页码")
-    private Integer thisPage;
+    private Integer thisPage = 1;
 
     /**
      * 当前页码
      */
     @ApiModelProperty(name = "pageSizes", value = "每页容量")
-    private Integer pageSizes;
+    private Integer pageSizes = 10;
+
+    /**
+     * 排序字段名
+     */
+    @ApiModelProperty(name = "sortName", value = "排序字段名")
+    private String sortName = "create_time";
+
+    /**
+     * 排序类型 0 升序  1降序
+     */
+    @ApiModelProperty(name = "sortType", value = "排序类型 0 升序  1降序")
+    private String sortType = "1";
 
 
 

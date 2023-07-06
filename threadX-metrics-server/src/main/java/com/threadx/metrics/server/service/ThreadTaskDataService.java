@@ -1,9 +1,12 @@
 package com.threadx.metrics.server.service;
 
+import com.threadx.metrics.server.conditions.ThreadTaskConditions;
 import com.threadx.metrics.server.dto.ThreadTaskDataErrorCalculation;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.entity.ThreadTaskData;
 import com.threadx.metrics.server.vo.ThreadTaskDataErrorTop;
+import com.threadx.metrics.server.vo.ThreadTaskVo;
+import com.threadx.metrics.server.vo.ThreadxPage;
 
 import java.util.Collection;
 import java.util.List;
@@ -20,13 +23,23 @@ public interface ThreadTaskDataService {
 
     /**
      * 统计计算线程池线程任务错误计算
+     *
      * @param limit 查询多少条
      * @return 错误统计
      */
     List<ThreadTaskDataErrorTop> findThreadTaskDataErrorCalculation(int limit);
 
     /**
+     * 根据条件查询
+     *
+     * @param threadTaskConditions 线程任务条件
+     * @return 线程任务
+     */
+    ThreadxPage<ThreadTaskVo> findByThreadTaskConditions(ThreadTaskConditions threadTaskConditions);
+
+    /**
      * 批量保存
+     *
      * @param collection 需要批量保存的
      */
     void batchSave(Collection<ThreadTaskData> collection);

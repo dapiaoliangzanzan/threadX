@@ -14,6 +14,7 @@ import com.threadx.metrics.server.lock.DistributedLockTemplate;
 import com.threadx.metrics.server.mapper.ServerItemMapper;
 import com.threadx.metrics.server.service.ServerItemService;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ import java.util.List;
  * @author huangfu
  * @date 2023/5/8 16:17
  */
+@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class ServerItemServiceImpl extends ServiceImpl<ServerItemMapper, ServerItem> implements ServerItemService {

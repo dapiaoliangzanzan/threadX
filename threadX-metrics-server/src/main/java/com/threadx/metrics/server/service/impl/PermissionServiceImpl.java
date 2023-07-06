@@ -15,6 +15,7 @@ import com.threadx.metrics.server.mapper.PermissionMapper;
 import com.threadx.metrics.server.service.PermissionService;
 import com.threadx.metrics.server.service.UserPermissionService;
 import com.threadx.metrics.server.vo.UserVo;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -29,6 +30,7 @@ import java.util.concurrent.TimeUnit;
  * @author huangfukexing
  * @date 2023/6/1 14:43
  */
+@Slf4j
 @Service
 @Transactional(rollbackFor = Exception.class)
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission> implements PermissionService {

@@ -9,6 +9,7 @@ class ThreadPoolService {
             return response;
         }).catch(error =>{
             console.log(error)
+            return {}
         })
     }
 }

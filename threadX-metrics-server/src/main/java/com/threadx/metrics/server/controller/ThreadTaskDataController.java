@@ -2,13 +2,15 @@ package com.threadx.metrics.server.controller;
 
 import com.threadx.metrics.server.common.annotations.GlobalResultPackage;
 import com.threadx.metrics.server.common.annotations.Login;
+import com.threadx.metrics.server.conditions.ThreadTaskConditions;
+import com.threadx.metrics.server.entity.ThreadTaskData;
 import com.threadx.metrics.server.service.ThreadTaskDataService;
 import com.threadx.metrics.server.vo.ThreadTaskDataErrorTop;
+import com.threadx.metrics.server.vo.ThreadTaskVo;
+import com.threadx.metrics.server.vo.ThreadxPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -37,5 +39,12 @@ public class ThreadTaskDataController {
     @GetMapping("findThreadTaskDataErrorCalculationTop10")
     public List<ThreadTaskDataErrorTop> findThreadTaskDataErrorCalculationTop10(){
         return threadTaskDataService.findThreadTaskDataErrorCalculation(10);
+    }
+
+    @Login
+    @ApiOperation(value = "分页查询线程任务数据")
+    @PostMapping("findByThreadTaskConditions")
+    public ThreadxPage<ThreadTaskVo> findByThreadTaskConditions(@RequestBody ThreadTaskConditions threadTaskConditions){
+        return threadTaskDataService.findByThreadTaskConditions(threadTaskConditions);
     }
 }

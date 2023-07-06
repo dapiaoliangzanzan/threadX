@@ -30,12 +30,6 @@ public class ThreadTaskVo implements Serializable {
     private Long id;
 
     /**
-     * 所属线程池的Id
-     */
-    @ApiModelProperty(name = "parentId", value = "所属线程池的Id")
-    private Long parentId;
-
-    /**
      * 线程的名称
      */
     @ApiModelProperty(name = "parentId", value = "线程的名称")

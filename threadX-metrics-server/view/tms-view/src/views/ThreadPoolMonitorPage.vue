@@ -305,9 +305,9 @@
 
         <div class="row-div search" @keyup.enter="searchTaskData">
             <div class="block">
-                <el-select v-model="resultStatus"  placeholder="结果状态"  size="large">
-                    <el-option label="成功" value="0"/>
-                    <el-option label="失败" value="1"/>
+                <el-select v-model="resultStatus"  placeholder="结果状态"  size="large"  clearable>
+                    <el-option label="成功" value="1"/>
+                    <el-option label="失败" value="0"/>
                 </el-select>
             </div>
 
@@ -316,6 +316,8 @@
 
                 <el-config-provider :locale="locale">
                     <el-date-picker
+                    value-format="YYYY-MM-DD HH:mm:ss"
+                    format="YYYY-MM-DD HH:mm:ss"
                     size="large"
                     v-model="runTime"
                     type="datetimerange"
@@ -335,7 +337,12 @@
         </div>
 
         <div>
-            <el-table :data="taskData" style="width: 100%">
+            <el-table 
+                :data="taskData" 
+                style="width: 100%"
+                sortable="custom"
+                @sort-change="sortTableChange"
+            >
 
                 <el-table-column type="expand">
                     <template #default="props">
@@ -347,17 +354,17 @@
 
                 <el-table-column prop="threadName" label="线程名" width="180" />
                 <el-table-column prop="submitDate" label="任务提交时间" width="180" />
-                <el-table-column prop="startTime" label="任务开始时间" />
-                <el-table-column prop="endTime" label="任务结束时间" />
-                <el-table-column prop="runIngConsumingTime" label="任务执行耗时" />
-                <el-table-column prop="waitTime" label="任务等待时间" />
-                <el-table-column prop="consumingTime" label="任务总耗时" />
+                <el-table-column prop="startDate" label="任务开始时间" />
+                <el-table-column prop="endDate" label="任务结束时间" />
+                <el-table-column prop="runIngConsumingTime" label="任务执行耗时" sortable/>
+                <el-table-column prop="waitTime" label="任务等待时间"  sortable/>
+                <el-table-column prop="consumingTime" label="任务总耗时" sortable/>
                 <el-table-column prop="refuse" label="是否拒绝" />
                 <el-table-column prop="success" label="是否成功" />
             </el-table>
 
             <div class="pagination-block">
-                <el-pagination @current-change="changePage" v-model:page-sizes="pageSizes" v-model:current-page="thisPage" pager-count="10" layout="prev, pager, next" :total="dataCountTotal" />
+                <el-pagination :default-current-page="1" :hide-on-single-page="true" @current-change="changePage" v-model:page-size="pageSizes" v-model:current-page="thisPage" pager-count="10" layout="prev, pager, next" :total="dataCountTotal" />
             </div>
         </div>
     </div>
@@ -368,6 +375,7 @@ import { defineComponent , ref, reactive, onMounted, onBeforeMount} from 'vue'
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import router from '@/router'
 import ThreadPoolService from '@/services/ThreadPoolService';
+import * as taskRequest from '../services/taskService'
 
 
 export default defineComponent({
@@ -375,6 +383,7 @@ export default defineComponent({
         onMounted(() =>{
             loadRouterParam();
             loadThreadPoolData();
+            loadThreadTaskList();
         });
 
         //定义传递的线程池名称
@@ -388,20 +397,26 @@ export default defineComponent({
         //单选筛选结果
         const resultStatus = ref('')
         //筛选事件
-        const runTime = ref('')
+        const runTime = ref([])
         //任务信息总条数
-        const dataCountTotal = ref(1000)
+        const dataCountTotal = ref(0)
         //当前页码
         const thisPage = ref(1)
         //每一页显示10
-        const pageSizes = ref(10)	
+        const pageSizes = ref(12)
+        //排序名称
+        const sortName = ref('create_time')
+        //默认为降序
+        const sortType = ref('1')
 
         const searchTaskData = ()=> {
-            console.log(123)
+            sortName.value = 'create_time'
+            sortType.value = '1'
+            loadThreadTaskList();
         }
 
         const changePage = ()=>{
-            console.log(thisPage.value)
+            loadThreadTaskList();
         }
 
         /**
@@ -422,6 +437,61 @@ export default defineComponent({
             instanceId.value = router.currentRoute.value.query.instanceId
         }
 
+        /**
+         * 加载线程池任务数据
+         */
+        const loadThreadTaskList = async ()=>{
+            let startTimeStr = "";
+            let endTimeStr = "";
+            if (runTime.value != null && runTime.value.length == 2) {
+                startTimeStr = runTime.value[0]
+                endTimeStr = runTime.value[1]
+            }
+
+            const pageData = await taskRequest.threadTaskData({
+                startTime:startTimeStr,
+                endTime:endTimeStr,
+                instanceId:instanceId.value,
+                pageSizes:pageSizes.value,
+                resultState:resultStatus.value,
+                thisPage: thisPage.value,
+                threadPoolName:threadPoolName.value,
+                sortName:sortName.value,
+                //0 升序    1降序
+                sortType:sortType.value
+            })
+
+            taskData.value = pageData.data;
+            dataCountTotal.value = pageData.total;
+
+        }
+
+        const sortTableChange = (sortData:any)=>{
+            thisPage.value = 1
+
+            const clickSortName = sortData.prop
+            if(clickSortName == "runIngConsumingTime") {
+                sortName.value = "runIng_consuming_time"
+            }
+
+            if(clickSortName == "consumingTime") {
+                sortName.value = "consuming_time"
+            }
+
+            if(clickSortName == "waitTime") {
+                sortName.value = "wait_time"
+            }
+
+           
+            const  orderName = sortData.order
+            if(orderName == "ascending") {
+                sortType.value = "0";
+            }else {
+                sortType.value = "1";
+            }
+            loadThreadTaskList();
+        }
+
         return {
             taskData,
             resultStatus,
@@ -433,7 +503,8 @@ export default defineComponent({
             pageSizes,
             searchTaskData,
             changePage,
-            loadThreadPoolData
+            loadThreadPoolData,
+            sortTableChange
         }
     }
 })

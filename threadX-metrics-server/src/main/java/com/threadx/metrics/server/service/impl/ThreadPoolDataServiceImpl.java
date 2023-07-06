@@ -10,21 +10,21 @@ import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
 import com.threadx.metrics.server.common.exceptions.GeneralException;
 import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
 import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
-import com.threadx.metrics.server.entity.InstanceItem;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.mapper.ThreadPoolDataMapper;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
+import com.threadx.metrics.server.service.ThreadTaskDataService;
 import com.threadx.metrics.server.vo.ThreadPoolDataVo;
-import com.threadx.metrics.server.vo.ThreadPoolDetailPackVo;
 import com.threadx.metrics.server.vo.ThreadPoolDetailsVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -35,9 +35,15 @@ import java.util.stream.Collectors;
  * @author huangfu
  * @date 2023/4/23 15:09
  */
+@Slf4j
 @Service
+@SuppressWarnings("all")
 @Transactional(rollbackFor = Exception.class)
 public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper, ThreadPoolData> implements ThreadPoolDataService {
+
+    @Autowired
+    private ThreadTaskDataService threadTaskDataService;
+
 
     @Override
     public void batchSave(Collection<ThreadPoolData> collection) {
