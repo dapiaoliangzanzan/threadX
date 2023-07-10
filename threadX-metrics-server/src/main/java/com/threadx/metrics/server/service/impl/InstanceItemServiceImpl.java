@@ -116,6 +116,18 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
     }
 
     /**
+     * 监测实例是否处于活跃状态   true活跃  false  断连
+     *
+     * @param instanceId 实例的id
+     * @return 实例活跃检查
+     */
+    @Override
+    public boolean instanceActiveCheck(String serverName, String instanceName) {
+        Boolean hasKey = redisTemplate.hasKey(String.format(RedisCacheKey.INSTANCE_ACTIVE_CACHE, serverName, instanceName));
+        return hasKey != null && hasKey;
+    }
+
+    /**
      * 转换未前端映射对象
      *
      * @param instanceItems 数据库实体对象
@@ -133,16 +145,18 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
 
         return instanceItems.stream().map(instanceItem -> {
             InstanceItemVo instanceItemVo = new InstanceItemVo();
-            instanceItemVo.setState(InstanceItemState.ACTIVE);
-            if (System.currentTimeMillis() - instanceItem.getActiveTime() > TimeUnit.SECONDS.toMillis(instanceTimout)) {
-                instanceItemVo.setState(InstanceItemState.NOT_ACTIVE);
-            }
-            instanceItemVo.setId(instanceItem.getId());
+            Long instanceId = instanceItem.getId();
             //获取服务名称
             Long serverId = instanceItem.getServerId();
             String serverName = serverItemMap.getOrDefault(serverId, "未知服务");
+            String instanceName = instanceItem.getInstanceName();
+            instanceItemVo.setState(InstanceItemState.NOT_ACTIVE);
+            if (instanceActiveCheck(serverName, instanceName)) {
+                instanceItemVo.setState(InstanceItemState.ACTIVE);
+            }
+            instanceItemVo.setId(instanceId);
             instanceItemVo.setServerName(serverName);
-            instanceItemVo.setInstanceName(instanceItem.getInstanceName());
+            instanceItemVo.setInstanceName(instanceName);
             instanceItemVo.setCreateDate(DateUtil.format(new Date(instanceItem.getCreateTime()), "yyyy-MM-dd HH:mm:ss"));
             return instanceItemVo;
         }).collect(Collectors.toList());
@@ -257,6 +271,7 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
             //写入到一级缓存
             taskCache.put(cacheKey, instanceId);
         }
+        redisTemplate.opsForValue().set(String.format(RedisCacheKey.INSTANCE_ACTIVE_CACHE, serverName, instanceName), "活跃", instanceTimout, TimeUnit.SECONDS);
         return instanceId;
     }
 

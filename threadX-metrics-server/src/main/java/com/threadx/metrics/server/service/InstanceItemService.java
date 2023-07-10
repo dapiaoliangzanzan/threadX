@@ -80,4 +80,13 @@ public interface InstanceItemService {
      * @return 实例的详情信息
      */
     InstanceItemDataVo instanceDetails(InstanceItemDataConditions instanceItemDataConditions);
+
+    /**
+     * 监测实例是否处于活跃状态   true活跃  false  断连
+     *
+     * @param serverName 服务名称
+     * @param instanceName  实例名称
+     * @return 实例活跃检查
+     */
+    boolean instanceActiveCheck(String serverName, String instanceName);
 }

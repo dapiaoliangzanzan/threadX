@@ -14,6 +14,7 @@ import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.mapper.ThreadPoolDataMapper;
+import com.threadx.metrics.server.service.InstanceItemService;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.service.ThreadTaskDataService;
 import com.threadx.metrics.server.vo.*;
@@ -46,6 +47,9 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
 
     @Autowired
     private ThreadTaskDataService threadTaskDataService;
+
+    @Autowired
+    private InstanceItemService instanceItemService;
 
     @Value("${threadx.thread.pool.timeout}")
     private Long threadPoolTimeOut;
@@ -153,6 +157,8 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
     }
 
     private ThreadPoolDetailsVo buildThreadPoolDetail(ThreadPoolData threadPoolData) {
+        String serverKey = threadPoolData.getServerKey();
+        String instanceKey = threadPoolData.getInstanceKey();
         ThreadPoolDetailsVo threadPoolDetailsVo = new ThreadPoolDetailsVo();
         threadPoolDetailsVo.setThreadPoolName(threadPoolData.getThreadPoolName());
         threadPoolDetailsVo.setActiveCount(threadPoolData.getActiveCount());
@@ -169,14 +175,20 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
         threadPoolDetailsVo.setSurviveThreadCount(threadPoolData.getThisThreadCount());
         threadPoolDetailsVo.setHistoryMaxThreadCount(threadPoolData.getLargestPoolSize());
         threadPoolDetailsVo.setInstanceId(threadPoolData.getInstanceId());
-        threadPoolDetailsVo.setInstanceName(threadPoolData.getInstanceKey());
-        threadPoolDetailsVo.setServerName(threadPoolData.getServerKey());
+
+        threadPoolDetailsVo.setInstanceName(instanceKey);
+
+        threadPoolDetailsVo.setServerName(serverKey);
         Long createTime = threadPoolData.getCreateTime();
         if((System.currentTimeMillis() - createTime) < TimeUnit.SECONDS.toMillis(threadPoolTimeOut)) {
             threadPoolDetailsVo.setState("活跃");
         }else {
             threadPoolDetailsVo.setState("等待任务或断联");
         }
+        if (!instanceItemService.instanceActiveCheck(serverKey, instanceKey)) {
+            threadPoolDetailsVo.setSurviveThreadCount(0);
+        }
+
         return threadPoolDetailsVo;
     }
 }
