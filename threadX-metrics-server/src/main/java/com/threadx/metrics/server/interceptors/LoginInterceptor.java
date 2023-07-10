@@ -54,7 +54,7 @@ public class LoginInterceptor implements HandlerInterceptor {
                     throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
                 }
                 // 进行令牌验证逻辑
-                UserVo userVo = ThreadxJwtUtil.renewParseToken(oldToken, newToken -> redisTemplate.opsForValue().set(cacheKey, newToken, 1, TimeUnit.HOURS));
+                UserVo userVo = ThreadxJwtUtil.renewParseToken(oldToken, newToken -> redisTemplate.opsForValue().set(cacheKey, newToken, 120, TimeUnit.MINUTES));
                 if (userVo == null) {
                     //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);

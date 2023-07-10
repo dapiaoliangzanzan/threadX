@@ -37,7 +37,7 @@ public class ThreadxJwtUtil  {
     /**
      * token过期时间
      */
-    private static final Long EXPIRATION_TIME = TimeUnit.DAYS.toMillis(1);
+    private static final Long EXPIRATION_TIME = TimeUnit.HOURS.toMillis(1);
     /**
      * token续约阈值  10分钟
      */
@@ -102,7 +102,7 @@ public class ThreadxJwtUtil  {
             if ((expiration.getTime() - System.currentTimeMillis()) <= RENEWAL_THRESHOLD) {
                 //重设过期时间
                 updatedClaims.setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME));
-                //生成新的token`
+                //生成新的token
                 String newToken = Jwts.builder()
                         .setClaims(updatedClaims)
                         .signWith(generateKey())
