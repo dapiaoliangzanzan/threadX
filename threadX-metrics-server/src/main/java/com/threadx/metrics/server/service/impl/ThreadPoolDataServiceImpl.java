@@ -181,11 +181,12 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
         threadPoolDetailsVo.setServerName(serverKey);
         Long createTime = threadPoolData.getCreateTime();
         if((System.currentTimeMillis() - createTime) < TimeUnit.SECONDS.toMillis(threadPoolTimeOut)) {
-            threadPoolDetailsVo.setState("活跃");
+            threadPoolDetailsVo.setState("执行任务");
         }else {
-            threadPoolDetailsVo.setState("等待任务或断联");
+            threadPoolDetailsVo.setState("等待任务");
         }
         if (!instanceItemService.instanceActiveCheck(serverKey, instanceKey)) {
+            threadPoolDetailsVo.setState("断连");
             threadPoolDetailsVo.setSurviveThreadCount(0);
         }
 
