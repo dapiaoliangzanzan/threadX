@@ -24,7 +24,7 @@
                             link
                             type="primary"
                             size="small"
-                            @click.prevent="instanceDetailsPage(scope.row.id)"
+                            @click.prevent="instanceDetailsPage(scope.row.instanceName,scope.row.id)"
                             >
                             {{ scope.row.instanceName}}
                             </el-button>
@@ -213,9 +213,15 @@ export default defineComponent({
         //异常任务数量线程池数组
         const errorTaskThreadPoolTopList = ref([])
 
-
-        const instanceDetailsPage = (id:any)=>{
-            console.log(id)
+        //实例详情页面
+        const instanceDetailsPage = (instanceName:any, instanceId:any)=>{
+            router.push({
+                name:'Service',
+                query: {
+                    instanceName:instanceName,
+                    instanceId:instanceId
+                }
+            })
         }
         /**
          * 常用实例查询

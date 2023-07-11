@@ -5,15 +5,17 @@
             <el-tree
                 ref="treeRef"
                 :data="serverTreeData"
+                empty-text="没有实例数据"
                 :props="defaultProps"
                 :default-expand-all="false"
                 accordion
                 :filter-node-method="filterNode"
+                :highlight-current="true"
                 @node-click="handleNodeClick"
             />
         </div>
         <div :span="20" class="instanceDataBody">
-            实例数据
+            实例数据：{{ instanceId }}
         </div>
     </div>
 </template>
@@ -23,28 +25,33 @@ import { defineComponent,ref,watch,onMounted } from 'vue'
 import { ElTree } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import ServerService from '../services/ServerService'
+import router from '@/router'
+import { da } from 'element-plus/es/locale'
 
 export default defineComponent({
     setup () {
 
         onMounted(() =>{
-            loadTreeData()
+            loadRouterParam();
+            loadTreeData();
         });
 
         // 定义树结构的数据体系
         const serverTreeData= ref([]);
+        //点击的实例的id
+        const instanceId = ref()
         // 定义标签和子标签的属性
         const defaultProps = ref({
             children: 'children',
             label: 'label',
         });
         // 定义筛选条件值
-        const treeFilterText = ref('')
+        const treeFilterText = ref()
         // 定义树引用
         const treeRef = ref<InstanceType<typeof ElTree>>()
         // 监听搜索框  将搜索值传入引用对象中
         watch(treeFilterText, (val) => {
-            treeRef.value!.filter(val)
+            filterTreeData()
         })
 
         /**
@@ -57,23 +64,62 @@ export default defineComponent({
             //是否包含搜索值
             return data.label.includes(value)
         }
+
+
         /**
          * 当出发节点点击的时候回调的方法
          * @param data 点击的值
          */
         const handleNodeClick = (data: any) => {
-            console.log(data)
+            if (data.parentId != null) {
+                instanceId.value = data.id
+                loadInstanceData()
+            }
+            
         }
 
-        const loadTreeData = async() =>{
-            serverTreeData.value = await ServerService.findServerAndInstanceData()
+
+        /**
+         * 加载实例的数据
+         */
+         const loadInstanceData = ()=>{
+            console.log(instanceId.value)
         }
+
+        
+
+        /**
+         * 加载路由参数
+         */
+        const loadTreeData = () =>{
+            ServerService.findServerAndInstanceData().then(response =>{
+                serverTreeData.value = response
+            }).finally(() =>{
+                filterTreeData();
+                loadInstanceData();
+            })
+            
+        }
+
+        /**
+         * 根据输入数据过滤数据
+         */
+        const filterTreeData = ()=>{
+            treeRef.value!.filter(treeFilterText.value)
+        }
+
+        const loadRouterParam = ()=>{
+            treeFilterText.value = router.currentRoute.value.query.instanceName
+            instanceId.value = router.currentRoute.value.query.instanceId
+        }
+
 
         return {
             serverTreeData,
             defaultProps,
             treeFilterText,
             treeRef,
+            instanceId,
             Search,
             filterNode,
             handleNodeClick
