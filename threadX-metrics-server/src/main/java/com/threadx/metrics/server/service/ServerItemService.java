@@ -3,6 +3,7 @@ package com.threadx.metrics.server.service;
 import com.threadx.metrics.server.conditions.ServerItemFindConditions;
 import com.threadx.metrics.server.entity.ServerItem;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.TreeDataVo;
 
 import java.util.List;
 
@@ -64,4 +65,10 @@ public interface ServerItemService {
      * @return 查询到服务信息
      */
     ServerItem findByNameOrCreate(String serverName);
+
+    /**
+     * 查询服务和实例的列表数据
+     * @return 树状图
+     */
+    List<TreeDataVo> findAllServerAndInstanceData();
 }

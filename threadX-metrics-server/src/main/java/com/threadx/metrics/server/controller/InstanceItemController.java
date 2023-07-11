@@ -36,6 +36,7 @@ public class InstanceItemController {
         this.instanceItemService = instanceItemService;
     }
 
+    @Login
     @ApiOperation(value = "分页查询实例数据")
     @PostMapping("findByPage")
     public ThreadxPage<InstanceItemVo> findByPage(@RequestBody InstanceItemFindConditions conditions) {

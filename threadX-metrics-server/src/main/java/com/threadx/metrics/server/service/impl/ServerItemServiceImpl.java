@@ -9,19 +9,23 @@ import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
 import com.threadx.metrics.server.common.exceptions.GeneralException;
 import com.threadx.metrics.server.conditions.ServerItemFindConditions;
 import com.threadx.metrics.server.constant.LockName;
+import com.threadx.metrics.server.entity.InstanceItem;
 import com.threadx.metrics.server.entity.ServerItem;
 import com.threadx.metrics.server.lock.DistributedLockTemplate;
 import com.threadx.metrics.server.mapper.ServerItemMapper;
+import com.threadx.metrics.server.service.InstanceItemService;
 import com.threadx.metrics.server.service.ServerItemService;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.TreeDataVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * *************************************************<br/>
@@ -38,13 +42,16 @@ public class ServerItemServiceImpl extends ServiceImpl<ServerItemMapper, ServerI
 
     private final DistributedLockTemplate distributedLockTemplate;
 
-    public ServerItemServiceImpl(DistributedLockTemplate distributedLockTemplate) {
+    private final InstanceItemService instanceItemService;
+
+    public ServerItemServiceImpl(DistributedLockTemplate distributedLockTemplate, InstanceItemService instanceItemService) {
         this.distributedLockTemplate = distributedLockTemplate;
+        this.instanceItemService = instanceItemService;
     }
 
     @Override
     public ServerItem selectById(Long id) {
-        if(id == null) {
+        if (id == null) {
             throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
         return super.getById(id);
@@ -59,7 +66,7 @@ public class ServerItemServiceImpl extends ServiceImpl<ServerItemMapper, ServerI
 
     @Override
     public List<ServerItem> findServerItemInId(List<Long> serverIds) {
-        if(CollUtil.isEmpty(serverIds)) {
+        if (CollUtil.isEmpty(serverIds)) {
             return new ArrayList<>();
         }
         QueryWrapper<ServerItem> queryWrapper = new QueryWrapper<>();
@@ -69,15 +76,15 @@ public class ServerItemServiceImpl extends ServiceImpl<ServerItemMapper, ServerI
 
     @Override
     public ThreadxPage<ServerItem> findServerItemByPage(ServerItemFindConditions serverItemFindConditions) {
-        if(serverItemFindConditions == null) {
+        if (serverItemFindConditions == null) {
             serverItemFindConditions = new ServerItemFindConditions();
         }
         Integer pageSize = serverItemFindConditions.getPageSize();
         Integer pageNumber = serverItemFindConditions.getPageNumber();
-        if(pageSize == null) {
+        if (pageSize == null) {
             pageSize = 20;
         }
-        if(pageNumber == null) {
+        if (pageNumber == null) {
             pageNumber = 1;
         }
         String serverItemName = serverItemFindConditions.getServerItemName();
@@ -118,4 +125,52 @@ public class ServerItemServiceImpl extends ServiceImpl<ServerItemMapper, ServerI
         }
 
     }
+
+    @Override
+    public List<TreeDataVo> findAllServerAndInstanceData() {
+        //查询服务的列表
+        QueryWrapper<ServerItem> queryWrapper = new QueryWrapper<>();
+        List<ServerItem> serverItems = baseMapper.selectList(queryWrapper);
+        //筛选所有的服务的id
+        List<Long> serverIds = serverItems.stream().map(ServerItem::getId).collect(Collectors.toList());
+        //根据服务的id查询实例
+        List<InstanceItem> instanceList = instanceItemService.findInServerIds(serverIds);
+        //根据服务的id进行数据分组
+        Map<Long, List<InstanceItem>> instanceGroup = instanceList.stream().collect(Collectors.groupingBy(InstanceItem::getServerId));
+        //开始映射对象
+        return serverItems.stream().map(serverItem -> {
+            Long serverId = serverItem.getId();
+            //创建一个映射类
+            TreeDataVo serverTreeDataVo = new TreeDataVo();
+            serverTreeDataVo.setId(serverId);
+            serverTreeDataVo.setLabel(serverItem.getServerName());
+            //获取对应的服务的实例
+            List<InstanceItem> instanceItems = instanceGroup.get(serverId);
+            if (CollUtil.isNotEmpty(instanceItems)) {
+                List<TreeDataVo> instanceVos = instanceItems.stream().map(instanceItem -> {
+                    TreeDataVo instanceTreeDataVo = new TreeDataVo();
+                    instanceTreeDataVo.setId(instanceItem.getId());
+                    instanceTreeDataVo.setLabel(instanceItem.getInstanceName());
+                    instanceTreeDataVo.setParentId(serverId);
+                    return instanceTreeDataVo;
+                }).collect(Collectors.toList());
+                serverTreeDataVo.setChildren(instanceVos);
+            }
+            return serverTreeDataVo;
+        }).collect(Collectors.toList());
+
+    }
 }
+
+
+
+
+
+
+
+
+
+
+
+
+

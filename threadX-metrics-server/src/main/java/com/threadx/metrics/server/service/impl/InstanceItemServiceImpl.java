@@ -28,6 +28,7 @@ import com.threadx.metrics.server.service.ServerItemService;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.vo.*;
 import lombok.extern.slf4j.Slf4j;
+import org.checkerframework.checker.units.qual.C;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -113,6 +114,16 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
             return baseMapper.selectList(query);
         }
         return new ArrayList<>();
+    }
+
+    @Override
+    public List<InstanceItem> findInServerIds(Collection<Long> ids) {
+        if (CollUtil.isEmpty(ids)) {
+            return new ArrayList<>();
+        }
+        QueryWrapper<InstanceItem> queryInstanceWrapper = new QueryWrapper<>();
+        queryInstanceWrapper.in("server_id", ids);
+        return baseMapper.selectList(queryInstanceWrapper);
     }
 
     /**

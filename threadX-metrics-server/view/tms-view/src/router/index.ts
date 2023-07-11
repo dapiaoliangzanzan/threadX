@@ -23,6 +23,10 @@ const routes: Array<RouteRecordRaw> = [
         path: '/threadPoolMonitor',
         name: 'ThreadPoolMonitor',
         component: () => import('../views/ThreadPoolMonitorPage.vue')
+      },{
+        path: '/servicePage',
+        name: 'Service',
+        component: () => import('../views/ServicePage.vue')
       }
     ]
   }

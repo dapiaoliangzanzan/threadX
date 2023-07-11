@@ -36,6 +36,14 @@ public interface InstanceItemService {
      */
     List<InstanceItem> findInIds(Collection<Long> ids);
 
+    /**
+     * 查询实例 根据服务的id
+     *
+     * @param ids 服务的id
+     * @return 实例信息
+     */
+    List<InstanceItem> findInServerIds(Collection<Long> ids);
+
 
     /**
      * 查询最常使用的top10
@@ -84,8 +92,8 @@ public interface InstanceItemService {
     /**
      * 监测实例是否处于活跃状态   true活跃  false  断连
      *
-     * @param serverName 服务名称
-     * @param instanceName  实例名称
+     * @param serverName   服务名称
+     * @param instanceName 实例名称
      * @return 实例活跃检查
      */
     boolean instanceActiveCheck(String serverName, String instanceName);
