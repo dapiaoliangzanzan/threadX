@@ -25,6 +25,7 @@ public class ThreadPoolDataVo implements Serializable {
 
     public final static String ACTION_NAME = "正在执行任务";
     public final static String IDEA_NAME = "等待任务提交";
+    public final static String DISCONNECTION = "断连";
     /**
      * 线程池的id
      */

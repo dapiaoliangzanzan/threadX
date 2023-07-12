@@ -12,6 +12,7 @@ import com.threadx.metrics.server.common.exceptions.GeneralException;
 import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
 import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.constant.RedisCacheKey;
+import com.threadx.metrics.server.entity.InstanceItem;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.mapper.ThreadPoolDataMapper;
 import com.threadx.metrics.server.service.InstanceItemService;
@@ -68,18 +69,28 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
             throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
 
+        Long instanceId = threadPoolPageDataConditions.getInstanceId();
+        if (instanceId == null) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+        }
+
+        InstanceItem instanceItem = instanceItemService.findById(instanceId);
+        if(instanceItem == null) {
+            log.error("No queried is instance data, instanceId = {}", instanceId);
+            throw new GeneralException(CurrencyRequestEnum.DATA_EXCEPTION);
+        }
+
         ThreadxPage<ThreadPoolDataVo> threadPoolDataVoThreadxPage = new ThreadxPage<>();
 
         Long updateTime = threadPoolPageDataConditions.getUpdateTime();
         String threadGroupName = threadPoolPageDataConditions.getThreadGroupName();
-        Long instanceId = threadPoolPageDataConditions.getInstanceId();
 
         Integer pageSize = threadPoolPageDataConditions.getPageSize();
         Integer pageNumber = threadPoolPageDataConditions.getPageNumber();
 
         QueryWrapper<ThreadPoolData> queryThreadPoolId = new QueryWrapper<>();
-
-        queryThreadPoolId.eq(StrUtil.isNotBlank(threadGroupName), "thread_pool_group_name", threadGroupName)
+        //查询分组下的最大值id
+        queryThreadPoolId.like(StrUtil.isNotBlank(threadGroupName), "thread_pool_group_name", threadGroupName)
                 .eq(instanceId != null, "instance_id", instanceId)
                 .gt(updateTime != null && updateTime > 0, "update_time", updateTime)
                 .groupBy("thread_pool_name")
@@ -97,12 +108,20 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
 
 
             List<ThreadPoolData> records = threadPoolDataPage.getRecords();
+            //获取当前的实例的状态
+            boolean isActive = instanceItemService.instanceActiveCheck(instanceItem.getInstanceName(), instanceItem.getServerName());
             //线程池的数据映射
             List<ThreadPoolDataVo> threadPoolDataVos = records.stream().map(record -> {
                 ThreadPoolDataVo threadPoolDataVo = new ThreadPoolDataVo();
                 BeanUtil.copyProperties(record, threadPoolDataVo);
                 Integer activeCount = record.getActiveCount();
-                threadPoolDataVo.setState(activeCount > 0 ? ThreadPoolDataVo.ACTION_NAME : ThreadPoolDataVo.IDEA_NAME);
+                if(!isActive) {
+                    threadPoolDataVo.setState(ThreadPoolDataVo.DISCONNECTION);
+                    threadPoolDataVo.setActiveCount(0);
+                    threadPoolDataVo.setThisThreadCount(0);
+                }else {
+                    threadPoolDataVo.setState(activeCount > 0 ? ThreadPoolDataVo.ACTION_NAME : ThreadPoolDataVo.IDEA_NAME);
+                }
                 return threadPoolDataVo;
             }).collect(Collectors.toList());
 

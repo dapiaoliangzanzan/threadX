@@ -69,8 +69,23 @@
                         
                     </el-card>
                 </div>
-                <div>
-                    表格
+
+                <div class="search-from-class">
+                    <el-input :prefix-icon="Search" v-model="threadPoolGroupNameSearch" placeholder="请输入线程池组的名称" clearable />
+                    <el-button type="primary">搜索</el-button>
+                </div>
+
+                <div class="thread-pool-table">
+                    
+                    <el-table :data="threadPoolTableData">
+                        <el-table-column prop="threadPoolName" label="线程池名称"  />
+                        <el-table-column prop="threadPoolGroupName" label="所属组" />
+                        <el-table-column prop="activeCount" label="活跃数量" />
+                        <el-table-column prop="thisThreadCount" label="当前数量" />
+                        <el-table-column prop="completedTaskCount" label="完成数量" />
+                        <el-table-column prop="updateTime" label="数据更新时间" />
+                        <el-table-column prop="state" label="线程池状态" />
+                    </el-table>
                 </div>
             </div>
         </div>
@@ -83,9 +98,11 @@ import { ElTree } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import ServerService from '../services/ServerService'
 import InstanceService from '@/services/InstanceService'
+import ThreadPoolService from '@/services/ThreadPoolService'
 import router from '@/router'
 
 export default defineComponent({
+    
     setup () {
 
         onMounted(() =>{
@@ -94,6 +111,10 @@ export default defineComponent({
         });
         //是否显示空logo
         const emLogo = ref(true)
+        //搜索条件
+        const threadPoolGroupNameSearch = ref()
+        //表格数据
+        const threadPoolTableData = ref([])
 
         const instanceListeningState = ref({
             monitoringDuration:"0毫秒",
@@ -102,7 +123,7 @@ export default defineComponent({
             waitThreadPoolCount:0
         })
         // 定义树结构的数据体系
-        const serverTreeData= ref([]);
+        const serverTreeData= ref();
         //点击的实例的id
         const instanceId = ref()
         // 定义标签和子标签的属性
@@ -156,8 +177,23 @@ export default defineComponent({
                 instanceListeningState.value = await InstanceService.instanceListeningState({
                     instanceId:instanceIdValue
                 })
+
+                loadThreadPoolData()
+
+                
             }
             
+        }
+
+        const loadThreadPoolData =async () => {
+            const threadPoolTableDataReq = await ThreadPoolService.findPageByThreadPoolPageDataConditions({
+                instanceId: instanceId.value,
+                threadGroupName: threadPoolGroupNameSearch.value,
+                pageNumber: 1,
+                pageSize: 10
+            })
+
+            threadPoolTableData.value = threadPoolTableDataReq.data
         }
 
         
@@ -196,6 +232,8 @@ export default defineComponent({
             instanceId,
             emLogo,
             instanceListeningState,
+            threadPoolGroupNameSearch,
+            threadPoolTableData,
             Search,
             filterNode,
             handleNodeClick
@@ -262,5 +300,20 @@ export default defineComponent({
                 font-weight: bold;
             }
         }
+    }
+
+    .search-from-class {
+        display: flex;
+        margin-top: 5px;
+        width: 100%;
+        justify-content: flex-end;
+
+        .el-input {
+            width: 20%;
+            margin-right: 10px;
+        }
+    }
+    .thread-pool-table {
+        margin-top: 5px;
     }
 </style>

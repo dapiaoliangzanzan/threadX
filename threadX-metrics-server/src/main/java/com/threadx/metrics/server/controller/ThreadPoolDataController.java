@@ -3,9 +3,12 @@ package com.threadx.metrics.server.controller;
 import com.threadx.metrics.server.common.annotations.GlobalResultPackage;
 import com.threadx.metrics.server.common.annotations.Login;
 import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
+import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
+import com.threadx.metrics.server.vo.ThreadPoolDataVo;
 import com.threadx.metrics.server.vo.ThreadPoolDetailPackVo;
 import com.threadx.metrics.server.vo.ThreadPoolDetailsVo;
+import com.threadx.metrics.server.vo.ThreadxPage;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
@@ -35,5 +38,12 @@ public class ThreadPoolDataController {
     @PostMapping("findThreadPoolDetail")
     public ThreadPoolDetailsVo findThreadPoolDetail(@RequestBody ThreadPoolDetailConditions threadPoolDetailConditions) {
         return threadPoolDataService.findThreadPoolDetail(threadPoolDetailConditions);
+    }
+
+    @Login
+    @ApiOperation(value = "根据查询条件分页查询线程池")
+    @PostMapping("findPageByThreadPoolPageDataConditions")
+    public ThreadxPage<ThreadPoolDataVo> findPageByThreadPoolPageDataConditions(@RequestBody ThreadPoolPageDataConditions threadPoolPageDataConditions){
+        return threadPoolDataService.findPageByThreadPoolPageDataConditions(threadPoolPageDataConditions);
     }
 }

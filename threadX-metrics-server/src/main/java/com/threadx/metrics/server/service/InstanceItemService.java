@@ -97,4 +97,12 @@ public interface InstanceItemService {
      * @return 实例活跃检查
      */
     boolean instanceActiveCheck(String serverName, String instanceName);
+
+    /**
+     * 根据id查询实例
+     *
+     * @param instanceId 实例的id
+     * @return 实例信息
+     */
+    InstanceItem findById(Long instanceId);
 }

@@ -138,6 +138,11 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
         return hasKey != null && hasKey;
     }
 
+    @Override
+    public InstanceItem findById(Long instanceId) {
+        return baseMapper.selectById(instanceId);
+    }
+
     /**
      * 转换未前端映射对象
      *
@@ -145,22 +150,14 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
      * @return 前端映射对象
      */
     private List<InstanceItemVo> getInstanceItemVos(List<InstanceItem> instanceItems) {
-        List<Long> serverIds = instanceItems.stream().map(InstanceItem::getServerId).collect(Collectors.toList());
-        //根据服务的id查询服务的名称
-        List<ServerItem> serverItems = serverItemService.findServerItemInId(serverIds);
-        //将数据转换为Map
-        Map<Long, String> serverItemMap = new HashMap<>(8);
-        for (ServerItem serverItem : serverItems) {
-            serverItemMap.put(serverItem.getId(), serverItem.getServerName());
-        }
 
         return instanceItems.stream().map(instanceItem -> {
             InstanceItemVo instanceItemVo = new InstanceItemVo();
             Long instanceId = instanceItem.getId();
             //获取服务名称
             Long serverId = instanceItem.getServerId();
-            String serverName = serverItemMap.getOrDefault(serverId, "未知服务");
             String instanceName = instanceItem.getInstanceName();
+            String serverName = instanceItem.getServerName();
             instanceItemVo.setState(InstanceItemState.NOT_ACTIVE);
             if (instanceActiveCheck(serverName, instanceName)) {
                 instanceItemVo.setState(InstanceItemState.ACTIVE);

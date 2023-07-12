@@ -20,8 +20,8 @@ class InstanceService {
      * 
      * @returns 查询监控的实例的状态信息，总监听数  活跃数  等待数   监听时间等
      */
-    public static instanceListeningState():Promise<any> {
-        return ApiUtils.get("/instanceItem/instanceListeningState").then((response) =>{
+    public static instanceListeningState(data:any):Promise<any> {
+        return ApiUtils.get("/instanceItem/instanceListeningState", data).then((response) =>{
             return response;
         }).catch(error =>{
             console.log(error)
