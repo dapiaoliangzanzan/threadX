@@ -19,7 +19,60 @@
                 <img src="../assets/icon/douding.png" alt="">
                 <el-text  type="info">请选择要查看的实例...</el-text>
             </div>
-            <div v-else>表格数据:{{ instanceId }}</div>
+            <div v-else>
+                <div class="instance-top">
+                    <el-card class="box-card">
+                        <template #header>
+                        <div class="card-header">
+                            <span>监控持续时间</span>
+                        </div>
+                        </template>
+                        <div class="cred-value">
+                            <span>{{ instanceListeningState.monitoringDuration }}</span>
+                        </div>
+                        
+                    </el-card>
+
+                    <el-card class="box-card">
+                        <template #header>
+                        <div class="card-header">
+                            <span>线程池数量</span>
+                        </div>
+                        </template>
+                        <div class="cred-value">
+                            <span>{{ instanceListeningState.threadPoolCount }}</span>
+                        </div>
+                        
+                    </el-card>
+
+                    <el-card class="box-card">
+                        <template #header>
+                        <div class="card-header">
+                            <span>等待任务的线程池数量</span>
+                        </div>
+                        </template>
+                        <div class="cred-value">
+                            <span>{{ instanceListeningState.waitThreadPoolCount }}</span>
+                        </div>
+                        
+                    </el-card>
+
+                    <el-card class="box-card">
+                        <template #header>
+                        <div class="card-header">
+                            <span>活跃线程池数量</span>
+                        </div>
+                        </template>
+                        <div class="cred-value">
+                            <span>{{instanceListeningState.activeThreadPoolCount}}</span>
+                        </div>
+                        
+                    </el-card>
+                </div>
+                <div>
+                    表格
+                </div>
+            </div>
         </div>
     </div>
 </template>
@@ -29,6 +82,7 @@ import { defineComponent,ref,watch,onMounted } from 'vue'
 import { ElTree } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import ServerService from '../services/ServerService'
+import InstanceService from '@/services/InstanceService'
 import router from '@/router'
 
 export default defineComponent({
@@ -40,6 +94,13 @@ export default defineComponent({
         });
         //是否显示空logo
         const emLogo = ref(true)
+
+        const instanceListeningState = ref({
+            monitoringDuration:"0毫秒",
+            threadPoolCount:0,
+            activeThreadPoolCount:0,
+            waitThreadPoolCount:0
+        })
         // 定义树结构的数据体系
         const serverTreeData= ref([]);
         //点击的实例的id
@@ -86,12 +147,15 @@ export default defineComponent({
         /**
          * 加载实例的数据
          */
-         const loadInstanceData = ()=>{
+         const loadInstanceData = async ()=>{
             const instanceIdValue = instanceId.value
             if (instanceIdValue == null) {
                 emLogo.value = true
             }else {
                 emLogo.value = false
+                instanceListeningState.value = await InstanceService.instanceListeningState({
+                    instanceId:instanceIdValue
+                })
             }
             
         }
@@ -131,6 +195,7 @@ export default defineComponent({
             treeRef,
             instanceId,
             emLogo,
+            instanceListeningState,
             Search,
             filterNode,
             handleNodeClick
@@ -176,7 +241,26 @@ export default defineComponent({
 
         .el-text {
             margin-top: 10px;
+        }
+    }
 
+    .instance-top {
+        display: flex;
+        justify-content: space-between;
+        .box-card {
+            width: 24.5%;
+            height: 17vh;
+        }
+
+        .cred-value {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+
+            span {
+                font-size: 20px;
+                font-weight: bold;
+            }
         }
     }
 </style>
