@@ -170,8 +170,8 @@
 
 <script lang="ts">
 import { defineComponent,ref,computed, onMounted, reactive } from 'vue'
-import * as instanceRequest from '../services/instanceService'
-import * as taskRequest from '../services/taskService'
+import InstanceService from '../services/InstanceService'
+import TaskService from '../services/TaskService'
 import '../assets/css/index.css'
 import { useRouter } from 'vue-router';
 
@@ -227,13 +227,13 @@ export default defineComponent({
          * 常用实例查询
          */
         const commonlyUsedTop10 = async ()=>{
-            instanceList.value = await instanceRequest.commonlyUsedTop10();
+            instanceList.value = await InstanceService.commonlyUsedTop10()
         }
         /**
          * 异常任务数量线程池Top10查询
          */
         const errorTaskThreadPoolTop = async () => {
-            errorTaskThreadPoolTopList.value = await taskRequest.findThreadTaskDataErrorCalculationTop10()
+            errorTaskThreadPoolTopList.value = await TaskService.findThreadTaskDataErrorCalculationTop10()
         }
 
         /**
@@ -379,4 +379,4 @@ export default defineComponent({
             font-size: 12px;
         }
 
-</style>
+</style>../services/TaskService

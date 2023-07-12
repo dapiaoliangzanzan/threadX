@@ -1,7 +1,7 @@
 <template>
     <div class="pageBody">
         <div :span="4" class="treeColClass">
-            <el-input v-model="treeFilterText" placeholder="搜索实例" :prefix-icon="Search"/>
+            <el-input style="margin-top: 0px;" v-model="treeFilterText" clearable placeholder="搜索实例" :prefix-icon="Search"/>
             <el-tree
                 ref="treeRef"
                 :data="serverTreeData"
@@ -15,7 +15,11 @@
             />
         </div>
         <div :span="20" class="instanceDataBody">
-            实例数据：{{ instanceId }}
+            <div class="em-logo-class" v-if="emLogo">
+                <img src="../assets/icon/douding.png" alt="">
+                <el-text  type="info">请选择要查看的实例...</el-text>
+            </div>
+            <div v-else>表格数据:{{ instanceId }}</div>
         </div>
     </div>
 </template>
@@ -26,7 +30,6 @@ import { ElTree } from 'element-plus'
 import { Search } from '@element-plus/icons-vue'
 import ServerService from '../services/ServerService'
 import router from '@/router'
-import { da } from 'element-plus/es/locale'
 
 export default defineComponent({
     setup () {
@@ -35,7 +38,8 @@ export default defineComponent({
             loadRouterParam();
             loadTreeData();
         });
-
+        //是否显示空logo
+        const emLogo = ref(true)
         // 定义树结构的数据体系
         const serverTreeData= ref([]);
         //点击的实例的id
@@ -83,7 +87,13 @@ export default defineComponent({
          * 加载实例的数据
          */
          const loadInstanceData = ()=>{
-            console.log(instanceId.value)
+            const instanceIdValue = instanceId.value
+            if (instanceIdValue == null) {
+                emLogo.value = true
+            }else {
+                emLogo.value = false
+            }
+            
         }
 
         
@@ -120,6 +130,7 @@ export default defineComponent({
             treeFilterText,
             treeRef,
             instanceId,
+            emLogo,
             Search,
             filterNode,
             handleNodeClick
@@ -154,5 +165,18 @@ export default defineComponent({
         border: 1px solid rgb(225, 227, 225);
         box-shadow: 0 10px 10px  rgba(0, 0, 0, .3);
         border-radius: 5px;
+    }
+
+    .em-logo-class {
+        display: flex;
+        flex-direction: column;
+        height: 100%;
+        justify-content: center;
+        align-items: center;
+
+        .el-text {
+            margin-top: 10px;
+
+        }
     }
 </style>

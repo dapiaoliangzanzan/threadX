@@ -156,6 +156,23 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
         return threadPoolDetailsVo;
     }
 
+    @Override
+    public InstanceStateCountVo findThreadPoolStateCountByInstanceId(Long instanceId) {
+        InstanceStateCountVo instanceStateCountVo = new InstanceStateCountVo();
+        List<ThreadStatusVo> threadPoolStateCountByInstanceId = baseMapper.findThreadPoolStateCountByInstanceId(instanceId);
+
+        List<ThreadStatusVo> activeThreadPoolData = threadPoolStateCountByInstanceId.stream().filter(state -> {
+            return 1 == state.getHasActive();
+        }).collect(Collectors.toList());
+        int totalCount = threadPoolStateCountByInstanceId.size();
+        int activeCount = activeThreadPoolData.size();
+        int failure = totalCount - activeCount;
+        instanceStateCountVo.setTotalCount(totalCount);
+        instanceStateCountVo.setWaitCount(failure);
+        instanceStateCountVo.setActiveCount(activeCount);
+        return instanceStateCountVo;
+    }
+
     private ThreadPoolDetailsVo buildThreadPoolDetail(ThreadPoolData threadPoolData) {
         String serverKey = threadPoolData.getServerKey();
         String instanceKey = threadPoolData.getInstanceKey();

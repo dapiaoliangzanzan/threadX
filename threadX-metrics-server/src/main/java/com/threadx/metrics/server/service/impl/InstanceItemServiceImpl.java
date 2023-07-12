@@ -287,11 +287,8 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
     }
 
     @Override
-    public InstanceItemDataVo instanceDetails(InstanceItemDataConditions instanceItemDataConditions) {
-        if (instanceItemDataConditions == null) {
-            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
-        }
-        Long instanceId = instanceItemDataConditions.getInstanceId();
+    public InstanceItemDataVo instanceListeningState(Long instanceId) {
+
         if (instanceId == null) {
             throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
@@ -316,33 +313,11 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
         String formatBetween = DateUtil.formatBetween(System.currentTimeMillis() - createTime);
         //监控时间
         instanceItemDataVo.setMonitoringDuration(formatBetween);
-        //查询实例下对应的线程池数据
-        ThreadPoolPageDataConditions cond = new ThreadPoolPageDataConditions();
-        cond.setInstanceId(instanceId);
-        cond.setPageNumber(instanceItemDataConditions.getPageNumber());
-        cond.setPageSize(instanceItemDataConditions.getPageSize());
-        ThreadxPage<ThreadPoolDataVo> pageByThreadPoolPageDataConditions = poolDataService.findPageByThreadPoolPageDataConditions(cond);
-
-        int activeThreadCount = 0;
-        //对活跃中的线程池进行计数
-        List<ThreadPoolDataVo> data = pageByThreadPoolPageDataConditions.getData();
-        if (CollUtil.isNotEmpty(data)) {
-            for (ThreadPoolDataVo datum : data) {
-                //只要当前活跃的不为0  就是线程池依旧在执行任务
-                if (datum.getActiveCount() > 0) {
-                    activeThreadCount = activeThreadCount + 1;
-                }
-            }
-        }
-
-        long total = pageByThreadPoolPageDataConditions.getTotal();
-        //计算不活跃的
-        int idleCount = (int) (total - activeThreadCount);
-        instanceItemDataVo.setActiveThreadPoolCount(activeThreadCount);
-        instanceItemDataVo.setWaitThreadPoolCount(idleCount);
-        instanceItemDataVo.setThreadPoolCount(total);
-        instanceItemDataVo.setThreadPoolData(pageByThreadPoolPageDataConditions);
-
+        InstanceStateCountVo threadPoolStateCountByInstanceId = poolDataService.findThreadPoolStateCountByInstanceId(instanceId);
+        instanceItemDataVo.setServerName(serverItem.getServerName());
+        instanceItemDataVo.setThreadPoolCount(threadPoolStateCountByInstanceId.getTotalCount());
+        instanceItemDataVo.setActiveThreadPoolCount(threadPoolStateCountByInstanceId.getActiveCount());
+        instanceItemDataVo.setWaitThreadPoolCount(threadPoolStateCountByInstanceId.getWaitCount());
         //对查看的数据进行计数
         UserVo userData = LoginContext.getUserData();
         Long userId = userData.getId();

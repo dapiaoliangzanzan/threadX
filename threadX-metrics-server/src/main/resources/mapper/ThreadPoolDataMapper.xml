@@ -39,4 +39,20 @@
         )
 
     </select>
+    <select id="findThreadPoolStateCountByInstanceId" resultType="com.threadx.metrics.server.vo.ThreadStatusVo">
+        SELECT
+            thread_pool_name AS threadPoolName,
+            CASE
+                WHEN MAX( UNIX_TIMESTAMP() * 1000 - create_time ) > 60000 THEN 0 ELSE 1
+            END AS hasActive
+        FROM
+            thread_pool_data
+        WHERE
+                id IN ( SELECT MAX( id ) FROM thread_pool_data WHERE instance_id = #{instanceId} GROUP BY thread_pool_name )
+        GROUP BY
+            thread_pool_name
+        ORDER BY
+            thread_pool_name;
+    </select>
+
 </mapper>

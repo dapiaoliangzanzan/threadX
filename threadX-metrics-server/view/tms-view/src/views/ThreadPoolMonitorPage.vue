@@ -375,7 +375,7 @@ import { defineComponent , ref, reactive, onMounted, onBeforeMount} from 'vue'
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import router from '@/router'
 import ThreadPoolService from '@/services/ThreadPoolService';
-import * as taskRequest from '../services/taskService'
+import TaskService from '../services/TaskService'
 
 
 export default defineComponent({
@@ -448,7 +448,7 @@ export default defineComponent({
                 endTimeStr = runTime.value[1]
             }
 
-            const pageData = await taskRequest.threadTaskData({
+            const pageData = await TaskService.threadTaskData({
                 startTime:startTimeStr,
                 endTime:endTimeStr,
                 instanceId:instanceId.value,
@@ -529,4 +529,4 @@ export default defineComponent({
         display: flex;
         justify-content: flex-end;
     }
-</style>
+</style>../services/TaskService

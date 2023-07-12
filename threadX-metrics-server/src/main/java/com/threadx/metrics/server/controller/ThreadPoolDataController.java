@@ -31,7 +31,7 @@ public class ThreadPoolDataController {
     }
 
     @Login
-    @ApiOperation(value = "查询实例详情")
+    @ApiOperation(value = "查询线程池详情")
     @PostMapping("findThreadPoolDetail")
     public ThreadPoolDetailsVo findThreadPoolDetail(@RequestBody ThreadPoolDetailConditions threadPoolDetailConditions) {
         return threadPoolDataService.findThreadPoolDetail(threadPoolDetailConditions);

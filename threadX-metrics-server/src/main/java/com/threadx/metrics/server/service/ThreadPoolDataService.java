@@ -3,10 +3,7 @@ package com.threadx.metrics.server.service;
 import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
 import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.entity.ThreadPoolData;
-import com.threadx.metrics.server.vo.ThreadPoolDataVo;
-import com.threadx.metrics.server.vo.ThreadPoolDetailPackVo;
-import com.threadx.metrics.server.vo.ThreadPoolDetailsVo;
-import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.*;
 
 import java.util.Collection;
 
@@ -37,10 +34,17 @@ public interface ThreadPoolDataService {
     ThreadxPage<ThreadPoolDataVo> findPageByThreadPoolPageDataConditions(ThreadPoolPageDataConditions threadPoolPageDataConditions);
 
     /**
-     * 查询实例详情
+     * 查询线程池详情
      *
      * @param threadPoolDetailConditions 实例详情查询
      * @return 实例的详情
      */
     ThreadPoolDetailsVo findThreadPoolDetail(ThreadPoolDetailConditions threadPoolDetailConditions);
+
+    /**
+     * 查询线程池状态的数量  根据实例的id
+     * @param instanceId 实例的id
+     * @return 返回线程池的数量
+     */
+    InstanceStateCountVo findThreadPoolStateCountByInstanceId(Long instanceId);
 }

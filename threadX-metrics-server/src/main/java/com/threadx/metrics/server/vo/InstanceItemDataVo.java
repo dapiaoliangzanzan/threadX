@@ -39,7 +39,7 @@ public class InstanceItemDataVo {
      * 当前实例内的线程池的数量
      */
     @ApiModelProperty(name = "threadPoolCount", value = "当前实例内的线程池的数量")
-    private Long threadPoolCount;
+    private Integer threadPoolCount;
 
     /**
      * 活跃的线程池的数量
@@ -52,11 +52,5 @@ public class InstanceItemDataVo {
      */
     @ApiModelProperty(name = "waitThreadPoolCount", value = "等待的线程池的数量")
     private Integer waitThreadPoolCount;
-
-    /**
-     * 当前实例下的线程池
-     */
-    @ApiModelProperty(name = "threadPoolData", value = "当前实例下的线程池")
-    private ThreadxPage<ThreadPoolDataVo> threadPoolData;
 
 }

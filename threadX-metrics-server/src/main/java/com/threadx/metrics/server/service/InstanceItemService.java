@@ -84,10 +84,10 @@ public interface InstanceItemService {
     /**
      * 实例详情查询
      *
-     * @param instanceItemDataConditions 查询条件
+     * @param instanceId 实例的id
      * @return 实例的详情信息
      */
-    InstanceItemDataVo instanceDetails(InstanceItemDataConditions instanceItemDataConditions);
+    InstanceItemDataVo instanceListeningState(Long instanceId);
 
     /**
      * 监测实例是否处于活跃状态   true活跃  false  断连

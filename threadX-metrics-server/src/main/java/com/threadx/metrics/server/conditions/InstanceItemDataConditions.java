@@ -25,17 +25,6 @@ public class InstanceItemDataConditions implements Serializable {
     /**
      * 实例的id
      */
+    @ApiModelProperty(name = "instanceId", value = "实例的id")
     private Long instanceId;
-
-    /**
-     * 每一页显示的条数
-     */
-    @ApiModelProperty(name = "pageSize", value = "每一页显示的条数")
-    private Integer pageSize = 10;
-
-    /**
-     * 当前页码
-     */
-    @ApiModelProperty(name = "pageNumber", value = "当前页码")
-    private Integer pageNumber = 1;
 }

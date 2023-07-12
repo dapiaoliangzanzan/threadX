@@ -51,9 +51,9 @@ public class InstanceItemController {
     }
 
     @Login
-    @ApiOperation(value = "实例详情查询")
-    @PostMapping("instanceDetails")
-    public InstanceItemDataVo instanceDetails(@RequestBody InstanceItemDataConditions instanceId){
-        return instanceItemService.instanceDetails(instanceId);
+    @ApiOperation(value = "实例监听状态查询")
+    @GetMapping("instanceListeningState")
+    public InstanceItemDataVo instanceListeningState(@RequestParam("instanceId") Long instanceId) {
+        return instanceItemService.instanceListeningState(instanceId);
     }
 }

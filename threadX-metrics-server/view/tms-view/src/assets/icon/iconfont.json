@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "6688120",
+      "name": "一片空白的豆丁",
+      "font_class": "douding",
+      "unicode": "e733",
+      "unicode_decimal": 59187
+    },
+    {
       "icon_id": "18321645",
       "name": "用户管理",
       "font_class": "yonghuguanli",

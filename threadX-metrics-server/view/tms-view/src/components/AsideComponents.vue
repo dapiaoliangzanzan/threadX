@@ -22,7 +22,7 @@
 import { defineComponent,ref, computed, onMounted } from 'vue'
 import '../assets/icon/iconfont.css'
 import '../assets/css/el-drawer-index.css'
-import * as request from '../services/menuService'
+import MenuService from '../services/MenuService'
 import router from '@/router';
 
 export default defineComponent({
@@ -36,7 +36,7 @@ export default defineComponent({
        * 获取菜单数据
        */
       const getMenuAllData = async () =>{
-        const res = await request.getLeftMenu();
+        const res = await MenuService.getLeftMenu();
         menuData.value=res
       };
 
