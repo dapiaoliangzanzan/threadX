@@ -89,4 +89,10 @@ public class ThreadPoolDataVo implements Serializable {
     @ApiModelProperty(name = "state", value = "当前线程池的状态")
     private String state;
 
+    /**
+     * 线程池的创建流程
+     */
+    @ApiModelProperty(name = "state", value = "线程池创建流程")
+    private String threadPoolFlow;
+
 }

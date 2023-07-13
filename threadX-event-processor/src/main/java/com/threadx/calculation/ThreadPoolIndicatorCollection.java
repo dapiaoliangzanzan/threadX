@@ -81,6 +81,7 @@ public class ThreadPoolIndicatorCollection {
         String threadPoolId = indexData.getThreadPoolId();
         String threadPoolName = indexData.getThreadPoolName();
         String threadPoolGroupName = indexData.getThreadPoolGroupName();
+        String createFlow = indexData.getCreateFlow();
 
         ThreadPoolExecutor executor = ThreadPoolWeakReferenceCache.getCache(threadPoolId);
         if (executor == null) {
@@ -134,6 +135,7 @@ public class ThreadPoolIndicatorCollection {
         //当前线程池中的线程数
         int poolSize = executor.getPoolSize();
         event.setThisThreadCount(poolSize);
+        event.setThreadPoolFlow(createFlow);
         return event;
     }
 }

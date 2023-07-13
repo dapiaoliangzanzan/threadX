@@ -24,9 +24,15 @@ public class ThreadPoolIndexData {
      */
     private final String threadPoolGroupName;
 
-    public ThreadPoolIndexData(String threadPoolId, String threadPoolName, String threadPoolGroupName) {
+    /**
+     * 创建流
+     */
+    private final String createFlow;
+
+    public ThreadPoolIndexData(String threadPoolId, String threadPoolName, String threadPoolGroupName, String createFlow) {
         this.threadPoolId = threadPoolId;
         this.threadPoolName = threadPoolName;
         this.threadPoolGroupName = threadPoolGroupName;
+        this.createFlow = createFlow;
     }
 }

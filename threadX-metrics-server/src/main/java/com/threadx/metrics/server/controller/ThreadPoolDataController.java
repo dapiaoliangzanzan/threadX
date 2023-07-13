@@ -6,7 +6,6 @@ import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
 import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.vo.ThreadPoolDataVo;
-import com.threadx.metrics.server.vo.ThreadPoolDetailPackVo;
 import com.threadx.metrics.server.vo.ThreadPoolDetailsVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 import io.swagger.annotations.Api;

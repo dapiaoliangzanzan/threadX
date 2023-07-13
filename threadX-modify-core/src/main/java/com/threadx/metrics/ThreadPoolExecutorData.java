@@ -97,4 +97,9 @@ public class ThreadPoolExecutorData implements Serializable {
      * 线程空闲
      */
     private Long keepAliveTime;
+
+    /**
+     * 线程池的创建流程
+     */
+    private String threadPoolFlow;
 }

@@ -23,6 +23,7 @@
         <result property="queueType" column="queue_type"/>
         <result property="rejectedType" column="rejected_type"/>
         <result property="keepAliveTime" column="keep_alive_time"/>
+        <result property="threadPoolFlow" column="thread_pool_flow"/>
         <result property="instanceId" column="instance_id"/>
         <result property="createTime" column="create_time"/>
         <result property="updateTime" column="update_time"/>

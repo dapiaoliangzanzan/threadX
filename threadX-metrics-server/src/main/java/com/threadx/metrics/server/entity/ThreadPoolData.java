@@ -91,6 +91,11 @@ public class ThreadPoolData extends BaseEntity {
      */
     private Long keepAliveTime;
 
+    /**
+     * 线程池的创建流程
+     */
+    private String threadPoolFlow;
+
 
     /**
      * 服务的名称

@@ -153,6 +153,26 @@ public class ThreadXCollectionUtils {
         }
     }
 
+    /**
+     * 关联集合
+     *
+     * @param stackFlow 节点流
+     * @param s         分隔符
+     * @return 关联后的数据
+     */
+    public static String join(Collection<String> stackFlow, String s) {
+        if (isEmpty(stackFlow)) {
+            return "";
+        }
+        StringBuilder sb = new StringBuilder();
+        for (String node : stackFlow) {
+            sb.append(node).append(s);
+        }
+        String data = sb.toString();
+        data = data.substring(0, data.lastIndexOf(s));
+        return data;
+    }
+
 
     public static interface ThreadXCollectionIteration<T> {
         /**

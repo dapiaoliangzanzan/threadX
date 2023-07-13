@@ -137,4 +137,24 @@ public class ThreadXThreadPoolUtil {
         ThreadXCollectionUtils.iterationList(Arrays.asList(stackTraces), stackTraceElements::add, true);
         return stackTraceElements;
     }
+
+    /**
+     * 获取创建流程
+     * @return 创建流
+     */
+    public static String getCreateFlow() {
+        List<String> stackFlow = new ArrayList<>();
+        //获取堆栈信息
+        StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
+        //生成流
+        for (StackTraceElement stackTrace : stackTraces) {
+            String className = stackTrace.getClassName();
+            String methodName = stackTrace.getMethodName();
+            int lineNumber = stackTrace.getLineNumber();
+
+            String simpleNode = String.format("%s#%s:%s", className, methodName, lineNumber);
+            stackFlow.add(simpleNode);
+        }
+        return ThreadXCollectionUtils.join(stackFlow, "->");
+    }
 }
