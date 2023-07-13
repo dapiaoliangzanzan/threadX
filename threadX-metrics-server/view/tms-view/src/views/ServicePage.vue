@@ -71,21 +71,57 @@
                 </div>
 
                 <div class="search-from-class">
-                    <el-input :prefix-icon="Search" v-model="threadPoolGroupNameSearch" placeholder="请输入线程池组的名称" clearable />
-                    <el-button type="primary">搜索</el-button>
+                    <el-input :prefix-icon="Search" v-model="threadPoolGroupNameSearch" placeholder="请输入线程池组的名称" clearable @keyup.enter="loadThreadPoolData"/>
+                    <el-button type="primary" @click="loadThreadPoolData">搜索</el-button>
                 </div>
 
                 <div class="thread-pool-table">
                     
                     <el-table :data="threadPoolTableData">
-                        <el-table-column prop="threadPoolName" label="线程池名称"  />
-                        <el-table-column prop="threadPoolGroupName" label="所属组" />
-                        <el-table-column prop="activeCount" label="活跃数量" />
-                        <el-table-column prop="thisThreadCount" label="当前数量" />
-                        <el-table-column prop="completedTaskCount" label="完成数量" />
-                        <el-table-column prop="updateTime" label="数据更新时间" />
-                        <el-table-column prop="state" label="线程池状态" />
+                        <el-table-column prop="threadPoolName" label="线程池名称"  align="center">
+                            <template #default="scope">
+
+                                <el-tooltip :content="scope.row.threadPoolName" placement="top">
+                                    <el-button
+                                    link
+                                    type="primary"
+                                    size="small"
+                                    @click.prevent="threadPoolDetailsPage(scope.row.instanceId, scope.row.threadPoolName)">
+                                        <span class="truncate-text">{{ scope.row.threadPoolName.length > 20 ? scope.row.threadPoolName.substring(0, 20) + '...' : scope.row.threadPoolName }}</span>
+                                    </el-button>
+                                </el-tooltip>  
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="threadPoolGroupName" label="所属组" align="center">
+                            <template #default="scope">
+                                <el-tooltip :content="scope.row.threadPoolGroupName" placement="top">
+                                    <span class="truncate-text">{{ scope.row.threadPoolGroupName.length > 20 ? scope.row.threadPoolGroupName.substring(0, 20) + '...' : scope.row.threadPoolGroupName }}</span>
+                                </el-tooltip>  
+                            </template>
+                        </el-table-column>
+                        <el-table-column prop="activeCount" label="活跃线程数量" align="center"/>
+                        <el-table-column prop="thisThreadCount" label="当前线程数量" align="center"/>
+                        <el-table-column prop="completedTaskCount" label="完成任务数量" align="center"/>
+                        <el-table-column prop="createTime" label="数据更新时间" align="center"/>
+                        <el-table-column prop="state" label="线程池状态" align="center"/>
+                        <el-table-column fixed="right" label="操作" align="center">
+                            <template #default="scope">
+                                <el-button link type="primary" size="small" @click="threadPoolDetailsPage(scope.row.instanceId, scope.row.threadPoolName)">详情</el-button>
+                                <el-button link type="primary" size="small">流程</el-button>
+                            </template>
+                        </el-table-column>
                     </el-table>
+
+                    <div class="page-class">
+                        <el-pagination
+                        :page-size="pageSize"
+                        :pager-count="5"
+                        v-model:current-page="currentPage"
+                        layout="prev, pager, next"
+                        :total="totalSize"
+                        @current-change="loadThreadPoolData"
+                        />
+                    </div>
                 </div>
             </div>
         </div>
@@ -109,6 +145,10 @@ export default defineComponent({
             loadRouterParam();
             loadTreeData();
         });
+        //分页容量
+        const pageSize = ref(14)
+        const totalSize = ref()
+        const currentPage = ref(1)
         //是否显示空logo
         const emLogo = ref(true)
         //搜索条件
@@ -177,26 +217,23 @@ export default defineComponent({
                 instanceListeningState.value = await InstanceService.instanceListeningState({
                     instanceId:instanceIdValue
                 })
-
-                loadThreadPoolData()
-
-                
+                loadThreadPoolData()    
             }
-            
         }
 
+        /**
+         * 加载线程池表格数据
+         */
         const loadThreadPoolData =async () => {
             const threadPoolTableDataReq = await ThreadPoolService.findPageByThreadPoolPageDataConditions({
                 instanceId: instanceId.value,
                 threadGroupName: threadPoolGroupNameSearch.value,
-                pageNumber: 1,
-                pageSize: 10
+                pageNumber: currentPage.value,
+                pageSize: pageSize.value
             })
-
             threadPoolTableData.value = threadPoolTableDataReq.data
+            totalSize.value = threadPoolTableDataReq.total
         }
-
-        
 
         /**
          * 加载路由参数
@@ -208,7 +245,6 @@ export default defineComponent({
                 filterTreeData();
                 loadInstanceData();
             })
-            
         }
 
         /**
@@ -218,9 +254,27 @@ export default defineComponent({
             treeRef.value!.filter(treeFilterText.value)
         }
 
+        /**
+         * 加载路由参数
+         */
         const loadRouterParam = ()=>{
             treeFilterText.value = router.currentRoute.value.query.instanceName
             instanceId.value = router.currentRoute.value.query.instanceId
+        }
+
+        /**
+         * 跳转页面到线程池详情页面，携带线程池的id信息
+         * 
+         * @param threadPoolId 点击的线程池的id
+         */
+         const threadPoolDetailsPage = (instanceId:string, threadPoolName:string)=>{
+            router.push({
+                name:'ThreadPoolMonitor',
+                query: {
+                    instanceId:instanceId,
+                    threadPoolName:threadPoolName
+                }
+            })
         }
 
 
@@ -234,9 +288,14 @@ export default defineComponent({
             instanceListeningState,
             threadPoolGroupNameSearch,
             threadPoolTableData,
+            pageSize,
+            totalSize,
+            currentPage,
             Search,
             filterNode,
-            handleNodeClick
+            handleNodeClick,
+            threadPoolDetailsPage,
+            loadThreadPoolData
         }
     }
 })
@@ -315,5 +374,10 @@ export default defineComponent({
     }
     .thread-pool-table {
         margin-top: 5px;
+    }
+
+    .page-class {
+        display: flex;
+        justify-content: flex-end;
     }
 </style>

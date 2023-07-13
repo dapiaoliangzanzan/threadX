@@ -31,6 +31,12 @@ public class ThreadPoolDataVo implements Serializable {
      */
     @ApiModelProperty(name = "id", value = "线程池的id")
     private Long id;
+
+    /**
+     * 线程池的id
+     */
+    @ApiModelProperty(name = "instanceId", value = "所属实例的id")
+    private Long instanceId;
     /**
      * 线程池的名称
      */

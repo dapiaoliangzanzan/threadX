@@ -2,6 +2,7 @@ package com.threadx.metrics.server.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
+import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
@@ -28,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -115,6 +117,8 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
                 ThreadPoolDataVo threadPoolDataVo = new ThreadPoolDataVo();
                 BeanUtil.copyProperties(record, threadPoolDataVo);
                 Integer activeCount = record.getActiveCount();
+                threadPoolDataVo.setCreateTime(DateUtil.format(new Date(record.getCreateTime()), "yyyy-MM-dd HH:mm:ss"));
+                threadPoolDataVo.setInstanceId(record.getInstanceId());
                 if(!isActive) {
                     threadPoolDataVo.setState(ThreadPoolDataVo.DISCONNECTION);
                     threadPoolDataVo.setActiveCount(0);

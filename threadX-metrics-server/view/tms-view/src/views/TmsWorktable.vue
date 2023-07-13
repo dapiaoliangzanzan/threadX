@@ -81,7 +81,7 @@
                                 type="primary"
                                 size="small"
                                 @click.prevent="threadPoolDetailsPage(scope.row.instanceId, scope.row.threadPoolName)">
-                                    <span class="truncate-text">{{ scope.row.threadPoolName.length > 30 ? scope.row.threadPoolName.substring(0, 30) + '...' : scope.row.threadPoolGroupName }}</span>
+                                    <span class="truncate-text">{{ scope.row.threadPoolName.length > 30 ? scope.row.threadPoolName.substring(0, 30) + '...' : scope.row.threadPoolName }}</span>
                                 </el-button>
                             </el-tooltip>  
                         </template>
