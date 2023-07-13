@@ -245,6 +245,7 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
                 instanceItem.setInstanceName(instanceName);
                 instanceItem.setActiveTime(instanceItem.getCreateTime());
                 instanceItem.setServerId(serverItem.getId());
+                instanceItem.setServerName(serverItem.getServerName());
                 ((InstanceItemServiceImpl) AopContext.currentProxy()).save(instanceItem);
             }
             return instanceItem;

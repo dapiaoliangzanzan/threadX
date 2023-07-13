@@ -143,14 +143,19 @@ public class ThreadXThreadPoolUtil {
      * @return 创建流
      */
     public static String getCreateFlow() {
+        String threadPrefix = "com.threadx.state.ThreadPoolExecutorState";
         List<String> stackFlow = new ArrayList<>();
         //获取堆栈信息
-        StackTraceElement[] stackTraces = Thread.currentThread().getStackTrace();
+        List<StackTraceElement> stackTraceElements = reversalThreadPoolStack();
         //生成流
-        for (StackTraceElement stackTrace : stackTraces) {
+        for (StackTraceElement stackTrace : stackTraceElements) {
             String className = stackTrace.getClassName();
             String methodName = stackTrace.getMethodName();
             int lineNumber = stackTrace.getLineNumber();
+            if(className.contains(threadPrefix)) {
+                break;
+            }
+
 
             String simpleNode = String.format("%s#%s:%s", className, methodName, lineNumber);
             stackFlow.add(simpleNode);
