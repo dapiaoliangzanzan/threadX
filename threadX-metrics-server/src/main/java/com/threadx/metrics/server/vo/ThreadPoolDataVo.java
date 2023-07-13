@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * *************************************************<br/>
@@ -92,7 +93,7 @@ public class ThreadPoolDataVo implements Serializable {
     /**
      * 线程池的创建流程
      */
-    @ApiModelProperty(name = "state", value = "线程池创建流程")
-    private String threadPoolFlow;
+    @ApiModelProperty(name = "createThreadPoolFlow", value = "线程池创建流程(顺序)")
+    private List<ProcedureVo> createThreadPoolFlow;
 
 }

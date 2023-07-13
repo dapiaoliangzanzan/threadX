@@ -111,7 +111,7 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
 
             List<ThreadPoolData> records = threadPoolDataPage.getRecords();
             //获取当前的实例的状态
-            boolean isActive = instanceItemService.instanceActiveCheck(instanceItem.getInstanceName(), instanceItem.getServerName());
+            boolean isActive = instanceItemService.instanceActiveCheck(instanceItem.getServerName(), instanceItem.getInstanceName());
             //线程池的数据映射
             List<ThreadPoolDataVo> threadPoolDataVos = records.stream().map(record -> {
                 ThreadPoolDataVo threadPoolDataVo = new ThreadPoolDataVo();
@@ -126,6 +126,19 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
                 }else {
                     threadPoolDataVo.setState(activeCount > 0 ? ThreadPoolDataVo.ACTION_NAME : ThreadPoolDataVo.IDEA_NAME);
                 }
+
+                List<ProcedureVo> procedureVos = new ArrayList<>();
+                //获取创建流
+                String threadPoolFlow = record.getThreadPoolFlow();
+                //分隔数据
+                String[] flowItems = threadPoolFlow.split("->");
+                for (int i = 0; i < flowItems.length; i++) {
+                    ProcedureVo procedureVo = new ProcedureVo();
+                    procedureVo.setTitle("流程" + (i+1));
+                    procedureVo.setDetails(flowItems[i]);
+                    procedureVos.add(procedureVo);
+                }
+                threadPoolDataVo.setCreateThreadPoolFlow(procedureVos);
                 return threadPoolDataVo;
             }).collect(Collectors.toList());
 

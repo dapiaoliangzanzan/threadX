@@ -143,7 +143,7 @@ public class ThreadXThreadPoolUtil {
      * @return 创建流
      */
     public static String getCreateFlow() {
-        String threadPrefix = "com.threadx.state.ThreadPoolExecutorState";
+        String threadPrefix = "java.util.concurrent.ThreadPoolExecutor";
         List<String> stackFlow = new ArrayList<>();
         //获取堆栈信息
         List<StackTraceElement> stackTraceElements = reversalThreadPoolStack();

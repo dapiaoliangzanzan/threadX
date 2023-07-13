@@ -107,7 +107,7 @@
                         <el-table-column fixed="right" label="操作" align="center">
                             <template #default="scope">
                                 <el-button link type="primary" size="small" @click="threadPoolDetailsPage(scope.row.instanceId, scope.row.threadPoolName)">详情</el-button>
-                                <el-button link type="primary" size="small">流程</el-button>
+                                <el-button link type="primary" size="small" @click="viewThreadPoolCreateFlow(scope.row.createThreadPoolFlow)">流程</el-button>
                             </template>
                         </el-table-column>
                     </el-table>
@@ -125,6 +125,24 @@
                 </div>
             </div>
         </div>
+
+
+        <el-dialog v-model="createThreadPoolFlowVisible" title="创建步骤" width="800px">
+            <div >
+                <el-scrollbar height="500px">
+                    <el-steps :active="procedureData.length" align-center direction="vertical">
+                        <el-step 
+                        v-for="(procedure) in procedureData"
+                        :key="procedure.title"
+                        :title="procedure.title" 
+                        :description="procedure.details" 
+                        />
+                    </el-steps>
+                </el-scrollbar>
+
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -155,6 +173,10 @@ export default defineComponent({
         const threadPoolGroupNameSearch = ref()
         //表格数据
         const threadPoolTableData = ref([])
+        //线程池创建步骤是否显示
+        const createThreadPoolFlowVisible = ref(false)
+        //步骤长度
+        const procedureData = ref()
 
         const instanceListeningState = ref({
             monitoringDuration:"0毫秒",
@@ -277,6 +299,11 @@ export default defineComponent({
             })
         }
 
+        const viewThreadPoolCreateFlow = (datas:any)=>{
+            procedureData.value = datas
+            createThreadPoolFlowVisible.value = true
+        }
+
 
         return {
             serverTreeData,
@@ -291,11 +318,14 @@ export default defineComponent({
             pageSize,
             totalSize,
             currentPage,
+            createThreadPoolFlowVisible,
+            procedureData,
             Search,
             filterNode,
             handleNodeClick,
             threadPoolDetailsPage,
-            loadThreadPoolData
+            loadThreadPoolData,
+            viewThreadPoolCreateFlow
         }
     }
 })
