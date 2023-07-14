@@ -86,7 +86,7 @@ class ApiUtils {
 
   /**
    * get请求方法
-   * @param url 请求的地址
+   * @param url 请求的地址 
    * @param params 参数  json类型的就行
    * @param config 可选的Axios请求配置
    * @returns 最终的返回结果
