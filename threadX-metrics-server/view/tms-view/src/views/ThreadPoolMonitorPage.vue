@@ -371,11 +371,11 @@
 </template>
 
 <script lang="ts">
-import { defineComponent , ref, reactive, onMounted, onBeforeMount} from 'vue'
+import { defineComponent , ref, onMounted} from 'vue'
 import zhCn from "element-plus/lib/locale/lang/zh-cn";
 import router from '@/router'
 import ThreadPoolService from '@/services/ThreadPoolService';
-import TaskService from '../services/TaskService'
+import TaskService from '@/services/TaskService'
 
 
 export default defineComponent({
