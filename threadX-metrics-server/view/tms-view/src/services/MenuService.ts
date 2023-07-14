@@ -2,7 +2,7 @@ import ApiUtils from './api';
 
 class MenuService {
     /**
-     * 查询当前用户下拥有的左侧菜单栏
+     * 查询当前用户下拥有的左侧菜单栏 
      * @returns 
      */
     public static getLeftMenu(): Promise<any> {

@@ -3,7 +3,7 @@ import ApiUtils from './api';
 class TaskService {
 
     /**
-     * 查询错误排名top10
+     * 查询错误排名top10 
      * @returns  top10的错误数据
      */
     public static findThreadTaskDataErrorCalculationTop10(): Promise<any> {

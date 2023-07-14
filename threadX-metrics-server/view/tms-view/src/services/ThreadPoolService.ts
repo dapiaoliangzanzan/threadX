@@ -6,7 +6,7 @@ import ApiUtils from './api';
 class ThreadPoolService {
 
     /**
-     * 查询线程池的具体详情
+     * 查询线程池的具体详情 
      * @param data 参数
      * @returns  线程池的具体详情
      */
