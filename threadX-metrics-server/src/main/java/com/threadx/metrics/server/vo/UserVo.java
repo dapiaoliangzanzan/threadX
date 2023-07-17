@@ -54,7 +54,7 @@ public class UserVo implements Serializable {
     private String updateTime;
 
     /**
-     * 当前状态
+     * 用户状态  0  冻结  1 正常
      */
     @ApiModelProperty(name = "state", value = "当前状态")
     private String state;
