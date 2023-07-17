@@ -1,19 +1,13 @@
 package com.threadx.metrics.server.common.utils;
 
 import cn.hutool.core.util.IdUtil;
-import cn.hutool.crypto.digest.BCrypt;
 import cn.hutool.extra.spring.SpringUtil;
-import com.threadx.metrics.server.common.code.TokenCheckExceptionCode;
-import com.threadx.metrics.server.common.exceptions.TokenCheckException;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.dto.UserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.tomcat.util.codec.binary.Base64;
-import org.springframework.context.EnvironmentAware;
-import org.springframework.core.env.Environment;
 
 import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
@@ -51,19 +45,19 @@ public class ThreadxJwtUtil  {
     /**
      * token生成工具类
      *
-     * @param userVo 用户信息
+     * @param userDto 用户信息
      * @return 生成的token
      */
-    public static String generateToken(UserVo userVo) {
+    public static String generateToken(UserDto userDto) {
         Date now = new Date();
         Date expiration = new Date(now.getTime() + EXPIRATION_TIME);
 
         Map<String, String> claims = new HashMap<>();
-        claims.put("username", userVo.getUserName());
-        claims.put("email", userVo.getEmail());
-        claims.put("id", userVo.getId() + "");
-        claims.put("nickName", userVo.getNickName());
-        claims.put("createTime", userVo.getCreateTime() + "");
+        claims.put("username", userDto.getUserName());
+        claims.put("email", userDto.getEmail());
+        claims.put("id", userDto.getId() + "");
+        claims.put("nickName", userDto.getNickName());
+        claims.put("createTime", userDto.getCreateTime() + "");
 
 
         return Jwts.builder()
@@ -87,7 +81,7 @@ public class ThreadxJwtUtil  {
      * @param renewToken 续约的自定义操作
      * @return 用户信息
      */
-    public static UserVo renewParseToken(String token, RenewToken renewToken) {
+    public static UserDto renewParseToken(String token, RenewToken renewToken) {
         try {
             Jws<Claims> claims = Jwts.parserBuilder()
                     .setSigningKey(generateKey())
@@ -113,13 +107,13 @@ public class ThreadxJwtUtil  {
                 }
             }
 
-            UserVo userVo = new UserVo();
-            userVo.setUserName(updatedClaims.get("username", String.class));
-            userVo.setEmail(updatedClaims.get("email", String.class));
-            userVo.setId(Long.parseLong(updatedClaims.get("id", String.class)));
-            userVo.setNickName(updatedClaims.get("nickName", String.class));
-            userVo.setCreateTime(Long.parseLong(updatedClaims.get("createTime", String.class)));
-            return userVo;
+            UserDto userDto = new UserDto();
+            userDto.setUserName(updatedClaims.get("username", String.class));
+            userDto.setEmail(updatedClaims.get("email", String.class));
+            userDto.setId(Long.parseLong(updatedClaims.get("id", String.class)));
+            userDto.setNickName(updatedClaims.get("nickName", String.class));
+            userDto.setCreateTime(Long.parseLong(updatedClaims.get("createTime", String.class)));
+            return userDto;
 
 
         } catch (Exception e) {

@@ -8,7 +8,7 @@ import com.threadx.metrics.server.dto.RequestData;
 import com.threadx.metrics.server.entity.ActiveLog;
 import com.threadx.metrics.server.enums.LogEnum;
 import com.threadx.metrics.server.init.LogMessageConsumer;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.dto.UserDto;
 import com.threadx.utils.ThreadXThrowableMessageUtil;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -66,7 +66,7 @@ public class LogAspect {
             }
 
 
-            UserVo userData = LoginContext.getUserData();
+            UserDto userData = LoginContext.getUserData();
             if (userData != null) {
                 Long id = userData.getId();
                 if (id != null) {

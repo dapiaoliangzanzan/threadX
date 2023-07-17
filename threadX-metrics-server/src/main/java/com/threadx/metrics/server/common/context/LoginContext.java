@@ -1,9 +1,7 @@
 package com.threadx.metrics.server.common.context;
 
-import com.threadx.metrics.server.common.code.LoginExceptionCode;
-import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.dto.RequestData;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.dto.UserDto;
 
 /**
  * 登录上下文
@@ -13,16 +11,16 @@ import com.threadx.metrics.server.vo.UserVo;
  */
 public class LoginContext {
 
-    private final static ThreadLocal<UserVo> USER_CONTEXT = new ThreadLocal<>();
+    private final static ThreadLocal<UserDto> USER_CONTEXT = new ThreadLocal<>();
     private final static ThreadLocal<RequestData> USER_REQUEST = new ThreadLocal<>();
 
     /**
      * 设置用户上下文
      *
-     * @param userVo 用户信息
+     * @param userDto 用户信息
      */
-    public static void setUserData(UserVo userVo) {
-        USER_CONTEXT.set(userVo);
+    public static void setUserData(UserDto userDto) {
+        USER_CONTEXT.set(userDto);
     }
 
     /**
@@ -30,7 +28,7 @@ public class LoginContext {
      *
      * @return 用户信息
      */
-    public static UserVo getUserData() {
+    public static UserDto getUserData() {
         return USER_CONTEXT.get();
     }
 

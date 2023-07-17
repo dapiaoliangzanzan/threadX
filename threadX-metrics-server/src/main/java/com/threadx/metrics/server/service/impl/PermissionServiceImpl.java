@@ -9,12 +9,11 @@ import com.threadx.metrics.server.common.code.LoginExceptionCode;
 import com.threadx.metrics.server.common.context.LoginContext;
 import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.constant.RedisCacheKey;
-import com.threadx.metrics.server.entity.Menu;
 import com.threadx.metrics.server.entity.Permission;
 import com.threadx.metrics.server.mapper.PermissionMapper;
 import com.threadx.metrics.server.service.PermissionService;
 import com.threadx.metrics.server.service.UserPermissionService;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -45,7 +44,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public List<Permission> findThisUserPermission() {
-        UserVo userData = LoginContext.getUserData();
+        UserDto userData = LoginContext.getUserData();
         if(userData == null) {
             throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
         }

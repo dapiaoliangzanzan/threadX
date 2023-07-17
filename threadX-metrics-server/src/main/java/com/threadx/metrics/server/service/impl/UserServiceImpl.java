@@ -20,7 +20,7 @@ import com.threadx.metrics.server.service.MenuService;
 import com.threadx.metrics.server.service.PermissionService;
 import com.threadx.metrics.server.service.UserService;
 import com.threadx.metrics.server.vo.LoginUserVo;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -72,14 +72,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
                 keys.forEach(redisTemplate::delete);
             }
             //生成token
-            UserVo userVo = new UserVo();
-            BeanUtil.copyProperties(user, userVo);
-            LoginContext.setUserData(userVo);
+            UserDto userDto = new UserDto();
+            BeanUtil.copyProperties(user, userDto);
+            LoginContext.setUserData(userDto);
             Long id = user.getId();
             String tokenKey = String.format("%s%s", IdUtil.fastSimpleUUID(), id);
             String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, id, tokenKey);
             //返回生成的token
-            String token = ThreadxJwtUtil.generateToken(userVo);
+            String token = ThreadxJwtUtil.generateToken(userDto);
             //查询菜单信息
             menuService.findThisUserMenu();
             //查询权限信息
@@ -87,7 +87,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             //缓存令牌
             redisTemplate.opsForValue().set(cacheKey, token, 1, TimeUnit.HOURS);
             //设置数据
-            LoginContext.setUserData(userVo);
+            LoginContext.setUserData(userDto);
             LoginUserVo loginUserVo = new LoginUserVo();
             loginUserVo.setNickName(user.getNickName());
             loginUserVo.setToken(tokenKey);
@@ -111,7 +111,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @SuppressWarnings("all")
     public void logout() {
-        UserVo userData = LoginContext.getUserData();
+        UserDto userData = LoginContext.getUserData();
         if (userData != null) {
             Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, userData.getId()) + "*");
             if (CollUtil.isNotEmpty(keys)) {

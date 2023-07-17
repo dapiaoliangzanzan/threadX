@@ -13,7 +13,7 @@ import com.threadx.metrics.server.entity.Menu;
 import com.threadx.metrics.server.mapper.MenuMapper;
 import com.threadx.metrics.server.service.MenuService;
 import com.threadx.metrics.server.service.UserMenuService;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -43,7 +43,7 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     @Override
     public List<Menu> findThisUserMenu() {
-        UserVo userData = LoginContext.getUserData();
+        UserDto userData = LoginContext.getUserData();
         if(userData == null) {
             throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
         }

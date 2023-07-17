@@ -13,6 +13,7 @@ import com.threadx.metrics.server.common.exceptions.GeneralException;
 import com.threadx.metrics.server.conditions.ThreadPoolDetailConditions;
 import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.constant.RedisCacheKey;
+import com.threadx.metrics.server.dto.UserDto;
 import com.threadx.metrics.server.entity.InstanceItem;
 import com.threadx.metrics.server.entity.ThreadPoolData;
 import com.threadx.metrics.server.mapper.ThreadPoolDataMapper;
@@ -182,7 +183,7 @@ public class ThreadPoolDataServiceImpl extends ServiceImpl<ThreadPoolDataMapper,
 
 
         //对查看的数据进行计数
-        UserVo userData = LoginContext.getUserData();
+        UserDto userData = LoginContext.getUserData();
         Long userId = userData.getId();
         String clickCountCacheKey = String.format(RedisCacheKey.USER_CLICK_INSTANCE_COUNT, userId);
         //对点击的实例进行累加，以方便计算top10

@@ -2,7 +2,6 @@ package com.threadx.metrics.server.interceptors;
 
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
-import cn.hutool.json.JSONUtil;
 import com.threadx.metrics.server.common.annotations.Login;
 import com.threadx.metrics.server.common.code.LoginExceptionCode;
 import com.threadx.metrics.server.common.context.LoginContext;
@@ -11,7 +10,7 @@ import com.threadx.metrics.server.common.utils.RequestUtils;
 import com.threadx.metrics.server.common.utils.ThreadxJwtUtil;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.dto.RequestData;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.dto.UserDto;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.HandlerInterceptor;
@@ -54,12 +53,12 @@ public class LoginInterceptor implements HandlerInterceptor {
                     throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
                 }
                 // 进行令牌验证逻辑
-                UserVo userVo = ThreadxJwtUtil.renewParseToken(oldToken, newToken -> redisTemplate.opsForValue().set(cacheKey, newToken, 120, TimeUnit.MINUTES));
-                if (userVo == null) {
+                UserDto userDto = ThreadxJwtUtil.renewParseToken(oldToken, newToken -> redisTemplate.opsForValue().set(cacheKey, newToken, 120, TimeUnit.MINUTES));
+                if (userDto == null) {
                     //response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                     throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
                 } else {
-                    LoginContext.setUserData(userVo);
+                    LoginContext.setUserData(userDto);
                     return true;
                 }
             }
