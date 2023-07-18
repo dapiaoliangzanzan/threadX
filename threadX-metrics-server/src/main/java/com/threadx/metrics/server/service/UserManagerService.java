@@ -1,8 +1,11 @@
 package com.threadx.metrics.server.service;
 
+import com.threadx.metrics.server.conditions.UserPageConditions;
 import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.entity.User;
+import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.UserVo;
 
 /**
  * 用户服务
@@ -25,4 +28,12 @@ public interface UserManagerService {
      * @param userInfoDto 用户信息
      */
     void updateUser(UserInfoDto userInfoDto);
+
+    /**
+     * 根据条件查询所有的用户
+     *
+     * @param userPageConditions 查询条件
+     * @return 返回的分页结果集
+     */
+    ThreadxPage<UserVo> findAllUser(UserPageConditions userPageConditions);
 }

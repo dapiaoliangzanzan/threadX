@@ -4,16 +4,18 @@ import com.threadx.metrics.server.common.annotations.GlobalResultPackage;
 import com.threadx.metrics.server.common.annotations.Log;
 import com.threadx.metrics.server.common.annotations.Login;
 import com.threadx.metrics.server.common.annotations.UserPermission;
+import com.threadx.metrics.server.conditions.UserPageConditions;
 import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.enums.LogEnum;
 import com.threadx.metrics.server.enums.PermissionValue;
 import com.threadx.metrics.server.service.UserManagerService;
+import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * *************************************************<br/>
@@ -52,5 +54,14 @@ public class UserManagerController {
     @PostMapping("updateUser")
     public void updateUser(@RequestBody UserInfoDto userInfoDto){
         userManagerService.updateUser(userInfoDto);
+    }
+
+    @Login
+    @Log(LogEnum.MANAGER_UPDATE_USER)
+    @UserPermission(PermissionValue.USER_UPDATE)
+    @ApiOperation(value = "查询所有的用户信息")
+    @PostMapping("getAllUser")
+    public ThreadxPage<UserVo> findAllUser(@RequestBody UserPageConditions userPageConditions){
+        return userManagerService.findAllUser(userPageConditions);
     }
 }

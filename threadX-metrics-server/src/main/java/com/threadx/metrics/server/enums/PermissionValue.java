@@ -15,6 +15,10 @@ public enum PermissionValue {
      * 修改用户信息
      */
     USER_UPDATE("update:user","修改用户信息"),
+    /**
+     * 查询所有用户信息
+     */
+    FIND_ALL_UPDATE("findAll:user","查询所有用户信息"),
     ;
     /**
      * 权限主键

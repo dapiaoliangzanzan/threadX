@@ -21,10 +21,10 @@
                         <el-button link type="primary" size="small">删除用户</el-button>
                         <el-tooltip
                             effect="dark"
-                            content="重置密码为123456"
+                            content="修改用户操作权限、用户菜单权限、用户信息"
                             placement="top"
                         >
-                            <el-button link type="primary" size="small">重置密码</el-button>
+                            <el-button link type="primary" size="small">修改用户</el-button>
                         </el-tooltip>
                         
                     </template>
@@ -32,40 +32,44 @@
             </el-table>
         </div>
         <div class="table-page-class">
-            <el-pagination layout="prev, pager, next" :total="dataTotal" />
+            <el-pagination layout="prev, pager, next" 
+                :page-size="pageSize" 
+                :pager-count="5" 
+                :total="dataTotal" 
+                v-model:current-page="currentPage" 
+                @current-change="currentPageChange"
+            />
         </div>
     </div>
 </template>
 
 <script setup lang="ts">
-    import {ref} from 'vue'
+    import {ref, onMounted} from 'vue'
     import type { TableColumnCtx } from 'element-plus'
     import { Search,Plus } from '@element-plus/icons-vue'
+    import UserManagerService from '@/services/UserManagerService'
 
 
-    
+    onMounted(() =>{
+        loadAllUserData()
+    });
     //搜索值
     const searchValue = ref()
     //用户表格数据
-    const userDataTable = ref([
-        {
-            "id":1,
-            "nickName":"测试用户",
-            "userName": "admin",
-            "email":"huangfusuper@163.com",
-            "createTime":"2023-07-16 12:23:56",
-            "updateTime":"2023-07-16 12:23:56",
-            "state":"1"
-
-        }
-    ])
+    const userDataTable = ref([])
+    //当前也
+    const currentPage = ref(1)
     //每一页显示的数据
-    const pageSize = ref(20)
+    const pageSize = ref(18)
     //数据总条数
     const dataTotal = ref(0)
     //搜索方法
     const searchMethod = () =>{
-        console.log(searchValue.value)
+        loadAllUserData();
+    }
+    //翻页
+    const currentPageChange = () =>{
+        loadAllUserData();
     }
 
     const stateFormatter = (row:any, column: TableColumnCtx<any>)=> {
@@ -75,6 +79,22 @@
             return "冻结"
         }
             
+    }
+
+    /**
+     * 加载所有的用户数据
+     */
+    const loadAllUserData = ()=>{
+        UserManagerService.findAllUser({
+            userName: searchValue.value,
+            nickName: searchValue.value,
+            pageSize: pageSize.value,
+            pageNumber: currentPage.value
+        }).then(response =>{
+            userDataTable.value = response.data
+            dataTotal.value = response.total
+        })
+        
     }
 
 </script>
