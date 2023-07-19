@@ -5,6 +5,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
@@ -145,5 +146,35 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
         threadPage.setData(userVos);
         threadPage.setTotal(userPage.getTotal());
         return threadPage;
+    }
+
+    @Override
+    public void freezeUser(Long userId) {
+        if(userId == null) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+        }
+
+        User user = new User();
+        user.setId(userId);
+        user.setState(UserConstant.DISABLE);
+        baseMapper.updateById(user);
+
+        Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, userId) + "*");
+        if (CollUtil.isNotEmpty(keys)) {
+            keys.forEach(redisTemplate::delete);
+        }
+    }
+
+    @Override
+    public void unsealUser(Long userId) {
+
+        if(userId == null) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+        }
+
+        User user = new User();
+        user.setId(userId);
+        user.setState(UserConstant.ENABLE);
+        baseMapper.updateById(user);
     }
 }

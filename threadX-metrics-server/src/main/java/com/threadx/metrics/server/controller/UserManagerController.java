@@ -15,8 +15,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 /**
  * *************************************************<br/>
  * 用户管理操作<br/>
@@ -57,11 +55,36 @@ public class UserManagerController {
     }
 
     @Login
-    @Log(LogEnum.MANAGER_UPDATE_USER)
-    @UserPermission(PermissionValue.USER_UPDATE)
+    @UserPermission(PermissionValue.FIND_ALL_USER)
     @ApiOperation(value = "查询所有的用户信息")
     @PostMapping("getAllUser")
     public ThreadxPage<UserVo> findAllUser(@RequestBody UserPageConditions userPageConditions){
         return userManagerService.findAllUser(userPageConditions);
+    }
+
+    /**
+     * 冻结用户
+     * @param userId 用户的id
+     */
+    @Login
+    @Log(LogEnum.MANAGER_FREEZE_USER)
+    @UserPermission(PermissionValue.USER_DISABLE)
+    @ApiOperation(value = "冻结用户")
+    @GetMapping("freezeUser")
+    public void freezeUser(@RequestParam("userId") Long userId) {
+        userManagerService.freezeUser(userId);
+    }
+
+    /**
+     * 解除冻结用户
+     * @param userId 用户的id
+     */
+    @Login
+    @Log(LogEnum.MANAGER_ENABLE_USER)
+    @UserPermission(PermissionValue.USER_ENABLE)
+    @ApiOperation(value = "解封用户")
+    @GetMapping("unsealUser")
+    public void unsealUser(@RequestParam("userId") Long userId) {
+        userManagerService.unsealUser(userId);
     }
 }

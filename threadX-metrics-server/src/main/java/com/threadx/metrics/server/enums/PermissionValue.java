@@ -18,7 +18,17 @@ public enum PermissionValue {
     /**
      * 查询所有用户信息
      */
-    FIND_ALL_UPDATE("findAll:user","查询所有用户信息"),
+    FIND_ALL_USER("findAll:user","查询所有用户信息"),
+
+    /**
+     * 冻结用户
+     */
+    USER_DISABLE("disable:user","冻结用户"),
+
+    /**
+     * 启用用户
+     */
+    USER_ENABLE("enable:user","启用用户"),
     ;
     /**
      * 权限主键

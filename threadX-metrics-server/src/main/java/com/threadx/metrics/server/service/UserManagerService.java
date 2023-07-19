@@ -36,4 +36,16 @@ public interface UserManagerService {
      * @return 返回的分页结果集
      */
     ThreadxPage<UserVo> findAllUser(UserPageConditions userPageConditions);
+
+    /**
+     * 冻结用户
+     * @param userId 用户的id
+     */
+    void freezeUser(Long userId);
+
+    /**
+     * 解除冻结用户
+     * @param userId 用户的id
+     */
+    void unsealUser(Long userId);
 }

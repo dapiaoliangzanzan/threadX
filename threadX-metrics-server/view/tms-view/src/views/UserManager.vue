@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="search-class">
-            <el-input :prefix-icon="Search" v-model="searchValue" placeholder="请输入要搜索的用户名或昵称" clearable />
+            <el-input :prefix-icon="Search" @keyup.enter="searchMethod" v-model="searchValue" placeholder="请输入要搜索的用户名或昵称" clearable />
             <el-button type="primary" @click="searchMethod">搜索用户</el-button>
 
             <el-button type="success" @click="searchMethod" class="create-user-button-class" :icon="Plus">新建用户</el-button>
@@ -16,8 +16,8 @@
                 <el-table-column prop="state" label="是否可用" width="100" :formatter="stateFormatter" align="center"/>
                 <el-table-column fixed="right" label="操作" align="center">
                     <template #default="scope">
-                        <el-button v-if="scope.row.state == '1'" link type="primary" size="small">冻结用户</el-button>
-                        <el-button v-else link type="primary" size="small">解除冻结</el-button>
+                        <el-button v-if="scope.row.state == '1'" link type="primary" size="small" @click="freezeUser(scope.row.id)">冻结用户</el-button>
+                        <el-button v-else link type="primary" size="small" @click="unsealUser(scope.row.id)">解除冻结</el-button>
                         <el-button link type="primary" size="small">删除用户</el-button>
                         <el-tooltip
                             effect="dark"
@@ -45,7 +45,8 @@
 
 <script setup lang="ts">
     import {ref, onMounted} from 'vue'
-    import type { TableColumnCtx } from 'element-plus'
+    import type { TableColumnCtx, Action } from 'element-plus'
+    import { ElMessage, ElMessageBox } from 'element-plus'
     import { Search,Plus } from '@element-plus/icons-vue'
     import UserManagerService from '@/services/UserManagerService'
 
@@ -72,6 +73,67 @@
         loadAllUserData();
     }
 
+    /**
+     * 冻结用户
+     * @param userId 用户的id信息
+     */
+    const freezeUser = (userId:any)=>{
+        ElMessageBox.confirm(
+            '是否确认冻结用户且强制被冻结用户下线?',
+            'Warning',
+            {
+            confirmButtonText: '确认',
+            cancelButtonText: '取消',
+            type: 'warning',
+            }
+        )
+        .then(() => {
+            UserManagerService.freezeUser(userId).then(() =>{
+                loadAllUserData();
+            })
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '取消操作',
+            })
+        })
+    }
+
+    /**
+     * 解除冻结
+     * @param userId 用户的id信息
+     */
+    const unsealUser = (userId:any) =>{
+        ElMessageBox.confirm(
+            '是否确认解除冻结用户?',
+            'Warning',
+            {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }
+        )
+        .then(() => {
+            UserManagerService.unsealUser(userId).then(() =>{
+                loadAllUserData();
+            })
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '取消操作',
+            })
+        })
+
+        
+    }
+
+    /**
+     * 格式化列的值
+     * @param row 当前行
+     * @param column 当前列
+     */
     const stateFormatter = (row:any, column: TableColumnCtx<any>)=> {
         if (row.state === '1') {
             return "有效"

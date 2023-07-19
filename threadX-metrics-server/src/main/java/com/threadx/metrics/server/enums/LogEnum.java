@@ -17,6 +17,17 @@ public enum LogEnum {
      * 管理修改用户
      */
     MANAGER_UPDATE_USER("100001", "管理修改用户"),
+
+    /**
+     * 管理冻结用户
+     */
+    MANAGER_FREEZE_USER("100005", "冻结用户"),
+
+    /**
+     * 解封用户
+     */
+    MANAGER_ENABLE_USER("100006", "解封用户"),
+
     /**
      * 用户登录
      */

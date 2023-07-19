@@ -17,6 +17,32 @@ class UserManagerService {
             return {}
         });
     }
+
+    /**
+     * 冻结用户
+     * @param data 参数信息
+     */
+    public static freezeUser(userId:any): Promise<any> {
+        return ApiUtils.get("/manager/user/freezeUser", {
+                    userId
+                }).catch((error: any) => {
+                    // 处理错误情况s
+                    console.error("冻结用户失败", error);
+                });
+    }
+
+    /**
+     * 解封用户
+     * @param data 参数信息
+     */
+        public static unsealUser(userId:any): Promise<any> {
+            return ApiUtils.get("/manager/user/unsealUser", {
+                        userId
+                    }).catch((error: any) => {
+                        // 处理错误情况
+                        console.error("解封用户失败", error);
+                    });
+        }
 }
 
 export default UserManagerService

@@ -41,7 +41,7 @@ public class PermissionInterception implements HandlerInterceptor {
                 List<Permission> thisUserPermission = permissionService.findThisUserPermission();
                 List<Permission> permissions = thisUserPermission.stream().filter(e -> userPermissionKey.equals(e.getPermissionKey())).collect(Collectors.toList());
                 if (CollUtil.isEmpty(permissions)) {
-                    response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+                    //response.setStatus(HttpServletResponse.SC_FORBIDDEN)
                     throw new PermissionException(PermissionExceptionCode.UNAUTHORIZED_OPERATION);
                 }
 

@@ -14,6 +14,7 @@ import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.reflect.MethodSignature;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Method;
@@ -29,6 +30,7 @@ import java.lang.reflect.Method;
 @Aspect
 @Component
 public class LogAspect {
+
     @Around("@annotation(com.threadx.metrics.server.common.annotations.Log)")
     public Object logMethodExecutionTime(ProceedingJoinPoint joinPoint) throws Throwable {
         ActiveLog activeLog = new ActiveLog();
@@ -97,9 +99,23 @@ public class LogAspect {
             Object arg = args[i];
             Class<?> paramType = parameterTypes[i];
             // 将参数信息转换为字符串
-            String argString = paramType.getSimpleName() + ": " + JSONUtil.toJsonStr(arg);
+            String argString = paramType.getSimpleName() + ": " + paramToString(arg, paramType);
             paramInfo.append(argString).append("\n");
         }
         activeLog.setParamData(paramInfo.toString());
+    }
+
+    /**
+     * 参数转换为string
+     *
+     * @param arg       参数信息
+     * @param paramType 参数类型
+     * @return 字符串参数
+     */
+    private String paramToString(Object arg, Class<?> paramType) {
+        if (Long.class.equals(paramType) || Integer.class.equals(paramType) || Double.class.equals(paramType) || Float.class.equals(paramType) || String.class.equals(paramType) || Character.class.equals(paramType)) {
+            return String.valueOf(arg);
+        }
+        return JSONUtil.toJsonStr(arg);
     }
 }
