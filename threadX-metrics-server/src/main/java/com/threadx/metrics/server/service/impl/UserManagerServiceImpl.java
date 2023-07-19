@@ -117,8 +117,14 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
         String nickName = userPageConditions.getNickName();
         Integer pageNumber = userPageConditions.getPageNumber();
         Integer pageSize = userPageConditions.getPageSize();
-        queryWrapper.like(StrUtil.isNotBlank(userName), "user_name", userName);
-        queryWrapper.like(StrUtil.isNotBlank(nickName), "nick_name", nickName);
+
+        if (StrUtil.isNotBlank(userName)) {
+            queryWrapper.like(StrUtil.isNotBlank(userName), "user_name", userName);
+        }
+
+        if (StrUtil.isNotBlank(nickName)) {
+            queryWrapper.or(con -> con.like(StrUtil.isNotBlank(nickName), "nick_name", nickName));
+        }
 
         Page<User> userPage = new Page<>(pageNumber, pageSize);
         baseMapper.selectPage(userPage, queryWrapper);
