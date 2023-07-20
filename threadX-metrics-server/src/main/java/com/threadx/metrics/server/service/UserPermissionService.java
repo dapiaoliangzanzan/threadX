@@ -17,4 +17,10 @@ public interface UserPermissionService {
      * @return 权限信息的Id
      */
     List<Long> findByUserId(Long userId);
+
+    /**
+     * 删除 根据用户的id
+     * @param userId 用户id
+     */
+    void deleteByUserId(Long userId);
 }

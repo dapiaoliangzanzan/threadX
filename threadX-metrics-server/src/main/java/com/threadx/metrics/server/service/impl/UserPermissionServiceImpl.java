@@ -34,4 +34,14 @@ public class UserPermissionServiceImpl extends ServiceImpl<UserPermissionMapper,
         List<UserPermission> userPermissions = baseMapper.selectList(queryWrapper);
         return userPermissions.stream().map(UserPermission::getPermissionId).collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        if(userId == null) {
+            return;
+        }
+        QueryWrapper<UserPermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        baseMapper.delete(queryWrapper);
+    }
 }

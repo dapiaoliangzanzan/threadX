@@ -1,6 +1,7 @@
 package com.threadx.metrics.server.service.impl;
 
 import cn.hutool.core.collection.CollUtil;
+import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.threadx.metrics.server.entity.ActiveLog;
 import com.threadx.metrics.server.mapper.ActiveLogMapper;
@@ -33,5 +34,15 @@ public class ActiveLogServiceImpl extends ServiceImpl<ActiveLogMapper, ActiveLog
         if (CollUtil.isNotEmpty(activeLogs)) {
             saveBatch(activeLogs);
         }
+    }
+
+    @Override
+    public void deleteLogByUserId(Long userId) {
+        if(userId == null) {
+            return;
+        }
+        QueryWrapper<ActiveLog> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        baseMapper.delete(queryWrapper);
     }
 }

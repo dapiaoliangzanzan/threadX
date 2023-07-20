@@ -28,4 +28,10 @@ public interface ActiveLogService {
      * @param activeLogs 批量日志
      */
     void batchSave(List<ActiveLog> activeLogs);
+
+    /**
+     * 根据用户的id删除操作id
+     * @param userId 用户的id
+     */
+    void deleteLogByUserId(Long userId);
 }

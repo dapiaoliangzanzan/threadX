@@ -5,19 +5,19 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
-import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
+import com.threadx.metrics.server.common.code.UserExceptionCode;
 import com.threadx.metrics.server.common.exceptions.GeneralException;
+import com.threadx.metrics.server.common.exceptions.UserException;
 import com.threadx.metrics.server.conditions.UserPageConditions;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.constant.UserConstant;
 import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.entity.User;
 import com.threadx.metrics.server.mapper.UserMapper;
-import com.threadx.metrics.server.service.UserManagerService;
-import com.threadx.metrics.server.service.UserService;
+import com.threadx.metrics.server.service.*;
 import com.threadx.metrics.server.vo.ThreadxPage;
 import com.threadx.metrics.server.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
@@ -45,10 +45,16 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
 
     private final UserService userService;
     private final StringRedisTemplate redisTemplate;
+    private final ActiveLogService activeLogService;
+    private final UserPermissionService userPermissionService;
+    private final UserMenuService userMenuService;
 
-    public UserManagerServiceImpl(UserService userService, StringRedisTemplate redisTemplate) {
+    public UserManagerServiceImpl(UserService userService, StringRedisTemplate redisTemplate, ActiveLogService activeLogService, UserPermissionService userPermissionService, UserMenuService userMenuService) {
         this.userService = userService;
         this.redisTemplate = redisTemplate;
+        this.activeLogService = activeLogService;
+        this.userPermissionService = userPermissionService;
+        this.userMenuService = userMenuService;
     }
 
     @Override
@@ -180,6 +186,24 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
 
     @Override
     public void forceDeleteUser(Long userId) {
+        //首先查询用户
+        User user = baseMapper.selectById(userId);
+        if(user == null) {
+            throw new UserException(UserExceptionCode.NOT_EXIST_USER);
+        }
 
+        String state = user.getState();
+        if(UserConstant.ENABLE.equals(state)) {
+            throw new UserException(UserExceptionCode.USER_STATUS_EXCEPTION);
+        }
+
+        // 开始删除当前用户的日志信息
+        activeLogService.deleteLogByUserId(userId);
+        // 开始删除当前用户的权限信息
+        userPermissionService.deleteByUserId(userId);
+        //开始删除用户的菜单信息
+        userMenuService.deleteByUserId(userId);
+        //删除用户信息
+        baseMapper.deleteById(userId);
     }
 }

@@ -33,4 +33,14 @@ public class UserMenuServiceImpl extends ServiceImpl<UserMenuMapper, UserMenu> i
         List<UserMenu> userMenus = baseMapper.selectList(queryWrapper);
         return userMenus.stream().map(UserMenu::getMenuId).collect(Collectors.toList());
     }
+
+    @Override
+    public void deleteByUserId(Long userId) {
+        if (userId == null) {
+            return;
+        }
+        QueryWrapper<UserMenu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("user_id", userId);
+        baseMapper.delete(queryWrapper);
+    }
 }

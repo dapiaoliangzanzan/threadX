@@ -16,4 +16,10 @@ public interface UserMenuService {
      * @return 用户名下所有的菜单id
      */
     List<Long> findAllByUserId(Long userId);
+
+    /**
+     * 删除根据用户的id
+     * @param userId 用户的id
+     */
+    void deleteByUserId(Long userId);
 }
