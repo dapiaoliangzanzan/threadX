@@ -142,7 +142,7 @@
             }
         )
         .then(() => {
-            UserManagerService.unsealUser(userId).then(() =>{
+            UserManagerService.forceDeleteUser(userId).then(() =>{
                 loadAllUserData();
             })
         })
