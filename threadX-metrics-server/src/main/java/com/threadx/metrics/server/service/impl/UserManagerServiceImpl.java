@@ -177,4 +177,9 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
         user.setState(UserConstant.ENABLE);
         baseMapper.updateById(user);
     }
+
+    @Override
+    public void forceDeleteUser(Long userId) {
+
+    }
 }

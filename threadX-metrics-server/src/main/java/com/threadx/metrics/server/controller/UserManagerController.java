@@ -87,4 +87,17 @@ public class UserManagerController {
     public void unsealUser(@RequestParam("userId") Long userId) {
         userManagerService.unsealUser(userId);
     }
+
+    /**
+     * 强制删除用户 包含删除所有的依赖关系以及操作日志
+     * @param userId 用户的id
+     */
+    @Login
+    @Log(LogEnum.FORCE_DELETE_USER)
+    @UserPermission(PermissionValue.FORCE_DELETE_USER)
+    @ApiOperation(value = "强制删除用户 包含删除所有的依赖关系以及操作日志")
+    @GetMapping("forceDeleteUser")
+    public void forceDeleteUser(@RequestParam("userId") Long userId) {
+        userManagerService.forceDeleteUser(userId);
+    }
 }

@@ -48,4 +48,10 @@ public interface UserManagerService {
      * @param userId 用户的id
      */
     void unsealUser(Long userId);
+
+    /**
+     * 强制删除用户 包含所有的依赖关系以及权限信息和日志信息
+     * @param userId 用户的id
+     */
+    void forceDeleteUser(Long userId);
 }

@@ -29,6 +29,11 @@ public enum LogEnum {
     MANAGER_ENABLE_USER("100006", "解封用户"),
 
     /**
+     * 强制删除用户  以及相关联的所有信息
+     */
+    FORCE_DELETE_USER("100007", "强制删除用户，以及相关联的所有信息"),
+
+    /**
      * 用户登录
      */
     USER_LOGIN("100002", "用户登录"),
