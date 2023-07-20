@@ -35,14 +35,27 @@ class UserManagerService {
      * 解封用户
      * @param data 参数信息
      */
-        public static unsealUser(userId:any): Promise<any> {
-            return ApiUtils.get("/manager/user/unsealUser", {
-                        userId
-                    }).catch((error: any) => {
-                        // 处理错误情况
-                        console.error("解封用户失败", error);
-                    });
-        }
+    public static unsealUser(userId:any): Promise<any> {
+        return ApiUtils.get("/manager/user/unsealUser", {
+                    userId
+                }).catch((error: any) => {
+                    // 处理错误情况
+                    console.error("解封用户失败", error);
+                });
+    }
+
+    /**
+     * 强制删除用户 包含删除所有的依赖关系以及操作日志
+     * @param userId 用户的id
+     */
+    public static forceDeleteUser(userId:any): Promise<any> {
+        return ApiUtils.get("/manager/user/forceDeleteUser", {
+            userId
+        }).catch((error: any) => {
+            // 处理错误情况
+            console.error("删除用户失败", error);
+        });
+    }
 }
 
 export default UserManagerService

@@ -17,8 +17,12 @@
                 <el-table-column fixed="right" label="操作" align="center">
                     <template #default="scope">
                         <el-button v-if="scope.row.state == '1'" link type="primary" size="small" @click="freezeUser(scope.row.id)">冻结用户</el-button>
-                        <el-button v-else link type="primary" size="small" @click="unsealUser(scope.row.id)">解除冻结</el-button>
-                        <el-button link type="primary" size="small">删除用户</el-button>
+
+                        <div v-else style="display: inline;">
+                            <el-button  link type="primary" size="small" @click="unsealUser(scope.row.id)">解除冻结</el-button>
+                            <el-button  link type="primary" size="small" @click="forceDeleteUser(scope.row.id)">删除用户</el-button>
+                        </div>
+                        
                         <el-tooltip
                             effect="dark"
                             content="修改用户操作权限、用户菜单权限、用户信息"
@@ -80,7 +84,7 @@
     const freezeUser = (userId:any)=>{
         ElMessageBox.confirm(
             '是否确认冻结用户且强制被冻结用户下线?',
-            'Warning',
+            '警告',
             {
             confirmButtonText: '确认',
             cancelButtonText: '取消',
@@ -107,7 +111,7 @@
     const unsealUser = (userId:any) =>{
         ElMessageBox.confirm(
             '是否确认解除冻结用户?',
-            'Warning',
+            '警告',
             {
                 confirmButtonText: '确认',
                 cancelButtonText: '取消',
@@ -125,8 +129,29 @@
                 message: '取消操作',
             })
         })
+    }
 
-        
+    const forceDeleteUser = (userId:any) =>{
+        ElMessageBox.confirm(
+            '点击确认后将不可恢复的删除该用户所有的权限信息以及操作日志信息，请慎重操作！！！',
+            '警告',
+            {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'error'
+            }
+        )
+        .then(() => {
+            UserManagerService.forceDeleteUser(userId).then(() =>{
+                loadAllUserData();
+            })
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '取消操作',
+            })
+        })
     }
 
     /**
