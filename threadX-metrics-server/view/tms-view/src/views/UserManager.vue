@@ -44,20 +44,132 @@
                 @current-change="currentPageChange"
             />
         </div>
+
+
+        <el-dialog v-model="createUserDialogVisible" append-to-body title="用户设置" width="80%" draggable open-delay="200" close-delay="200" :close-on-click-modal="false">
+            <div class="create-dialog-class">
+                <el-form
+                    ref="createUserFormRef"
+                    :model="createUserFormModel"
+                    label-position="right"
+                    rules="rules"
+                    label-width="100px"
+                    status-icon
+                >
+                    <el-divider>用户信息</el-divider>
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="用户昵称:" prop="nickName">
+                                <el-input v-model="createUserFormModel.nickName" style="width: 100%"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="用户邮箱:" prop="email">
+                                <el-input v-model="createUserFormModel.email" style="width: 100%"/>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-row>
+                        <el-col :span="12">
+                            <el-form-item label="用户名称:" prop="userName">
+                                <el-input v-model="createUserFormModel.userName" style="width: 100%"/>
+                            </el-form-item>
+                        </el-col>
+                        <el-col :span="12">
+                            <el-form-item label="用户密码:" prop="password">
+                                <el-input v-model="createUserFormModel.password" style="width: 100%"/>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-divider>用户菜单</el-divider>
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="用户菜单权限:" prop="selectMenuList" >
+                                <el-checkbox-group v-model="createUserFormModel.selectMenuList">
+                                    <el-checkbox v-for="menu in menus" :key="menu.id" :label="menu.id">{{ menu.name }}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+
+                    <el-divider>用户权限</el-divider>
+                    <el-row>
+                        <el-col :span="24">
+                            <el-form-item label="用户菜单权限:" prop="selectPermissionList" >
+                                <el-checkbox-group v-model="createUserFormModel.selectPermissionList">
+                                    <el-checkbox v-for="permission in permissions" :key="permission.id" :label="permission.id">{{ permission.name }}</el-checkbox>
+                                </el-checkbox-group>
+                            </el-form-item>
+                        </el-col>
+                    </el-row>
+                </el-form>
+
+                
+            </div>
+            <template #footer>
+                <span class="dialog-footer">
+                    <el-button @click="createUserDialogVisible = false">取消</el-button>
+                    <el-button type="primary" @click="createUserDialogVisible = false">确认</el-button>
+                </span>
+            </template>
+        </el-dialog>
     </div>
 </template>
 
 <script setup lang="ts">
-    import {ref, onMounted} from 'vue'
+    import {ref, reactive, onMounted} from 'vue'
     import type { TableColumnCtx, Action } from 'element-plus'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import { Search,Plus } from '@element-plus/icons-vue'
     import UserManagerService from '@/services/UserManagerService'
+    import type { FormInstance, FormRules } from 'element-plus'
 
+    interface Menu {
+        id: string,
+        name:string
+    }
+
+    interface Permission {
+        id: string,
+        name:string
+    }
+
+
+    interface CreateUserForm {
+        nickName: string
+        userName: string
+        password: string
+        email: string,
+        selectMenuList: string[],
+        selectPermissionList:string[]
+    }
 
     onMounted(() =>{
         loadAllUserData()
+        console.log(createUserFormModel.value)
+        console.log(menus)
     });
+
+    //所有的菜单
+    const menus = reactive<Menu[]>([])
+    //所有的权限信息
+    const permissions = reactive<Permission[]>([])
+    //对应表单的引用
+    const createUserFormRef = ref<FormInstance>()
+    //对应表单的值
+    const createUserFormModel = ref<CreateUserForm>({
+        nickName:'',
+        userName:'',
+        password:'',
+        email:'',
+        selectMenuList: [],
+        selectPermissionList: ["1"]
+    })
+
+    //创建用户的对话框
+    const createUserDialogVisible = ref(true)
     //搜索值
     const searchValue = ref()
     //用户表格数据
@@ -210,5 +322,9 @@
         display: flex;
         justify-content: flex-end;
         background-color: rgb(255, 255, 255);
+    }
+
+    .create-dialog-class {
+        
     }
 </style>

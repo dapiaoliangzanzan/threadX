@@ -34,6 +34,11 @@ public enum PermissionValue {
      * 强制删除用户，以及相关联的所有信息
      */
     FORCE_DELETE_USER("force:delete:user","强制删除用户，以及相关联的所有信息"),
+
+    /**
+     * 查询所有的菜单列表
+     */
+    FIND_ALL_MENU_LIST("findAll:menu","查询所有的菜单列表"),
     ;
     /**
      * 权限主键

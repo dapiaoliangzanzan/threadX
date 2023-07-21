@@ -19,4 +19,10 @@ public interface MenuService {
      */
     List<Menu> findThisUserMenu();
 
+    /**
+     * 查询所有的菜单
+     * @return 返回所有的菜单信息
+     */
+    List<Menu> findAllMenu();
+
 }

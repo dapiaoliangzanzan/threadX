@@ -10,6 +10,7 @@ import com.threadx.metrics.server.common.context.LoginContext;
 import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.entity.Menu;
+import com.threadx.metrics.server.entity.UserMenu;
 import com.threadx.metrics.server.mapper.MenuMapper;
 import com.threadx.metrics.server.service.MenuService;
 import com.threadx.metrics.server.service.UserMenuService;
@@ -18,6 +19,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import springfox.documentation.spring.web.json.Json;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -71,6 +73,26 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             redisTemplate.opsForValue().set(menuCacheKey, JSONUtil.toJsonStr(menus), 1, TimeUnit.HOURS);
         }
 
+        return menus;
+    }
+
+    @Override
+    public List<Menu> findAllMenu() {
+        List<Menu> menus;
+        if (redisTemplate.hasKey(RedisCacheKey.MENU_ALL_CACHE)) {
+            //先查询缓存
+            String menuAll = redisTemplate.opsForValue().get(RedisCacheKey.MENU_ALL_CACHE);
+            //格式化数据
+            menus = JSONUtil.toList(menuAll, Menu.class);
+            //数据续约
+            redisTemplate.expire(RedisCacheKey.MENU_ALL_CACHE, 1, TimeUnit.DAYS);
+        }else {
+            //查询所有的菜单数据
+            menus = baseMapper.selectList(new QueryWrapper<>());
+            redisTemplate.opsForValue().set(RedisCacheKey.MENU_ALL_CACHE, JSONUtil.toJsonStr(menus), 1, TimeUnit.DAYS);
+
+        }
+        //数据续期
         return menus;
     }
 }
