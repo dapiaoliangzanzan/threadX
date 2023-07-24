@@ -42,12 +42,18 @@ CREATE TABLE `active_log` (
                               `create_time` bigint(64) NOT NULL COMMENT '创建时间',
                               `param_data` longtext COLLATE utf8mb4_unicode_ci COMMENT '调用参数',
                               PRIMARY KEY (`id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
+) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC;
 
 -- ----------------------------
 -- Records of active_log
 -- ----------------------------
 BEGIN;
+INSERT INTO `active_log` (`id`, `active_key`, `active_log`, `start_time`, `end_time`, `user_id`, `browser`, `os`, `ip_address`, `operation_time`, `result_state`, `error_message`, `update_time`, `create_time`, `param_data`) VALUES (1, '100002', '用户登录', 1690170233008, 1690170233546, 1, 'Chrome 114.0.0.0', 'OS X OS X', '127.0.0.1', 538, '0', NULL, 1690170233008, 1690170233008, 'UserLoginDto: {\"userName\":\"admin\",\"password\":\"123456\"}\n');
+INSERT INTO `active_log` (`id`, `active_key`, `active_log`, `start_time`, `end_time`, `user_id`, `browser`, `os`, `ip_address`, `operation_time`, `result_state`, `error_message`, `update_time`, `create_time`, `param_data`) VALUES (2, '100006', '解封用户', 1690170260555, 1690170260673, 1, 'Chrome 114.0.0.0', 'OS X OS X', '127.0.0.1', 118, '0', NULL, 1690170260555, 1690170260555, 'Long: 2\n');
+INSERT INTO `active_log` (`id`, `active_key`, `active_log`, `start_time`, `end_time`, `user_id`, `browser`, `os`, `ip_address`, `operation_time`, `result_state`, `error_message`, `update_time`, `create_time`, `param_data`) VALUES (3, '100005', '冻结用户', 1690170262910, 1690170263028, 1, 'Chrome 114.0.0.0', 'OS X OS X', '127.0.0.1', 118, '0', NULL, 1690170262910, 1690170262910, 'Long: 2\n');
+INSERT INTO `active_log` (`id`, `active_key`, `active_log`, `start_time`, `end_time`, `user_id`, `browser`, `os`, `ip_address`, `operation_time`, `result_state`, `error_message`, `update_time`, `create_time`, `param_data`) VALUES (4, '100002', '用户登录', 1690170395649, 1690170395855, 1, 'Chrome 114.0.0.0', 'OS X OS X', '127.0.0.1', 206, '0', NULL, 1690170395649, 1690170395649, 'UserLoginDto: {\"userName\":\"admin\",\"password\":\"123456\"}\n');
+INSERT INTO `active_log` (`id`, `active_key`, `active_log`, `start_time`, `end_time`, `user_id`, `browser`, `os`, `ip_address`, `operation_time`, `result_state`, `error_message`, `update_time`, `create_time`, `param_data`) VALUES (5, '100003', '用户登出', 1690170708131, 1690170708293, 1, 'Chrome 114.0.0.0', 'OS X OS X', '127.0.0.1', 162, '0', NULL, 1690170708131, 1690170708131, '');
+INSERT INTO `active_log` (`id`, `active_key`, `active_log`, `start_time`, `end_time`, `user_id`, `browser`, `os`, `ip_address`, `operation_time`, `result_state`, `error_message`, `update_time`, `create_time`, `param_data`) VALUES (6, '100002', '用户登录', 1690170714109, 1690170714324, 1, 'Chrome 114.0.0.0', 'OS X OS X', '127.0.0.1', 215, '0', NULL, 1690170714109, 1690170714109, 'UserLoginDto: {\"userName\":\"admin\",\"password\":\"123456\"}\n');
 COMMIT;
 
 -- ----------------------------
@@ -124,6 +130,68 @@ INSERT INTO `permission` (`id`, `permission_name`, `permission_key`, `permission
 INSERT INTO `permission` (`id`, `permission_name`, `permission_key`, `permission_desc`, `update_time`, `create_time`) VALUES (5, '启用用户', 'enable:user', '管理员启用用户', 1689735146792, 1689735146792);
 INSERT INTO `permission` (`id`, `permission_name`, `permission_key`, `permission_desc`, `update_time`, `create_time`) VALUES (6, '强制删除用户', 'force:delete:user', '强制删除用户，以及相关联的所有信息', 1689832529179, 1689832529179);
 INSERT INTO `permission` (`id`, `permission_name`, `permission_key`, `permission_desc`, `update_time`, `create_time`) VALUES (7, '查询菜单列表', 'findAll:menu', '查询所有的菜单列表', 1689935409302, 1689935409302);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for role
+-- ----------------------------
+DROP TABLE IF EXISTS `role`;
+CREATE TABLE `role` (
+                        `id` bigint(64) NOT NULL AUTO_INCREMENT COMMENT '主键',
+                        `role_name` varchar(255) COLLATE utf8mb4_unicode_ci NOT NULL COMMENT '角色名称',
+                        `role_desc` longtext COLLATE utf8mb4_unicode_ci COMMENT '角色解释',
+                        `update_time` bigint(64) NOT NULL COMMENT '修改时间',
+                        `create_time` bigint(64) NOT NULL COMMENT '创建时间',
+                        PRIMARY KEY (`id`)
+) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Records of role
+-- ----------------------------
+BEGIN;
+INSERT INTO `role` (`id`, `role_name`, `role_desc`, `update_time`, `create_time`) VALUES (1, '超级管理员', '拥有所有的权限', 1690164464238, 1690164464238);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for role_menu
+-- ----------------------------
+DROP TABLE IF EXISTS `role_menu`;
+CREATE TABLE `role_menu` (
+                             `role_id` bigint(64) NOT NULL COMMENT '角色id',
+                             `menu_id` bigint(64) NOT NULL COMMENT '菜单id',
+                             PRIMARY KEY (`role_id`,`menu_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Records of role_menu
+-- ----------------------------
+BEGIN;
+INSERT INTO `role_menu` (`role_id`, `menu_id`) VALUES (1, 1);
+INSERT INTO `role_menu` (`role_id`, `menu_id`) VALUES (1, 2);
+INSERT INTO `role_menu` (`role_id`, `menu_id`) VALUES (1, 3);
+COMMIT;
+
+-- ----------------------------
+-- Table structure for role_permission
+-- ----------------------------
+DROP TABLE IF EXISTS `role_permission`;
+CREATE TABLE `role_permission` (
+                                   `role_id` bigint(64) NOT NULL COMMENT '角色id',
+                                   `permission_id` bigint(64) NOT NULL COMMENT '权限id',
+                                   PRIMARY KEY (`role_id`,`permission_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- ----------------------------
+-- Records of role_permission
+-- ----------------------------
+BEGIN;
+INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES (1, 1);
+INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES (1, 2);
+INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES (1, 3);
+INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES (1, 4);
+INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES (1, 5);
+INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES (1, 6);
+INSERT INTO `role_permission` (`role_id`, `permission_id`) VALUES (1, 7);
 COMMIT;
 
 -- ----------------------------
@@ -408,45 +476,20 @@ INSERT INTO `user` (`id`, `user_name`, `password`, `nick_name`, `email`, `state`
 COMMIT;
 
 -- ----------------------------
--- Table structure for user_menu
+-- Table structure for user_role
 -- ----------------------------
-DROP TABLE IF EXISTS `user_menu`;
-CREATE TABLE `user_menu` (
+DROP TABLE IF EXISTS `user_role`;
+CREATE TABLE `user_role` (
                              `user_id` bigint(64) NOT NULL COMMENT '用户id',
-                             `menu_id` bigint(64) NOT NULL COMMENT '菜单id',
-                             PRIMARY KEY (`user_id`,`menu_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='用户菜单关联表';
+                             `role_id` bigint(64) NOT NULL COMMENT '角色id',
+                             PRIMARY KEY (`user_id`,`role_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- ----------------------------
--- Records of user_menu
+-- Records of user_role
 -- ----------------------------
 BEGIN;
-INSERT INTO `user_menu` (`user_id`, `menu_id`) VALUES (1, 1);
-INSERT INTO `user_menu` (`user_id`, `menu_id`) VALUES (1, 2);
-INSERT INTO `user_menu` (`user_id`, `menu_id`) VALUES (1, 3);
-COMMIT;
-
--- ----------------------------
--- Table structure for user_permission
--- ----------------------------
-DROP TABLE IF EXISTS `user_permission`;
-CREATE TABLE `user_permission` (
-                                   `user_id` bigint(20) NOT NULL COMMENT '用户id',
-                                   `permission_id` bigint(20) NOT NULL COMMENT '权限id',
-                                   PRIMARY KEY (`user_id`,`permission_id`) USING BTREE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci ROW_FORMAT=DYNAMIC COMMENT='用户权限关联表';
-
--- ----------------------------
--- Records of user_permission
--- ----------------------------
-BEGIN;
-INSERT INTO `user_permission` (`user_id`, `permission_id`) VALUES (1, 1);
-INSERT INTO `user_permission` (`user_id`, `permission_id`) VALUES (1, 2);
-INSERT INTO `user_permission` (`user_id`, `permission_id`) VALUES (1, 3);
-INSERT INTO `user_permission` (`user_id`, `permission_id`) VALUES (1, 4);
-INSERT INTO `user_permission` (`user_id`, `permission_id`) VALUES (1, 5);
-INSERT INTO `user_permission` (`user_id`, `permission_id`) VALUES (1, 6);
-INSERT INTO `user_permission` (`user_id`, `permission_id`) VALUES (1, 7);
+INSERT INTO `user_role` (`user_id`, `role_id`) VALUES (1, 1);
 COMMIT;
 
 SET FOREIGN_KEY_CHECKS = 1;
