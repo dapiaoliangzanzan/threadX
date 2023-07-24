@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiModelProperty;
 import lombok.Data;
 
 import java.io.Serializable;
+import java.util.List;
 
 /**
  * 用户映射信息
@@ -20,6 +21,11 @@ public class UserDto implements Serializable {
      * 用户的id
      */
     private Long id;
+
+    /**
+     * 角色id
+     */
+    private List<Long> roleIds;
 
     /**
      * 用户昵称

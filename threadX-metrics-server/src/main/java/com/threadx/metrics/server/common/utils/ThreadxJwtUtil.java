@@ -2,6 +2,7 @@ package com.threadx.metrics.server.common.utils;
 
 import cn.hutool.core.util.IdUtil;
 import cn.hutool.extra.spring.SpringUtil;
+import cn.hutool.json.JSONUtil;
 import com.threadx.metrics.server.dto.UserDto;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -58,6 +59,7 @@ public class ThreadxJwtUtil  {
         claims.put("id", userDto.getId() + "");
         claims.put("nickName", userDto.getNickName());
         claims.put("createTime", userDto.getCreateTime() + "");
+        claims.put("roleIds", JSONUtil.toJsonStr(userDto.getRoleIds()));
 
 
         return Jwts.builder()
@@ -113,6 +115,7 @@ public class ThreadxJwtUtil  {
             userDto.setId(Long.parseLong(updatedClaims.get("id", String.class)));
             userDto.setNickName(updatedClaims.get("nickName", String.class));
             userDto.setCreateTime(Long.parseLong(updatedClaims.get("createTime", String.class)));
+            userDto.setRoleIds(JSONUtil.toList(updatedClaims.get("roleIds", String.class), Long.class));
             return userDto;
 
 

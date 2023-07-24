@@ -46,15 +46,14 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
     private final UserService userService;
     private final StringRedisTemplate redisTemplate;
     private final ActiveLogService activeLogService;
-    private final UserPermissionService userPermissionService;
-    private final UserMenuService userMenuService;
+    private final UserRoleService userRoleService;
 
-    public UserManagerServiceImpl(UserService userService, StringRedisTemplate redisTemplate, ActiveLogService activeLogService, UserPermissionService userPermissionService, UserMenuService userMenuService) {
+
+    public UserManagerServiceImpl(UserService userService, StringRedisTemplate redisTemplate, ActiveLogService activeLogService, UserRoleService userRoleService) {
         this.userService = userService;
         this.redisTemplate = redisTemplate;
         this.activeLogService = activeLogService;
-        this.userPermissionService = userPermissionService;
-        this.userMenuService = userMenuService;
+        this.userRoleService = userRoleService;
     }
 
     @Override
@@ -196,13 +195,15 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
         if(UserConstant.ENABLE.equals(state)) {
             throw new UserException(UserExceptionCode.USER_STATUS_EXCEPTION);
         }
-
+        //清除当前用户的缓存信息
+        Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, userId) + "*");
+        if (CollUtil.isNotEmpty(keys)) {
+            keys.forEach(redisTemplate::delete);
+        }
         // 开始删除当前用户的日志信息
         activeLogService.deleteLogByUserId(userId);
-        // 开始删除当前用户的权限信息
-        userPermissionService.deleteByUserId(userId);
-        //开始删除用户的菜单信息
-        userMenuService.deleteByUserId(userId);
+        //开始删除当前用户的角色信息
+        userRoleService.deleteByUserId(userId);
         //删除用户信息
         baseMapper.deleteById(userId);
     }

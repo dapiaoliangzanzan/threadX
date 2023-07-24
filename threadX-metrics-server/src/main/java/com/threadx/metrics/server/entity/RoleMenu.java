@@ -8,25 +8,25 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 
 /**
- * 用户权限关联表
+ * 角色菜单关联表
  *
  * @author huangfukexing
- * @date 2023/6/1 14:51
+ * @date 2023/7/24 10:15
  */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@TableName("user_permission")
-public class UserPermission implements Serializable {
-    private static final long serialVersionUID = 563074028991697806L;
+@TableName("role_menu")
+public class RoleMenu implements Serializable {
+    private static final long serialVersionUID = 1476621277724732281L;
 
     /**
-     * 用户id
+     * 角色的id
      */
-    private Long userId;
+    private Long roleId;
 
     /**
-     * 权限id
+     * 菜单的id
      */
-    private Long permissionId;
+    private Long menuId;
 }

@@ -10,16 +10,14 @@ import com.threadx.metrics.server.common.context.LoginContext;
 import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.entity.Menu;
-import com.threadx.metrics.server.entity.UserMenu;
 import com.threadx.metrics.server.mapper.MenuMapper;
 import com.threadx.metrics.server.service.MenuService;
-import com.threadx.metrics.server.service.UserMenuService;
+import com.threadx.metrics.server.service.RoleMenuService;
 import com.threadx.metrics.server.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import springfox.documentation.spring.web.json.Json;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -36,11 +34,11 @@ import java.util.concurrent.TimeUnit;
 public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements MenuService {
 
     private final StringRedisTemplate redisTemplate;
-    private final UserMenuService userMenuService;
+    private final RoleMenuService roleMenuService;
 
-    public MenuServiceImpl(StringRedisTemplate redisTemplate, UserMenuService userMenuService) {
+    public MenuServiceImpl(StringRedisTemplate redisTemplate, RoleMenuService roleMenuService) {
         this.redisTemplate = redisTemplate;
-        this.userMenuService = userMenuService;
+        this.roleMenuService = roleMenuService;
     }
 
     @Override
@@ -58,10 +56,10 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
         if (StrUtil.isNotBlank(menuDataStr)) {
             menus = JSONUtil.toList(menuDataStr, Menu.class);
         } else {
-            List<Long> allByUserId = userMenuService.findAllByUserId(userId);
-            if (CollUtil.isNotEmpty(allByUserId)) {
+            Set<Long> menuIds = roleMenuService.findByRoleIds(userData.getRoleIds());
+            if (CollUtil.isNotEmpty(menuIds)) {
                 QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
-                queryWrapper.in("id", allByUserId);
+                queryWrapper.in("id", menuIds);
                 menus = baseMapper.selectList(queryWrapper);
                 Comparator<Menu> comparator = Comparator.comparingInt(Menu::getSort);
                 menus.sort(comparator);

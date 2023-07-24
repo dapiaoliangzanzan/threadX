@@ -1,15 +1,15 @@
 package com.threadx.metrics.server.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.threadx.metrics.server.entity.UserMenu;
+import com.threadx.metrics.server.entity.RolePermission;
 import org.springframework.stereotype.Repository;
 
 /**
- * 用户菜单数据库操作
+ * 角色 权限操作类
  *
  * @author huangfukexing
- * @date 2023/6/1 14:52
+ * @date 2023/7/24 10:38
  */
 @Repository
-public interface UserMenuMapper extends BaseMapper<UserMenu> {
+public interface RolePermissionMapper extends BaseMapper<RolePermission> {
 }

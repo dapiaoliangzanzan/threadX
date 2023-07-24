@@ -12,7 +12,7 @@ import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.entity.Permission;
 import com.threadx.metrics.server.mapper.PermissionMapper;
 import com.threadx.metrics.server.service.PermissionService;
-import com.threadx.metrics.server.service.UserPermissionService;
+import com.threadx.metrics.server.service.RolePermissionService;
 import com.threadx.metrics.server.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -21,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -35,11 +36,11 @@ import java.util.concurrent.TimeUnit;
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission> implements PermissionService {
 
     private final StringRedisTemplate redisTemplate;
-    private final UserPermissionService userPermissionService;
+    private final RolePermissionService rolePermissionService;
 
-    public PermissionServiceImpl(StringRedisTemplate redisTemplate, UserPermissionService userPermissionService) {
+    public PermissionServiceImpl(StringRedisTemplate redisTemplate, RolePermissionService rolePermissionService) {
         this.redisTemplate = redisTemplate;
-        this.userPermissionService = userPermissionService;
+        this.rolePermissionService = rolePermissionService;
     }
 
     @Override
@@ -57,10 +58,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             permissions = JSONUtil.toList(permissionData, Permission.class);
         }else {
             //查询中间表
-            List<Long> permissionServiceByUserId = userPermissionService.findByUserId(userId);
-            if(CollUtil.isNotEmpty(permissionServiceByUserId)) {
+            Set<Long> permissionIds = rolePermissionService.findByRoleIds(userData.getRoleIds());
+            if(CollUtil.isNotEmpty(permissionIds)) {
                 QueryWrapper<Permission> queryWrapper = new QueryWrapper<>();
-                queryWrapper.in("id", permissionServiceByUserId);
+                queryWrapper.in("id", permissionIds);
                 permissions = baseMapper.selectList(queryWrapper);
             }
         }

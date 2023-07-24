@@ -18,6 +18,7 @@ import com.threadx.metrics.server.entity.User;
 import com.threadx.metrics.server.mapper.UserMapper;
 import com.threadx.metrics.server.service.MenuService;
 import com.threadx.metrics.server.service.PermissionService;
+import com.threadx.metrics.server.service.UserRoleService;
 import com.threadx.metrics.server.service.UserService;
 import com.threadx.metrics.server.vo.LoginUserVo;
 import com.threadx.metrics.server.dto.UserDto;
@@ -27,6 +28,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -42,11 +44,14 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     private final StringRedisTemplate redisTemplate;
+    private final UserRoleService userRoleService;
     private final MenuService menuService;
     private final PermissionService permissionService;
 
-    public UserServiceImpl(StringRedisTemplate redisTemplate, MenuService menuService, PermissionService permissionService) {
+
+    public UserServiceImpl(StringRedisTemplate redisTemplate, UserRoleService userRoleService, MenuService menuService, PermissionService permissionService) {
         this.redisTemplate = redisTemplate;
+        this.userRoleService = userRoleService;
         this.menuService = menuService;
         this.permissionService = permissionService;
     }
@@ -71,10 +76,14 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if(CollUtil.isNotEmpty(keys)) {
                 keys.forEach(redisTemplate::delete);
             }
+            //查询用户角色
+            List<Long> roleIds = userRoleService.findRoleIdByUserId(user.getId());
             //生成token
             UserDto userDto = new UserDto();
             BeanUtil.copyProperties(user, userDto);
+            userDto.setRoleIds(roleIds);
             LoginContext.setUserData(userDto);
+
             Long id = user.getId();
             String tokenKey = String.format("%s%s", IdUtil.fastSimpleUUID(), id);
             String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, id, tokenKey);
