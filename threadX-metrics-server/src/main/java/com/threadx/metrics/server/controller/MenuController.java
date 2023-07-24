@@ -6,6 +6,7 @@ import com.threadx.metrics.server.common.annotations.UserPermission;
 import com.threadx.metrics.server.entity.Menu;
 import com.threadx.metrics.server.enums.PermissionValue;
 import com.threadx.metrics.server.service.MenuService;
+import com.threadx.metrics.server.vo.MenuVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,7 +45,7 @@ public class MenuController {
     @ApiOperation(value = "查询所有的菜单信息")
     @UserPermission(PermissionValue.FIND_ALL_MENU_LIST)
     @GetMapping("findAllMenu")
-    public List<Menu> findAllMenu(){
+    public List<MenuVo> findAllMenu(){
         return menuService.findAllMenu();
     }
 }

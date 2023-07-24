@@ -28,6 +28,10 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Service',
         component: () => import('../views/ServicePage.vue')
       },{
+        path: '/roleManager',
+        name: 'RoleManager',
+        component: () => import('../views/RoleManager.vue')
+      },{
         path: '/userManager',
         name: 'UserManager',
         component: () => import('../views/UserManager.vue')

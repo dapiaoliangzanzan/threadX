@@ -9,11 +9,14 @@ import com.threadx.metrics.server.common.code.LoginExceptionCode;
 import com.threadx.metrics.server.common.context.LoginContext;
 import com.threadx.metrics.server.common.exceptions.LoginException;
 import com.threadx.metrics.server.constant.RedisCacheKey;
+import com.threadx.metrics.server.entity.Menu;
 import com.threadx.metrics.server.entity.Permission;
 import com.threadx.metrics.server.mapper.PermissionMapper;
 import com.threadx.metrics.server.service.PermissionService;
 import com.threadx.metrics.server.service.RolePermissionService;
 import com.threadx.metrics.server.dto.UserDto;
+import com.threadx.metrics.server.vo.MenuVo;
+import com.threadx.metrics.server.vo.PermissionVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -23,6 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 权限实现
@@ -69,5 +73,38 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             redisTemplate.opsForValue().set(permissionCacheKey, JSONUtil.toJsonStr(permissions), 1, TimeUnit.HOURS);
         }
         return permissions;
+    }
+
+    @Override
+    public List<PermissionVo> findAllPermission() {
+        List<Permission> permissions;
+        if (redisTemplate.hasKey(RedisCacheKey.PERMISSION_ALL_CACHE)) {
+            //先查询缓存
+            String permissionAllStr = redisTemplate.opsForValue().get(RedisCacheKey.PERMISSION_ALL_CACHE);
+            //格式化数据
+            permissions = JSONUtil.toList(permissionAllStr, Permission.class);
+            //数据续约
+            redisTemplate.expire(RedisCacheKey.PERMISSION_ALL_CACHE, 1, TimeUnit.DAYS);
+        }else {
+            //查询所有的菜单数据
+            permissions = baseMapper.selectList(new QueryWrapper<>());
+
+
+        }
+        //菜单转换
+        if (CollUtil.isNotEmpty(permissions)) {
+            List<PermissionVo> permissionVos = permissions.stream().map(permission -> {
+                PermissionVo permissionVo = new PermissionVo();
+                permissionVo.setId(permission.getId());
+                permissionVo.setName(permission.getPermissionName());
+                permissionVo.setPermissionDesc(permission.getPermissionDesc());
+                return permissionVo;
+            }).collect(Collectors.toList());
+
+            redisTemplate.opsForValue().set(RedisCacheKey.MENU_ALL_CACHE, JSONUtil.toJsonStr(permissionVos), 1, TimeUnit.DAYS);
+            return permissionVos;
+        }
+        //数据续期
+        return null;
     }
 }

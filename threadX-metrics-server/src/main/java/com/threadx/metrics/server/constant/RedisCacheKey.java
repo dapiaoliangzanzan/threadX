@@ -36,9 +36,14 @@ public interface RedisCacheKey {
     String USER_MENU_CACHE = USER_CACHE + "authority:menu";
 
     /**
-     * 所有的菜单权限
+     * 所有的菜单信息
      */
     String MENU_ALL_CACHE = THREADX_CADCHE + "menu:all";
+
+    /**
+     * 所有的权限信息
+     */
+    String PERMISSION_ALL_CACHE = THREADX_CADCHE + "permission:all";
 
     /**
      * 用户权限缓存  占位符为  userId

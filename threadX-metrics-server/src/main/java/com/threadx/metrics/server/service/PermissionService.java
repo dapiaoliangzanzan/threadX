@@ -1,6 +1,7 @@
 package com.threadx.metrics.server.service;
 
 import com.threadx.metrics.server.entity.Permission;
+import com.threadx.metrics.server.vo.PermissionVo;
 
 import java.util.List;
 
@@ -19,4 +20,12 @@ public interface PermissionService {
      * @return 返回符合调价的菜单
      */
     List<Permission> findThisUserPermission();
+
+    /**
+     * 查询所有的权限信息
+     *
+     * @return 所有的权限信息
+     */
+    List<PermissionVo> findAllPermission();
+
 }

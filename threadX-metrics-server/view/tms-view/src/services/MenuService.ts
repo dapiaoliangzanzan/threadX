@@ -15,6 +15,22 @@ class MenuService {
             console.error("查询左侧菜单栏信息请求失败：", error);
         });
     }
+
+
+    /**
+     * 获取所有的菜单信息
+     * @returns 所有的菜单信息
+     */
+    public static findAllMenu(): Promise<any> {
+        return ApiUtils.get("/menu/findAllMenu")
+        .then((response) =>{
+            return response
+        })
+        .catch((error: any) => {
+            // 处理错误情况
+            console.error("查询全部菜单栏信息请求失败：", error);
+        });
+    }
 }
 export default MenuService
 

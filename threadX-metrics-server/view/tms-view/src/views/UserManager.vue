@@ -7,7 +7,7 @@
             <el-button type="success" @click="searchMethod" class="create-user-button-class" :icon="Plus">新建用户</el-button>
         </div>
         <div class="user-data-class">
-            <el-table :data="userDataTable" style="width: 100%" height="760">
+            <el-table :data="userDataTable" style="width: 100%" height="79.5vh">
                 <el-table-column prop="nickName" label="用户昵称" align="center"/>
                 <el-table-column prop="userName" label="用户名" align="center" />
                 <el-table-column prop="email" label="用户邮箱" align="center"/>
@@ -148,8 +148,6 @@
 
     onMounted(() =>{
         loadAllUserData()
-        console.log(createUserFormModel.value)
-        console.log(menus)
     });
 
     //所有的菜单

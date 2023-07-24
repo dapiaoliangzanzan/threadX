@@ -1,6 +1,7 @@
 package com.threadx.metrics.server.service;
 
 import com.threadx.metrics.server.entity.Menu;
+import com.threadx.metrics.server.vo.MenuVo;
 
 import java.util.List;
 
@@ -23,6 +24,6 @@ public interface MenuService {
      * 查询所有的菜单
      * @return 返回所有的菜单信息
      */
-    List<Menu> findAllMenu();
+    List<MenuVo> findAllMenu();
 
 }

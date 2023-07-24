@@ -39,6 +39,16 @@ public enum PermissionValue {
      * 查询所有的菜单列表
      */
     FIND_ALL_MENU_LIST("findAll:menu","查询所有的菜单列表"),
+
+    /**
+     * 查询所有的角色信息
+     */
+    FIND_ALL_ROLE_LIST("findAll:role","查询所有的角色信息"),
+
+    /**
+     * 查询所有的权限信息
+     */
+    FIND_ALL_PERMISSION_LIST("findAll:permission","查询所有的权限信息"),
     ;
     /**
      * 权限主键
