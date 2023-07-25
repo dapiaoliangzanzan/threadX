@@ -10,10 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -34,5 +31,33 @@ public class RoleMenuServiceImpl extends ServiceImpl<RoleMenuMapper, RoleMenu> i
         QueryWrapper<RoleMenu> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("role_id", roleIds);
         return baseMapper.selectList(queryWrapper).stream().map(RoleMenu::getMenuId).collect(Collectors.toSet());
+    }
+
+    @Override
+    public void batchSave(Collection<RoleMenu> roleMenus) {
+        if(CollUtil.isNotEmpty(roleMenus)) {
+            super.saveBatch(roleMenus, 100);
+        }
+
+    }
+
+    @Override
+    public Set<Long> findByRoleId(Long roleId) {
+        if(roleId == null) {
+            return null;
+        }
+        QueryWrapper<RoleMenu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", roleId);
+        return baseMapper.selectList(queryWrapper).stream().map(RoleMenu::getMenuId).collect(Collectors.toSet());
+    }
+
+    @Override
+    public void deleteByRoleId(Long roleId) {
+        if(roleId == null) {
+            return;
+        }
+        QueryWrapper<RoleMenu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", roleId);
+        baseMapper.delete(queryWrapper);
     }
 }

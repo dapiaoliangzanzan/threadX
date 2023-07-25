@@ -14,9 +14,9 @@
                 <el-table-column prop="updateDate" label="修改时间" align="center"/>
                 <el-table-column fixed="right" label="操作" align="center">
                     <template #default="scope">
-                        <el-button  link type="primary" size="small" @click="findUser(scope.row.id)">查看用户</el-button>  
-                        <el-button  link type="primary" size="small" @click="updateRole(scope.row.id)">修改</el-button>
-                        <el-button  link type="primary" size="small" @click="deleteRole(scope.row.id)">删除</el-button>                      
+                        <el-button  link type="primary" size="small" @click="findUser(scope.row.roleId)">查看用户</el-button>  
+                        <el-button  link type="primary" size="small" @click="updateRole(scope.row.roleId)">修改</el-button>
+                        <el-button  link type="primary" size="small" @click="deleteRole(scope.row.roleId)">删除</el-button>                      
                     </template>
                 </el-table-column>
             </el-table>
@@ -106,7 +106,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="createRoleDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="createRoleDialogVisible = false">确认</el-button>
+                    <el-button type="primary" @click="saveOrUpdateRole(createRoleFormRef)">确认</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -136,14 +136,16 @@
 
 
     interface CreateRoleForm {
+        id:string
         roleName: string
         roleDesc: string
-        selectMenuList: string[],
+        selectMenuList: string[]
         selectPermissionList:string[]
     }
 
     //对应表单的值
     const createRoleFormModel = ref<CreateRoleForm>({
+        id:'',
         roleName:'',
         roleDesc:'',
         selectMenuList: [],
@@ -202,8 +204,16 @@
         console.log("asd")
     }
 
-    const updateRole = (id:any) => {
-        console.log("asd")
+    const updateRole = (roleId:any) => {
+        RoleService.findRoleAuthority(roleId).then(response =>{
+            createRoleFormModel.value.id = response.roleId
+            createRoleFormModel.value.roleName = response.roleName
+            createRoleFormModel.value.roleDesc = response.roleDesc
+            createRoleFormModel.value.selectMenuList = response.menuIds
+            createRoleFormModel.value.selectPermissionList = response.permissionIds
+            createRoleDialogVisible.value = true;
+        })
+        
     }
 
     const deleteRole = (id:any) => {
@@ -225,6 +235,9 @@
      * 创建一个新的角色
      */
     const createRoleMethod = () => {
+        createRoleFormModel.value.id = ''
+        createRoleFormModel.value.roleName = ''
+        createRoleFormModel.value.roleDesc = ''
         createRoleFormModel.value.selectMenuList = []
         createRoleFormModel.value.selectPermissionList = []
         createRoleDialogVisible.value = true;
@@ -241,6 +254,35 @@
         PermissionService.findAllPermission().then(response =>{
             permissions.value = response
         })
+    }
+
+    /**
+     * 保存角色信息  同时关闭对话框
+     */
+    const saveOrUpdateRole = (formEl: FormInstance | undefined)=>{
+        if (!formEl) return
+        formEl.validate((valid, fields) => {
+                if (valid) {
+                    
+                    RoleService.saveRole({
+                        menuIds:createRoleFormModel.value.selectMenuList,
+                        permissionIds:createRoleFormModel.value.selectPermissionList,
+                        roleName:createRoleFormModel.value.roleName,
+                        roleDesc:createRoleFormModel.value.roleDesc,
+                        roleId:createRoleFormModel.value.id
+
+                    }).then(response =>{
+                        loadRoleList();
+                        createRoleDialogVisible.value = false;
+                    }).catch(error =>{
+                        console.log("保存修改角色信息失败!", error)
+                    })
+                } else {
+                    console.log('error submit!', fields)
+                }
+        })
+        
+        
     }
 
 </script>

@@ -49,6 +49,16 @@ public enum PermissionValue {
      * 查询所有的权限信息
      */
     FIND_ALL_PERMISSION_LIST("findAll:permission","查询所有的权限信息"),
+
+    /**
+     * 查询角色权限数据
+     */
+    FIND_ROLE_AUTHORITY("find:role:authority", "查询角色权限数据"),
+
+    /**
+     * 保存权限信息
+     */
+    SAVE_ROLE_AUTHORITY("save:role:authority", "保存权限信息"),
     ;
     /**
      * 权限主键

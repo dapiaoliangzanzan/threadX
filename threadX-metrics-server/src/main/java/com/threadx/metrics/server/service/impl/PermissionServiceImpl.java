@@ -105,4 +105,14 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
         }
     }
+
+    @Override
+    public List<Permission> findByIds(Set<Long> permissionIds) {
+        if(CollUtil.isEmpty(permissionIds)) {
+            return new ArrayList<>();
+        }
+        QueryWrapper<Permission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", permissionIds);
+        return baseMapper.selectList(queryWrapper);
+    }
 }

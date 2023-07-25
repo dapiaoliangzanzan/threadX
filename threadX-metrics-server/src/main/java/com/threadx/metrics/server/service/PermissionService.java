@@ -4,6 +4,7 @@ import com.threadx.metrics.server.entity.Permission;
 import com.threadx.metrics.server.vo.PermissionVo;
 
 import java.util.List;
+import java.util.Set;
 
 /**
  * 权限服务
@@ -28,4 +29,10 @@ public interface PermissionService {
      */
     List<PermissionVo> findAllPermission();
 
+    /**
+     * 根据权限的id 查询权限数据
+     * @param permissionIds 权限的id
+     * @return 权限数据
+     */
+    List<Permission> findByIds(Set<Long> permissionIds);
 }

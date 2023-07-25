@@ -13,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -37,5 +34,29 @@ public class RolePermissionServiceImpl extends ServiceImpl<RolePermissionMapper,
         QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
         queryWrapper.in("role_id", roleIds);
         return baseMapper.selectList(queryWrapper).stream().map(RolePermission::getPermissionId).collect(Collectors.toSet());
+    }
+
+    @Override
+    public Set<Long> findByRoleId(Long roleId) {
+        QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", roleId);
+        return baseMapper.selectList(queryWrapper).stream().map(RolePermission::getPermissionId).collect(Collectors.toSet());
+    }
+
+    @Override
+    public void batchSave(Collection<RolePermission> rolePermissions) {
+       if(CollUtil.isNotEmpty(rolePermissions)) {
+           super.saveBatch(rolePermissions, 100);
+       }
+    }
+
+    @Override
+    public void deleteByRoleId(Long roleId) {
+        if(roleId == null) {
+            return;
+        }
+        QueryWrapper<RolePermission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.eq("role_id", roleId);
+        baseMapper.delete(queryWrapper);
     }
 }

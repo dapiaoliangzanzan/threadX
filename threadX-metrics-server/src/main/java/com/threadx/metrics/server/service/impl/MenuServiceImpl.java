@@ -105,4 +105,14 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
             return null;
         }
     }
+
+    @Override
+    public List<Menu> findByIds(Collection<Long> ids) {
+        if(CollUtil.isEmpty(ids)) {
+            return new ArrayList<>();
+        }
+        QueryWrapper<Menu> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", ids);
+        return baseMapper.selectList(queryWrapper);
+    }
 }

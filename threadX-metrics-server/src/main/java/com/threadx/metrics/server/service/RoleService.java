@@ -2,6 +2,7 @@ package com.threadx.metrics.server.service;
 
 import com.threadx.metrics.server.conditions.RolePageConditions;
 import com.threadx.metrics.server.entity.Role;
+import com.threadx.metrics.server.vo.RoleAuthorityVo;
 import com.threadx.metrics.server.vo.RoleVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 
@@ -20,4 +21,33 @@ public interface RoleService {
      * @return 分页数据
      */
     ThreadxPage<RoleVo> findAllByPage(RolePageConditions rolePageConditions);
+
+    /**
+     * 获取角色的具体权限
+     *
+     * @param roleId 角色的id
+     * @return 角色的具体权限信息
+     */
+    RoleAuthorityVo findRoleAuthority(Long roleId);
+
+    /**
+     * 保存角色信息
+     *
+     * @param roleAuthorityVo 角色权限
+     */
+    void saveOrUpdate(RoleAuthorityVo roleAuthorityVo);
+
+    /**
+     * 保存角色信息
+     *
+     * @param roleAuthorityVo 角色信息
+     */
+    void saveRole(RoleAuthorityVo roleAuthorityVo);
+
+    /**
+     * 修改角色
+     *
+     * @param roleAuthorityVo 角色权限
+     */
+    void updateRole(RoleAuthorityVo roleAuthorityVo);
 }
