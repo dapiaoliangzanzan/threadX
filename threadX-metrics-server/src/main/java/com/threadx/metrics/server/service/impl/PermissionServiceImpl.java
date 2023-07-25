@@ -101,7 +101,7 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
                 return permissionVo;
             }).collect(Collectors.toList());
 
-            redisTemplate.opsForValue().set(RedisCacheKey.MENU_ALL_CACHE, JSONUtil.toJsonStr(permissionVos), 1, TimeUnit.DAYS);
+            redisTemplate.opsForValue().set(RedisCacheKey.PERMISSION_ALL_CACHE, JSONUtil.toJsonStr(permissionVos), 1, TimeUnit.DAYS);
             return permissionVos;
         }
         //数据续期

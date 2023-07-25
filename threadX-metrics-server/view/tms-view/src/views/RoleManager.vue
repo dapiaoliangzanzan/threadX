@@ -109,6 +109,7 @@
     import { Search,Plus } from '@element-plus/icons-vue'
     import RoleService from '@/services/RoleService'
     import MenuService from '@/services/MenuService'
+    import PermissionService from '@/services/PermissionService'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import type { FormInstance, FormRules } from 'element-plus'
 
@@ -213,6 +214,10 @@
     const createRoleMethod = () => {
         MenuService.findAllMenu().then(response =>{
             menus.value = response
+        })
+
+        PermissionService.findAllPermission().then(response =>{
+            permissions.value = response
         })
         createRoleDialogVisible.value = true
     }

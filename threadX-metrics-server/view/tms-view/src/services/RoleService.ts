@@ -13,6 +13,7 @@ class RoleService {
         .catch((error: any) => {
             // 处理错误情况
             console.error("查询全部角色信息请求失败：", error);
+            return {}
         });
     }
 }
