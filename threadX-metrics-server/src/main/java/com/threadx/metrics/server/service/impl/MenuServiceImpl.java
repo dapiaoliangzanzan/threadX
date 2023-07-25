@@ -78,34 +78,31 @@ public class MenuServiceImpl extends ServiceImpl<MenuMapper, Menu> implements Me
 
     @Override
     public List<MenuVo> findAllMenu() {
-        List<Menu> menus;
         if (redisTemplate.hasKey(RedisCacheKey.MENU_ALL_CACHE)) {
             //先查询缓存
             String menuAll = redisTemplate.opsForValue().get(RedisCacheKey.MENU_ALL_CACHE);
             //格式化数据
-            menus = JSONUtil.toList(menuAll, Menu.class);
+            List<MenuVo> menuVos = JSONUtil.toList(menuAll, MenuVo.class);
             //数据续约
             redisTemplate.expire(RedisCacheKey.MENU_ALL_CACHE, 1, TimeUnit.DAYS);
+            return menuVos;
         }else {
             //查询所有的菜单数据
-            menus = baseMapper.selectList(new QueryWrapper<>());
-
-
+            List<Menu> menus = baseMapper.selectList(new QueryWrapper<>());
+            //菜单转换
+            if (CollUtil.isNotEmpty(menus)) {
+                List<MenuVo> menuVos = menus.stream().map(menu -> {
+                    MenuVo menuVo = new MenuVo();
+                    menuVo.setId(menu.getId());
+                    menuVo.setName(menu.getMenuName());
+                    menuVo.setMenuDesc(menu.getMenuDesc());
+                    return menuVo;
+                }).collect(Collectors.toList());
+                redisTemplate.opsForValue().set(RedisCacheKey.MENU_ALL_CACHE, JSONUtil.toJsonStr(menuVos), 1, TimeUnit.DAYS);
+                return menuVos;
+            }
+            //数据续期
+            return null;
         }
-        //菜单转换
-        if (CollUtil.isNotEmpty(menus)) {
-            List<MenuVo> menuVos = menus.stream().map(menu -> {
-                MenuVo menuVo = new MenuVo();
-                menuVo.setId(menu.getId());
-                menuVo.setName(menu.getMenuName());
-                menuVo.setMenuDesc(menu.getMenuDesc());
-                return menuVo;
-            }).collect(Collectors.toList());
-
-            redisTemplate.opsForValue().set(RedisCacheKey.MENU_ALL_CACHE, JSONUtil.toJsonStr(menuVos), 1, TimeUnit.DAYS);
-            return menuVos;
-        }
-        //数据续期
-        return null;
     }
 }

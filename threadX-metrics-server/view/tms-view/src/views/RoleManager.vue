@@ -85,7 +85,16 @@
                         <el-col :span="24">
                             <el-form-item label="用户菜单权限:" prop="selectPermissionList" >
                                 <el-checkbox-group v-model="createRoleFormModel.selectPermissionList">
-                                    <el-checkbox v-for="permission in permissions" :key="permission.id" :label="permission.id">{{ permission.name }}</el-checkbox>
+                                    <el-checkbox v-for="permission in permissions" :key="permission.id" :label="permission.id">
+                                        <el-tooltip
+                                            effect="dark"
+                                            :content="permission.permissionDesc"
+                                            placement="top"
+                                        >
+                                            {{ permission.name }}
+                                        </el-tooltip>
+                                        
+                                     </el-checkbox>
                                 </el-checkbox-group>
                             </el-form-item>
                         </el-col>
@@ -146,6 +155,7 @@
 
     onMounted(() =>{
         loadRoleList();
+        loadAllAuthority();
     });
 
     //所有的菜单
@@ -211,7 +221,19 @@
         });
     }
 
+    /**
+     * 创建一个新的角色
+     */
     const createRoleMethod = () => {
+        createRoleFormModel.value.selectMenuList = []
+        createRoleFormModel.value.selectPermissionList = []
+        createRoleDialogVisible.value = true;
+    }
+
+    /**
+     * 获取所有的权限  菜单权限和权限
+     */
+    const loadAllAuthority = ()=>{
         MenuService.findAllMenu().then(response =>{
             menus.value = response
         })
@@ -219,7 +241,6 @@
         PermissionService.findAllPermission().then(response =>{
             permissions.value = response
         })
-        createRoleDialogVisible.value = true
     }
 
 </script>

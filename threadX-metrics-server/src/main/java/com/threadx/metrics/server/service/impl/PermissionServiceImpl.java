@@ -77,34 +77,32 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
 
     @Override
     public List<PermissionVo> findAllPermission() {
-        List<Permission> permissions;
         if (redisTemplate.hasKey(RedisCacheKey.PERMISSION_ALL_CACHE)) {
             //先查询缓存
             String permissionAllStr = redisTemplate.opsForValue().get(RedisCacheKey.PERMISSION_ALL_CACHE);
             //格式化数据
-            permissions = JSONUtil.toList(permissionAllStr, Permission.class);
+            List<PermissionVo> permissionVo = JSONUtil.toList(permissionAllStr, PermissionVo.class);
             //数据续约
             redisTemplate.expire(RedisCacheKey.PERMISSION_ALL_CACHE, 1, TimeUnit.DAYS);
+            return permissionVo;
         }else {
             //查询所有的菜单数据
-            permissions = baseMapper.selectList(new QueryWrapper<>());
+            List<Permission> permissions = baseMapper.selectList(new QueryWrapper<>());
+            //菜单转换
+            if (CollUtil.isNotEmpty(permissions)) {
+                List<PermissionVo> permissionVos = permissions.stream().map(permission -> {
+                    PermissionVo permissionVo = new PermissionVo();
+                    permissionVo.setId(permission.getId());
+                    permissionVo.setName(permission.getPermissionName());
+                    permissionVo.setPermissionDesc(permission.getPermissionDesc());
+                    return permissionVo;
+                }).collect(Collectors.toList());
 
+                redisTemplate.opsForValue().set(RedisCacheKey.PERMISSION_ALL_CACHE, JSONUtil.toJsonStr(permissionVos), 1, TimeUnit.DAYS);
+                return permissionVos;
+            }
+            return null;
 
         }
-        //菜单转换
-        if (CollUtil.isNotEmpty(permissions)) {
-            List<PermissionVo> permissionVos = permissions.stream().map(permission -> {
-                PermissionVo permissionVo = new PermissionVo();
-                permissionVo.setId(permission.getId());
-                permissionVo.setName(permission.getPermissionName());
-                permissionVo.setPermissionDesc(permission.getPermissionDesc());
-                return permissionVo;
-            }).collect(Collectors.toList());
-
-            redisTemplate.opsForValue().set(RedisCacheKey.PERMISSION_ALL_CACHE, JSONUtil.toJsonStr(permissionVos), 1, TimeUnit.DAYS);
-            return permissionVos;
-        }
-        //数据续期
-        return null;
     }
 }
