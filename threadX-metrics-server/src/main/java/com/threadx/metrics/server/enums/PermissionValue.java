@@ -56,9 +56,24 @@ public enum PermissionValue {
     FIND_ROLE_AUTHORITY("find:role:authority", "查询角色权限数据"),
 
     /**
-     * 保存权限信息
+     * 保存角色信息
      */
-    SAVE_ROLE_AUTHORITY("save:role:authority", "保存权限信息"),
+    SAVE_ROLE_AUTHORITY("save:role:authority", "保存角色信息"),
+
+    /**
+     * 删除角色信息
+     */
+    DELETE_ROLE_AUTHORITY("delete:role:authority", "删除角色信息"),
+
+    /**
+     * 解绑用户与角色信息
+     */
+    UNTIE_USER_ROLE("untie:role:authority", "解绑用户与角色信息"),
+
+    /**
+     * 查询角色下的用户
+     */
+    FIND_ROLE_USER("find:role:users", "查询角色下的用户"),
     ;
     /**
      * 权限主键

@@ -25,6 +25,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -54,6 +55,13 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
         this.redisTemplate = redisTemplate;
         this.activeLogService = activeLogService;
         this.userRoleService = userRoleService;
+    }
+
+    @Override
+    public List<User> findByUserIds(Collection<Long> userIds) {
+        QueryWrapper<User> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", userIds);
+        return baseMapper.selectList(queryWrapper);
     }
 
     @Override

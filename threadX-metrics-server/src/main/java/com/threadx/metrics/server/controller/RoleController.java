@@ -1,17 +1,23 @@
 package com.threadx.metrics.server.controller;
 
 import com.threadx.metrics.server.common.annotations.GlobalResultPackage;
+import com.threadx.metrics.server.common.annotations.Log;
 import com.threadx.metrics.server.common.annotations.Login;
 import com.threadx.metrics.server.common.annotations.UserPermission;
 import com.threadx.metrics.server.conditions.RolePageConditions;
+import com.threadx.metrics.server.conditions.RoleUserConditions;
+import com.threadx.metrics.server.enums.LogEnum;
 import com.threadx.metrics.server.enums.PermissionValue;
 import com.threadx.metrics.server.service.RoleService;
 import com.threadx.metrics.server.vo.RoleAuthorityVo;
 import com.threadx.metrics.server.vo.RoleVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * 角色控制器
@@ -51,8 +57,35 @@ public class RoleController {
     @Login
     @PostMapping("save")
     @UserPermission(PermissionValue.SAVE_ROLE_AUTHORITY)
+    @Log(LogEnum.CREATE_ROLE)
     @ApiOperation(value = "保存角色信息")
-    public void save(@RequestBody RoleAuthorityVo roleAuthorityVo){
+    public void save(@RequestBody RoleAuthorityVo roleAuthorityVo) {
         roleService.saveOrUpdate(roleAuthorityVo);
+    }
+
+    @Login
+    @GetMapping("deleteRole")
+    @UserPermission(PermissionValue.DELETE_ROLE_AUTHORITY)
+    @Log(LogEnum.DELETE_ROLE)
+    @ApiOperation(value = "删除角色数据")
+    public void deleteRole(@RequestParam("roleId") Long roleId) {
+        roleService.deleteRoleById(roleId);
+    }
+
+    @Login
+    @GetMapping("untieUserRole")
+    @UserPermission(PermissionValue.DELETE_ROLE_AUTHORITY)
+    @Log(LogEnum.UNTIE_USER_ROLE)
+    @ApiOperation(value = "解绑用户与角色")
+    public void untieUserRole(@RequestParam("roleId") Long roleId, @RequestParam("userId") Long userId) {
+        roleService.untieUserRole(roleId, userId);
+    }
+
+    @Login
+    @PostMapping("findRoleUser")
+    @UserPermission(PermissionValue.FIND_ROLE_USER)
+    @ApiOperation(value = "查询角色用户")
+    public ThreadxPage<UserVo> findRoleUser(@RequestBody RoleUserConditions roleUserConditions) {
+        return roleService.findRoleUser(roleUserConditions);
     }
 }

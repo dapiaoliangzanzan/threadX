@@ -165,9 +165,9 @@
         selectMenuList: [],
         selectPermissionList: ["1"]
     })
-
     //创建用户的对话框
     const createUserDialogVisible = ref(true)
+
     //搜索值
     const searchValue = ref()
     //用户表格数据
@@ -243,7 +243,7 @@
 
     const forceDeleteUser = (userId:any) =>{
         ElMessageBox.confirm(
-            '点击确认后将不可恢复的删除该用户所有的权限信息以及操作日志信息，请慎重操作！！！',
+            '点击确认后将不可恢复的删除该用户所有的角色信息以及操作日志信息，请慎重操作！！！',
             '警告',
             {
                 confirmButtonText: '确认',

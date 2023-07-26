@@ -43,7 +43,50 @@ class RoleService {
     public static saveRole(roleVo:any):Promise<any> {
         return ApiUtils.post('/role/save', roleVo);
     }
+
+    /**
+     * 删除角色
+     * @param roleId 角色id
+     */
+    public static deleteRole(roleId:any):Promise<any> {
+        return  ApiUtils.get('/role/deleteRole', {
+                    roleId
+                }).catch((error: any) => {
+                    // 处理错误情况
+                    console.error("查询对应角色的权限信息失败！", error);
+                });
+    }
+
+    /**
+     * 解绑用户角色
+     * @param roleId 角色id
+     * @param userId 用户id
+     * @returns 
+     */
+    public static untieUserRole(roleId:any, userId:any):Promise<any> {
+        return  ApiUtils.get('/role/untieUserRole', {
+            roleId,
+            userId
+        }).catch((error: any) => {
+            // 处理错误情况
+            console.error("解绑用户角色失败！", error);
+        });
+    }
+
+    /**
+     * 解绑用户角色
+     * @param roleId 角色id
+     * @param userId 用户id
+     * @returns 
+     */
+        public static findRoleUser(data:any):Promise<any> {
+            return  ApiUtils.post('/role/findRoleUser', data).catch((error: any) => {
+                // 处理错误情况
+                console.error("查询角色下的用户失败！", error);
+            });
+        }
     
 }
+
 
 export default RoleService

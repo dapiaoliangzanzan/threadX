@@ -110,6 +110,33 @@
                 </span>
             </template>
         </el-dialog>
+
+        <el-dialog v-model="roleUserDialogVisible" append-to-body title="角色关联用户" width="80%" draggable open-delay="200" close-delay="200" :close-on-click-modal="false">
+            <div>
+                <el-table empty-text="当前角色没有关联用户" :data="roleUserDataTable" style="width: 100%;height: 50vh;">
+                    <el-table-column prop="nickName" label="昵称"/>
+                    <el-table-column prop="userName" label="用户名"/>
+                    <el-table-column prop="email" label="邮箱" />
+                    <el-table-column prop="createTime" label="创建时间" />
+                    <el-table-column prop="updateTime" label="修改时间" />
+                    <el-table-column prop="state" label="当前状态" :formatter="stateFormatter" />
+                    <el-table-column fixed="right" label="操作" align="center">
+                        <template #default="scope">
+                            <el-button  link type="primary" size="small" @click="untie(scope.row.id)">解绑</el-button>
+                        </template>
+                    </el-table-column>
+                </el-table>
+            </div>
+            <div class="table-page-class">
+                <el-pagination layout="prev, pager, next" 
+                    :page-size="roleUserPageSize" 
+                    :pager-count="5" 
+                    :total="roleUserDataTotal" 
+                    v-model:current-page="roleUserCurrentPage" 
+                    @current-change="roleUserCurrentPageChange"
+                />
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -121,6 +148,7 @@
     import PermissionService from '@/services/PermissionService'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import type { FormInstance, FormRules } from 'element-plus'
+    import type { TableColumnCtx } from 'element-plus'
 
     interface Menu {
         id: string,
@@ -159,13 +187,16 @@
         loadRoleList();
         loadAllAuthority();
     });
-
+    //当前选中的角色的id
+    const selectRoleId = ref()
     //所有的菜单
     const menus = ref<Menu[]>([])
     //所有的权限信息
     const permissions = ref<Permission[]>([])
     //显示新建修改弹出框
     const createRoleDialogVisible = ref(false)
+    //角色关联用户对话框
+    const roleUserDialogVisible = ref(false)
     //搜索值
     const searchValue = ref()
     //角色表格数据
@@ -176,11 +207,20 @@
     const pageSize = ref(18)
     //数据总条数
     const dataTotal = ref(0)
+
+    //角色用户
+    const roleUserDataTable = ref([])
+    //当前页
+    const roleUserCurrentPage = ref(1)
+    //每一页显示的数据
+    const roleUserPageSize = ref(10)
+    //数据总条数
+    const roleUserDataTotal = ref(0)
     //翻页
     const currentPageChange = () =>{
         loadRoleList();
     }
-
+    //表单规则
     const rules = ref<FormRules>(
         {
             roleName: [
@@ -201,9 +241,22 @@
     )
 
     const findUser = (id:any) => {
-        console.log("asd")
+        selectRoleId.value = id
+        RoleService.findRoleUser({
+            roleId: id,
+            pageSize:roleUserPageSize.value,
+            currentPage:roleUserCurrentPage.value
+        }).then(res =>{
+            console.log(res)
+            roleUserDataTotal.value = res.total
+            roleUserDataTable.value = res.data
+            roleUserDialogVisible.value = true
+        })
+
+        
     }
 
+    //修改角色信息
     const updateRole = (roleId:any) => {
         RoleService.findRoleAuthority(roleId).then(response =>{
             createRoleFormModel.value.id = response.roleId
@@ -216,10 +269,31 @@
         
     }
 
-    const deleteRole = (id:any) => {
-        console.log("asd")
+    //删除角色信息
+    const deleteRole = (roleId:any) => {
+        ElMessageBox.confirm(
+            '点击确认后将不可恢复的删除该角色所有的权限信息以及菜单权限，并强制下线所有关联用户，请慎重操作！！！',
+            '警告',
+            {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'error'
+            }
+        )
+        .then(() => {
+            RoleService.deleteRole(roleId).then(() =>{
+                loadRoleList();
+            })
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '取消操作',
+            })
+        })
     }
 
+    //加载角色数据
     const loadRoleList = () =>{
         RoleService.findAllByPage({
             roleName:searchValue.value,
@@ -281,9 +355,53 @@
                     console.log('error submit!', fields)
                 }
         })
-        
-        
     }
+
+    /**
+     * 格式化列的值
+     * @param row 当前行
+     * @param column 当前列
+     */
+    const stateFormatter = (row:any, column: TableColumnCtx<any>)=> {
+        if (row.state === '1') {
+            return "有效"
+        } else {
+            return "冻结"
+        }    
+    }
+
+    /**
+     * 解绑用户信息
+     * @param userId 用户的id
+     */
+    const untie = (userId:any) =>{
+        ElMessageBox.confirm(
+            '是否确认去除选中用户角色?',
+            '警告',
+            {
+                confirmButtonText: '确认',
+                cancelButtonText: '取消',
+                type: 'warning'
+            }
+        )
+        .then(() => {
+            RoleService.untieUserRole(selectRoleId.value, userId).then(res =>{
+                findUser(selectRoleId.value)
+            })
+        })
+        .catch(() => {
+            ElMessage({
+                type: 'info',
+                message: '取消操作',
+            })
+        })
+
+    }
+
+    const roleUserCurrentPageChange = () =>{
+        findUser(selectRoleId.value)
+    }
+
 
 </script>
 

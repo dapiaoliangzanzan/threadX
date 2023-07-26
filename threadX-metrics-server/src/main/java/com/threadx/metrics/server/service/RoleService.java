@@ -1,10 +1,12 @@
 package com.threadx.metrics.server.service;
 
 import com.threadx.metrics.server.conditions.RolePageConditions;
+import com.threadx.metrics.server.conditions.RoleUserConditions;
 import com.threadx.metrics.server.entity.Role;
 import com.threadx.metrics.server.vo.RoleAuthorityVo;
 import com.threadx.metrics.server.vo.RoleVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.UserVo;
 
 /**
  * 角色服务
@@ -53,7 +55,36 @@ public interface RoleService {
 
     /**
      * 仅仅删除角色  不删除角色关联的数据  以及操作角色关联的用户相关信息
-     * @param id 角色的id
+     *
+     * @param roleId 角色的id
      */
-    void simpleDeleteById(Long id);
+    void simpleDeleteById(Long roleId);
+
+    /**
+     * 删除角色信息  连带和角色有关的所有资料
+     * 1. 删除  角色 - 菜单映射
+     * 2. 删除  角色 - 权限映射
+     * 3. 删除  用户 - 角色映射
+     * 4. 删除  角色信息
+     * 5. 下线与当前角色有关的所有用户（删除登录缓存）
+     *
+     * @param roleId 角色的id
+     */
+    void deleteRoleById(Long roleId);
+
+    /**
+     * 解绑用户角色
+     *
+     * @param roleId 操作的角色
+     * @param userId 要解绑的用户
+     */
+    void untieUserRole(Long roleId, Long userId);
+
+    /**
+     * 查询角色下绑定的用户
+     *
+     * @param roleUserConditions 角色用户查询条件
+     * @return 用户信息
+     */
+    ThreadxPage<UserVo> findRoleUser(RoleUserConditions roleUserConditions);
 }
