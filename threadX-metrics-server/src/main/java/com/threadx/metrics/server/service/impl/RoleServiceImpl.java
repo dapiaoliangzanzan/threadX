@@ -176,30 +176,29 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         if(role == null) {
             throw new RoleException(RoleExceptionCode.ROLE_IN_EXISTENCE);
         }
-        //开始对比role数据
-        Role newRole = null;
+
         String roleNameNew = roleAuthorityVo.getRoleName();
         String roleDescNew = roleAuthorityVo.getRoleDesc();
-        if(StrUtil.isNotBlank(roleNameNew) && !roleNameNew.equals(role.getRoleName())) {
-            newRole = new Role();
-            newRole.setRoleName(roleNameNew);
+
+        if(StrUtil.isBlank(roleNameNew) || StrUtil.isBlank(roleDescNew)) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
 
-        if(StrUtil.isNotBlank(roleDescNew) && !roleDescNew.equals(role.getRoleDesc())) {
-            if(newRole == null) {
-                newRole = new Role();
-            }
-            newRole.setRoleDesc(roleDescNew);
-        }
+        Role newRole = new Role();
+        newRole.setId(role.getId());
+        newRole.setCreateTime(role.getCreateTime());
+        newRole.setUpdateTime(System.currentTimeMillis());
+        newRole.setRoleName(roleNameNew);
+        newRole.setRoleDesc(roleDescNew);
+        //删除旧角色数据
+        ((RoleService)AopContext.currentProxy()).simpleDeleteById(roleId);
+        //插入新数据
+        baseMapper.insert(newRole);
 
-        if(newRole != null) {
-            newRole.setId(role.getId());
-            newRole.setUpdateTime(System.currentTimeMillis());
-            baseMapper.updateById(newRole);
-        }
 
-        //查询当前的菜单是否存在，将不存在的过滤掉
         Set<Long> menuIds = roleAuthorityVo.getMenuIds();
+        Set<Long> permissionIds = roleAuthorityVo.getPermissionIds();
+        //查询当前的菜单是否存在，将不存在的过滤掉
         List<Menu> menuServiceByIds = menuService.findByIds(menuIds);
         //筛选出id
         Set<RoleMenu> roleMenuNew = menuServiceByIds.stream().map(menu ->{
@@ -214,7 +213,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         roleMenuService.batchSave(roleMenuNew);
 
         //查询当前的菜单是否存在，将不存在的过滤掉
-        Set<Long> permissionIds = roleAuthorityVo.getPermissionIds();
         List<Permission> permissions = permissionService.findByIds(permissionIds);
         //转换数据
         Set<RolePermission> newRolePermission = permissions.stream().map(permission ->{
@@ -227,5 +225,10 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         rolePermissionService.deleteByRoleId(roleId);
         //将映射重新入库
         rolePermissionService.batchSave(newRolePermission);
+    }
+
+    @Override
+    public void simpleDeleteById(Long id) {
+        baseMapper.deleteById(id);
     }
 }

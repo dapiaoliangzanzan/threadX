@@ -50,4 +50,10 @@ public interface RoleService {
      * @param roleAuthorityVo 角色权限
      */
     void updateRole(RoleAuthorityVo roleAuthorityVo);
+
+    /**
+     * 仅仅删除角色  不删除角色关联的数据  以及操作角色关联的用户相关信息
+     * @param id 角色的id
+     */
+    void simpleDeleteById(Long id);
 }
