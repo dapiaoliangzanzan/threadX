@@ -56,6 +56,34 @@ class UserManagerService {
             console.error("删除用户失败", error);
         });
     }
+
+    /**
+     * 保存用户信息
+     * @param userRoleVo 用户角色
+     * @returns 
+     */
+    public static saveUser(userRoleVo:any):Promise<any> {
+        return ApiUtils.post("/manager/user/saveUser", userRoleVo).catch((error: any) => {
+            // 处理错误情况
+            console.error("保存用户信息失败", error);
+            return {}
+        });
+    }
+
+    /**
+     * 查询用户详情
+     * @param userId 用户id
+     * @returns 
+     */
+    public static findUserDesc(userId:any):Promise<any> {
+        return ApiUtils.get('/manager/user/findUserDesc', {
+            userId
+        }).catch((error: any) => {
+            // 处理错误情况
+            console.error("查询用户详情失败", error);
+            return {}
+        });
+    }
 }
 
 export default UserManagerService

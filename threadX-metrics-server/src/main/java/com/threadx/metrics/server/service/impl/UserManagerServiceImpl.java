@@ -1,5 +1,6 @@
 package com.threadx.metrics.server.service.impl;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.collection.CollUtil;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.StrUtil;
@@ -14,13 +15,15 @@ import com.threadx.metrics.server.common.exceptions.UserException;
 import com.threadx.metrics.server.conditions.UserPageConditions;
 import com.threadx.metrics.server.constant.RedisCacheKey;
 import com.threadx.metrics.server.constant.UserConstant;
-import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.entity.User;
+import com.threadx.metrics.server.entity.UserRole;
 import com.threadx.metrics.server.mapper.UserMapper;
 import com.threadx.metrics.server.service.*;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.UserRoleVo;
 import com.threadx.metrics.server.vo.UserVo;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,14 +47,12 @@ import java.util.stream.Collectors;
 @Transactional(rollbackFor = Exception.class)
 public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implements UserManagerService {
 
-    private final UserService userService;
     private final StringRedisTemplate redisTemplate;
     private final ActiveLogService activeLogService;
     private final UserRoleService userRoleService;
 
 
-    public UserManagerServiceImpl(UserService userService, StringRedisTemplate redisTemplate, ActiveLogService activeLogService, UserRoleService userRoleService) {
-        this.userService = userService;
+    public UserManagerServiceImpl(StringRedisTemplate redisTemplate, ActiveLogService activeLogService, UserRoleService userRoleService) {
         this.redisTemplate = redisTemplate;
         this.activeLogService = activeLogService;
         this.userRoleService = userRoleService;
@@ -65,63 +66,70 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
     }
 
     @Override
-    public void saveUser(UserInfoDto userInfoDto) {
-        if (userInfoDto == null) {
+    public void saveUserAndRole(UserRoleVo userRoleVo) {
+        if (userRoleVo == null) {
             throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
-        User user = new User();
-        user.init();
-        user.setUserName(userInfoDto.getUserName());
-        user.setNickName(userInfoDto.getNickName());
-        user.setPassword(BCrypt.hashpw(userInfoDto.getPassword()));
-        user.setEmail(userInfoDto.getEmail());
-        user.setState(UserConstant.ENABLE);
-        baseMapper.insert(user);
-    }
 
-    @Override
-    @SuppressWarnings("all")
-    public void updateUser(UserInfoDto userInfoDto) {
-        if (userInfoDto == null) {
+        String userName = userRoleVo.getUserName();
+        if (StrUtil.isBlank(userName)) {
             throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
-        String userName = userInfoDto.getUserName();
-        String password = userInfoDto.getPassword();
-        String email = userInfoDto.getEmail();
-        String nickName = userInfoDto.getNickName();
-        User user = userService.findByUserName(userName);
 
-        if (user == null) {
-            throw new GeneralException("用户不存在！");
+        String nickName = userRoleVo.getNickName();
+        if (StrUtil.isBlank(nickName)) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
 
-        //是否强制下线
-        boolean isUpdate = false;
+        String email = userRoleVo.getEmail();
+        if (StrUtil.isBlank(email)) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+        }
 
-        if(StrUtil.isNotBlank(userName) && !userName.equals(user.getUserName())){
-            user.setUserName(userName);
-            isUpdate = true;
+        String password = userRoleVo.getPassword();
+        if (StrUtil.isBlank(password)) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
-        if(StrUtil.isNotBlank(password) && !BCrypt.checkpw(password, user.getPassword())) {
-            user.setPassword(BCrypt.hashpw(password));
-            isUpdate = true;
-        }
-        if(StrUtil.isNotBlank(email) && !email.equals(user.getEmail())) {
-            user.setEmail(email);
-            isUpdate = true;
-        }
-        if(StrUtil.isNotBlank(nickName) && !nickName.equals(user.getNickName())) {
-            user.setNickName(nickName);
-            isUpdate = true;
-        }
-        baseMapper.updateById(user);
-
-        if (isUpdate) {
-            Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, user.getId()) + "*");
-            if(CollUtil.isNotEmpty(keys)) {
-                keys.forEach(redisTemplate::delete);
+        User newUser = new User();
+        Long id = userRoleVo.getId();
+        if (id != null) {
+            User user = baseMapper.selectById(id);
+            if (user == null) {
+                throw new UserException(UserExceptionCode.NOT_EXIST_USER);
             }
+            BeanUtil.copyProperties(user, newUser);
+            user.setUpdateTime(System.currentTimeMillis());
+            ((UserManagerService) AopContext.currentProxy()).deleteUser(user.getId());
         }
+        //开始更新数据
+        newUser.setUserName(userName);
+        newUser.setNickName(nickName);
+        newUser.setEmail(email);
+        if (!password.equals(newUser.getPassword())) {
+            newUser.setPassword(BCrypt.hashpw(password));
+        }
+        //插入数据
+        baseMapper.insert(newUser);
+        //删除权限信息
+        userRoleService.deleteByUserId(newUser.getId());
+        //开始新增权限信息
+        List<Long> selectRoleList = userRoleVo.getSelectRoleList();
+        if (CollUtil.isNotEmpty(selectRoleList)) {
+            Set<UserRole> userRoles = selectRoleList.stream().map(roleId -> {
+                UserRole userRole = new UserRole();
+                userRole.setUserId(newUser.getId());
+                userRole.setRoleId(roleId);
+                return userRole;
+            }).collect(Collectors.toSet());
+            //插入角色信息
+            userRoleService.batchSave(userRoles);
+        }
+        //开始将id下线
+        Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, newUser.getId()) + "*");
+        if (CollUtil.isNotEmpty(keys)) {
+            keys.forEach(redisTemplate::delete);
+        }
+
     }
 
     @Override
@@ -163,7 +171,7 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
 
     @Override
     public void freezeUser(Long userId) {
-        if(userId == null) {
+        if (userId == null) {
             throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
 
@@ -181,7 +189,7 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
     @Override
     public void unsealUser(Long userId) {
 
-        if(userId == null) {
+        if (userId == null) {
             throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
 
@@ -195,12 +203,12 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
     public void forceDeleteUser(Long userId) {
         //首先查询用户
         User user = baseMapper.selectById(userId);
-        if(user == null) {
+        if (user == null) {
             throw new UserException(UserExceptionCode.NOT_EXIST_USER);
         }
 
         String state = user.getState();
-        if(UserConstant.ENABLE.equals(state)) {
+        if (UserConstant.ENABLE.equals(state)) {
             throw new UserException(UserExceptionCode.USER_STATUS_EXCEPTION);
         }
         //清除当前用户的缓存信息
@@ -214,5 +222,33 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
         userRoleService.deleteByUserId(userId);
         //删除用户信息
         baseMapper.deleteById(userId);
+    }
+
+    @Override
+    public void deleteUser(Long userId) {
+        //删除用户信息
+        baseMapper.deleteById(userId);
+    }
+
+    @Override
+    public UserRoleVo findUserDesc(Long userId) {
+        if (userId == null) {
+            throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
+        }
+        User user = baseMapper.selectById(userId);
+        if (user == null) {
+            throw new UserException(UserExceptionCode.NOT_EXIST_USER);
+        }
+        //查询用户的角色
+        List<Long> roleIdByUserId = userRoleService.findRoleIdByUserId(userId);
+        UserRoleVo userRoleVo = new UserRoleVo();
+        userRoleVo.setUserName(user.getUserName());
+        userRoleVo.setEmail(user.getEmail());
+        userRoleVo.setNickName(user.getNickName());
+        userRoleVo.setId(userId);
+        userRoleVo.setPassword(user.getPassword());
+        userRoleVo.setSelectRoleList(roleIdByUserId);
+
+        return userRoleVo;
     }
 }

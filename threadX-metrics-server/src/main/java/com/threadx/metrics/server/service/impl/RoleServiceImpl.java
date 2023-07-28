@@ -286,7 +286,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         List<UserRole> userRoleData = userRole.getData();
 
 
-        if(CollUtil.isEmpty(userRoleData)) {
+        if (CollUtil.isEmpty(userRoleData)) {
             userVoThreadPage.setData(new ArrayList<>());
             userVoThreadPage.setTotal(0);
             return userVoThreadPage;
@@ -311,5 +311,19 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements Ro
         userVoThreadPage.setTotal(userRole.getTotal());
         userVoThreadPage.setData(userVos);
         return userVoThreadPage;
+    }
+
+    @Override
+    public List<RoleVo> findAllRole() {
+        List<Role> roles = baseMapper.selectList(new QueryWrapper<>());
+        return roles.stream().map(role -> {
+            RoleVo roleVo = new RoleVo();
+            roleVo.setRoleId(role.getId());
+            roleVo.setRoleDesc(role.getRoleDesc());
+            roleVo.setRoleName(role.getRoleName());
+            roleVo.setCreateDate(DateUtil.format(new Date(role.getCreateTime()), "yyyy-MM-dd HH:mm:ss"));
+            roleVo.setUpdateDate(DateUtil.format(new Date(role.getUpdateTime()), "yyyy-MM-dd HH:mm:ss"));
+            return roleVo;
+        }).collect(Collectors.toList());
     }
 }

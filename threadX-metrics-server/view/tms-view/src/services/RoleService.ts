@@ -18,6 +18,18 @@ class RoleService {
     }
 
     /**
+     * 查询全部的角色信息
+     * @returns 全部的角色信息
+     */
+    public static findAllRole():Promise<any> {
+        return ApiUtils.get('/role/findAllRole').catch((error: any) => {
+            // 处理错误情况
+            console.error("查询全部的角色信息错误", error);
+            return {}
+        });
+    }
+
+    /**
      * 查询对应角色的权限信息
      * @param roleId 角色的id
      * @returns 对应角色的权限信息

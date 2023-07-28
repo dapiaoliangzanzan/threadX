@@ -8,6 +8,8 @@ import com.threadx.metrics.server.vo.RoleVo;
 import com.threadx.metrics.server.vo.ThreadxPage;
 import com.threadx.metrics.server.vo.UserVo;
 
+import java.util.List;
+
 /**
  * 角色服务
  *
@@ -87,4 +89,12 @@ public interface RoleService {
      * @return 用户信息
      */
     ThreadxPage<UserVo> findRoleUser(RoleUserConditions roleUserConditions);
+
+    /**
+     * 查询全部的角色数据
+     *
+     * @return 全部的角色数据
+     */
+    List<RoleVo> findAllRole();
+
 }

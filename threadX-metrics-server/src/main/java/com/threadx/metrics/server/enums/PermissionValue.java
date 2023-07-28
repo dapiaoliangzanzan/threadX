@@ -10,15 +10,16 @@ public enum PermissionValue {
     /**
      * 添加用户
      */
-    USER_ADD("add:user","添加用户"),
-    /**
-     * 修改用户信息
-     */
-    USER_UPDATE("update:user","修改用户信息"),
+    USER_SAVE("save:user","保存用户"),
     /**
      * 查询所有用户信息
      */
     FIND_ALL_USER("findAll:user","查询所有用户信息"),
+
+    /**
+     * 查询所有的用户详细信息
+     */
+    FIND_USER_DESC("find:user","查询所有的用户详细信息"),
 
     /**
      * 冻结用户

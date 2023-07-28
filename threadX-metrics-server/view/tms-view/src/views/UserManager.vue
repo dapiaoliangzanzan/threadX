@@ -28,7 +28,7 @@
                             content="修改用户操作权限、用户菜单权限、用户信息"
                             placement="top"
                         >
-                            <el-button link type="primary" size="small">修改用户</el-button>
+                            <el-button link type="primary" size="small" @click="updateUser(scope.row.id)">修改用户</el-button>
                         </el-tooltip>
                         
                     </template>
@@ -78,28 +78,25 @@
                         </el-col>
                         <el-col :span="12">
                             <el-form-item label="用户密码:" prop="password">
-                                <el-input v-model="createUserFormModel.password" style="width: 100%"/>
+                                <el-input type="password" v-model="createUserFormModel.password" style="width: 100%"/>
                             </el-form-item>
                         </el-col>
                     </el-row>
 
-                    <el-divider>用户菜单</el-divider>
+                    <el-divider>用户角色</el-divider>
                     <el-row>
                         <el-col :span="24">
-                            <el-form-item label="用户菜单权限:" prop="selectMenuList" >
-                                <el-checkbox-group v-model="createUserFormModel.selectMenuList">
-                                    <el-checkbox v-for="menu in menus" :key="menu.id" :label="menu.id">{{ menu.name }}</el-checkbox>
-                                </el-checkbox-group>
-                            </el-form-item>
-                        </el-col>
-                    </el-row>
-
-                    <el-divider>用户权限</el-divider>
-                    <el-row>
-                        <el-col :span="24">
-                            <el-form-item label="用户菜单权限:" prop="selectPermissionList" >
-                                <el-checkbox-group v-model="createUserFormModel.selectPermissionList">
-                                    <el-checkbox v-for="permission in permissions" :key="permission.id" :label="permission.id">{{ permission.name }}</el-checkbox>
+                            <el-form-item label="用户角色分配:" prop="selectRoleList" >
+                                <el-checkbox-group v-model="createUserFormModel.selectRoleList">
+                                    <el-checkbox v-for="role in roles" :key="role.roleId" :label="role.roleId">
+                                        <el-tooltip
+                                            effect="dark"
+                                            :content="role.roleDesc"
+                                            placement="top"
+                                        >
+                                            {{ role.roleName }}
+                                        </el-tooltip>
+                                    </el-checkbox>
                                 </el-checkbox-group>
                             </el-form-item>
                         </el-col>
@@ -119,54 +116,51 @@
 </template>
 
 <script setup lang="ts">
-    import {ref, reactive, onMounted} from 'vue'
-    import type { TableColumnCtx, Action } from 'element-plus'
+    import {ref, onMounted} from 'vue'
+    import type { TableColumnCtx } from 'element-plus'
     import { ElMessage, ElMessageBox } from 'element-plus'
     import { Search,Plus } from '@element-plus/icons-vue'
     import UserManagerService from '@/services/UserManagerService'
-    import type { FormInstance, FormRules } from 'element-plus'
+    import RoleService from '@/services/RoleService'
+    import type { FormInstance } from 'element-plus'
 
-    interface Menu {
-        id: string,
-        name:string
-    }
 
-    interface Permission {
-        id: string,
-        name:string
+    interface Role {
+        roleId: string,
+        roleDesc: string,
+        roleName:string
     }
 
 
     interface CreateUserForm {
+        id:number| null;
         nickName: string
         userName: string
         password: string
         email: string,
-        selectMenuList: string[],
-        selectPermissionList:string[]
+        selectRoleList: number[],
     }
 
     onMounted(() =>{
         loadAllUserData()
+        loadAllRole()
     });
 
-    //所有的菜单
-    const menus = reactive<Menu[]>([])
-    //所有的权限信息
-    const permissions = reactive<Permission[]>([])
+    //所有的角色信息
+    const roles = ref<Role[]>([])
     //对应表单的引用
     const createUserFormRef = ref<FormInstance>()
     //对应表单的值
     const createUserFormModel = ref<CreateUserForm>({
+        id: null,
         nickName:'',
         userName:'',
         password:'',
         email:'',
-        selectMenuList: [],
-        selectPermissionList: ["1"]
+        selectRoleList: []
     })
     //创建用户的对话框
-    const createUserDialogVisible = ref(true)
+    const createUserDialogVisible = ref(false)
 
     //搜索值
     const searchValue = ref()
@@ -292,6 +286,19 @@
             dataTotal.value = response.total
         })
         
+    }
+
+    const loadAllRole = () =>{
+        RoleService.findAllRole().then(response =>{
+            roles.value = response
+        })
+    }
+
+    const updateUser = (id:any) =>{
+        UserManagerService.findUserDesc(id).then(res =>{
+            createUserFormModel.value = res
+            createUserDialogVisible.value = true
+        })
     }
 
 </script>

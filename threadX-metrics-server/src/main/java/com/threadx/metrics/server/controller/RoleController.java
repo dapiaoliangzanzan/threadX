@@ -47,6 +47,14 @@ public class RoleController {
     }
 
     @Login
+    @GetMapping("findAllRole")
+    @UserPermission(PermissionValue.FIND_ALL_ROLE_LIST)
+    @ApiOperation(value = "查询所有的角色信息")
+    public List<RoleVo> findAllRole() {
+        return roleService.findAllRole();
+    }
+
+    @Login
     @GetMapping("findRoleAuthority")
     @UserPermission(PermissionValue.FIND_ROLE_AUTHORITY)
     @ApiOperation(value = "查询一个角色的全部权限信息")

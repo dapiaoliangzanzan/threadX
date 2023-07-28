@@ -10,6 +10,7 @@ import com.threadx.metrics.server.enums.LogEnum;
 import com.threadx.metrics.server.enums.PermissionValue;
 import com.threadx.metrics.server.service.UserManagerService;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.UserRoleVo;
 import com.threadx.metrics.server.vo.UserVo;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -35,23 +36,12 @@ public class UserManagerController {
         this.userManagerService = userManagerService;
     }
 
-
     @Login
-    @Log(LogEnum.ADD_USER)
-    @UserPermission(PermissionValue.USER_ADD)
-    @ApiOperation(value = "添加用户")
-    @PostMapping("addUser")
-    public void addUser(@RequestBody UserInfoDto userInfoDto){
-        userManagerService.saveUser(userInfoDto);
-    }
-
-    @Login
-    @Log(LogEnum.MANAGER_UPDATE_USER)
-    @UserPermission(PermissionValue.USER_UPDATE)
-    @ApiOperation(value = "修改用户信息")
-    @PostMapping("updateUser")
-    public void updateUser(@RequestBody UserInfoDto userInfoDto){
-        userManagerService.updateUser(userInfoDto);
+    @UserPermission(PermissionValue.FIND_USER_DESC)
+    @ApiOperation(value = "查询所有的用户详细信息")
+    @GetMapping("findUserDesc")
+    public UserRoleVo findUserDesc(@RequestParam("userId") Long userId) {
+        return userManagerService.findUserDesc(userId);
     }
 
     @Login
@@ -99,5 +89,18 @@ public class UserManagerController {
     @GetMapping("forceDeleteUser")
     public void forceDeleteUser(@RequestParam("userId") Long userId) {
         userManagerService.forceDeleteUser(userId);
+    }
+
+    /**
+     * 保存用户信息
+     * @param userRoleVo 用户关系
+     */
+    @Login
+    @Log(LogEnum.SAVE_USER)
+    @UserPermission(PermissionValue.USER_SAVE)
+    @ApiOperation(value = "保存用户 包括修改  新增")
+    @PostMapping("saveUser")
+    public void saveUser(@RequestBody UserRoleVo userRoleVo){
+        userManagerService.saveUserAndRole(userRoleVo);
     }
 }

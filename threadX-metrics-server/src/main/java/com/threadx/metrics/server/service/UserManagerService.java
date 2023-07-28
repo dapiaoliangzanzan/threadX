@@ -5,6 +5,7 @@ import com.threadx.metrics.server.dto.UserInfoDto;
 import com.threadx.metrics.server.dto.UserLoginDto;
 import com.threadx.metrics.server.entity.User;
 import com.threadx.metrics.server.vo.ThreadxPage;
+import com.threadx.metrics.server.vo.UserRoleVo;
 import com.threadx.metrics.server.vo.UserVo;
 
 import java.util.Collection;
@@ -27,18 +28,12 @@ public interface UserManagerService {
     List<User> findByUserIds(Collection<Long> userIds);
 
     /**
-     * 保存用户
+     * 保存用户和角色信息
      *
-     * @param userInfoDto 用户信息
+     * @param userRoleVo 用户角色信息
      */
-    void saveUser(UserInfoDto userInfoDto);
+    void saveUserAndRole(UserRoleVo userRoleVo);
 
-    /**
-     * 管理员修改用户信息
-     *
-     * @param userInfoDto 用户信息
-     */
-    void updateUser(UserInfoDto userInfoDto);
 
     /**
      * 根据条件查询所有的用户
@@ -68,4 +63,19 @@ public interface UserManagerService {
      * @param userId 用户的id
      */
     void forceDeleteUser(Long userId);
+
+    /**
+     * 删除用户信息  单纯的删除用户
+     *
+     * @param userId 用户id
+     */
+    void deleteUser(Long userId);
+
+    /**
+     * 查询用户的详细信息
+     *
+     * @param userId 用户的id
+     * @return 用户的详细信息
+     */
+    UserRoleVo findUserDesc(Long userId);
 }

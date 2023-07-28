@@ -4,7 +4,9 @@ import com.threadx.metrics.server.conditions.RoleUserConditions;
 import com.threadx.metrics.server.entity.UserRole;
 import com.threadx.metrics.server.vo.ThreadxPage;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 /**
  * 用户角色服务
@@ -59,4 +61,10 @@ public interface UserRoleService {
      * @param userId 要解绑的用户
      */
     void untieUserRole(Long roleId, Long userId);
+
+    /**
+     * 批量插入数据
+     * @param userRoles 用户角色映射
+     */
+    void batchSave(Collection<UserRole> userRoles);
 }
