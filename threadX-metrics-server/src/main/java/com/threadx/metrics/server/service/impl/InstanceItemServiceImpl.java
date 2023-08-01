@@ -13,12 +13,11 @@ import com.google.common.cache.CacheBuilder;
 import com.threadx.metrics.server.common.code.CurrencyRequestEnum;
 import com.threadx.metrics.server.common.context.LoginContext;
 import com.threadx.metrics.server.common.exceptions.GeneralException;
-import com.threadx.metrics.server.conditions.InstanceItemDataConditions;
 import com.threadx.metrics.server.conditions.InstanceItemFindConditions;
-import com.threadx.metrics.server.conditions.ThreadPoolPageDataConditions;
 import com.threadx.metrics.server.constant.InstanceItemState;
 import com.threadx.metrics.server.constant.LockName;
 import com.threadx.metrics.server.constant.RedisCacheKey;
+import com.threadx.metrics.server.dto.UserDto;
 import com.threadx.metrics.server.entity.InstanceItem;
 import com.threadx.metrics.server.entity.ServerItem;
 import com.threadx.metrics.server.lock.DistributedLockTemplate;
@@ -28,7 +27,6 @@ import com.threadx.metrics.server.service.ServerItemService;
 import com.threadx.metrics.server.service.ThreadPoolDataService;
 import com.threadx.metrics.server.vo.*;
 import lombok.extern.slf4j.Slf4j;
-import org.checkerframework.checker.units.qual.C;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -173,7 +171,7 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
     @Override
     @SuppressWarnings("all")
     public List<InstanceItemVo> commonlyUsedTop10() {
-        UserVo userData = LoginContext.getUserData();
+        UserDto userData = LoginContext.getUserData();
         Long userId = userData.getId();
         String clickCountCacheKey = String.format(RedisCacheKey.USER_CLICK_INSTANCE_COUNT, userId);
         // 检查有序集合是否已过期
@@ -317,7 +315,7 @@ public class InstanceItemServiceImpl extends ServiceImpl<InstanceItemMapper, Ins
         instanceItemDataVo.setActiveThreadPoolCount(threadPoolStateCountByInstanceId.getActiveCount());
         instanceItemDataVo.setWaitThreadPoolCount(threadPoolStateCountByInstanceId.getWaitCount());
         //对查看的数据进行计数
-        UserVo userData = LoginContext.getUserData();
+        UserDto userData = LoginContext.getUserData();
         Long userId = userData.getId();
         String clickCountCacheKey = String.format(RedisCacheKey.USER_CLICK_INSTANCE_COUNT, userId);
         //对点击的实例进行累加，以方便计算top10

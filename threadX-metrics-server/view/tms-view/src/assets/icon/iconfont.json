@@ -6,6 +6,13 @@
   "description": "",
   "glyphs": [
     {
+      "icon_id": "20104486",
+      "name": "角色配置",
+      "font_class": "jiaose",
+      "unicode": "e614",
+      "unicode_decimal": 58900
+    },
+    {
       "icon_id": "6688120",
       "name": "一片空白的豆丁",
       "font_class": "douding",

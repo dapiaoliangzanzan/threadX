@@ -18,15 +18,17 @@ import com.threadx.metrics.server.entity.User;
 import com.threadx.metrics.server.mapper.UserMapper;
 import com.threadx.metrics.server.service.MenuService;
 import com.threadx.metrics.server.service.PermissionService;
+import com.threadx.metrics.server.service.UserRoleService;
 import com.threadx.metrics.server.service.UserService;
 import com.threadx.metrics.server.vo.LoginUserVo;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.aop.framework.AopContext;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -42,11 +44,14 @@ import java.util.concurrent.TimeUnit;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements UserService {
 
     private final StringRedisTemplate redisTemplate;
+    private final UserRoleService userRoleService;
     private final MenuService menuService;
     private final PermissionService permissionService;
 
-    public UserServiceImpl(StringRedisTemplate redisTemplate, MenuService menuService, PermissionService permissionService) {
+
+    public UserServiceImpl(StringRedisTemplate redisTemplate, UserRoleService userRoleService, MenuService menuService, PermissionService permissionService) {
         this.redisTemplate = redisTemplate;
+        this.userRoleService = userRoleService;
         this.menuService = menuService;
         this.permissionService = permissionService;
     }
@@ -71,15 +76,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             if(CollUtil.isNotEmpty(keys)) {
                 keys.forEach(redisTemplate::delete);
             }
+            //查询用户角色
+            List<Long> roleIds = userRoleService.findRoleIdByUserId(user.getId());
             //生成token
-            UserVo userVo = new UserVo();
-            BeanUtil.copyProperties(user, userVo);
-            LoginContext.setUserData(userVo);
+            UserDto userDto = new UserDto();
+            BeanUtil.copyProperties(user, userDto);
+            userDto.setRoleIds(roleIds);
+            LoginContext.setUserData(userDto);
+
             Long id = user.getId();
             String tokenKey = String.format("%s%s", IdUtil.fastSimpleUUID(), id);
             String cacheKey = String.format(RedisCacheKey.USER_TOKEN_CACHE, id, tokenKey);
             //返回生成的token
-            String token = ThreadxJwtUtil.generateToken(userVo);
+            String token = ThreadxJwtUtil.generateToken(userDto);
             //查询菜单信息
             menuService.findThisUserMenu();
             //查询权限信息
@@ -87,7 +96,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             //缓存令牌
             redisTemplate.opsForValue().set(cacheKey, token, 1, TimeUnit.HOURS);
             //设置数据
-            LoginContext.setUserData(userVo);
+            LoginContext.setUserData(userDto);
             LoginUserVo loginUserVo = new LoginUserVo();
             loginUserVo.setNickName(user.getNickName());
             loginUserVo.setToken(tokenKey);
@@ -111,7 +120,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     @Override
     @SuppressWarnings("all")
     public void logout() {
-        UserVo userData = LoginContext.getUserData();
+        UserDto userData = LoginContext.getUserData();
         if (userData != null) {
             Set<String> keys = redisTemplate.keys(String.format(RedisCacheKey.USER_CACHE, userData.getId()) + "*");
             if (CollUtil.isNotEmpty(keys)) {

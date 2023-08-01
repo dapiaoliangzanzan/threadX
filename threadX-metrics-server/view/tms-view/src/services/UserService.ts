@@ -29,7 +29,9 @@ class UserService{
      * 退出登录
      */
     public static logout():void {
-        ApiUtils.get('/user/logout').finally(()=>{
+        ApiUtils.get('/user/logout').catch((error) =>{
+            console.log(error)
+        }).finally(()=>{
             LocalStorageUtil.logoutDataRemove()
             router.push('/login')
         })

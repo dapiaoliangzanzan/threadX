@@ -7,16 +7,16 @@ import lombok.Data;
 import java.io.Serializable;
 
 /**
- * 用户映射信息
+ * 用户映射
  *
  * @author huangfukexing
- * @date 2023/6/1 07:53
+ * @date 2023/7/17 16:19
  */
 @Data
 @ApiModel(description = "用户的基础信息", value = "用户的基础信息")
 public class UserVo implements Serializable {
-    private static final long serialVersionUID = 7045262567616349898L;
 
+    private static final long serialVersionUID = -8200400772942386689L;
     /**
      * 用户的id
      */
@@ -45,11 +45,18 @@ public class UserVo implements Serializable {
      * 用户的创建时间
      */
     @ApiModelProperty(name = "createTime", value = "用户的创建时间")
-    private Long createTime;
+    private String createTime;
 
     /**
      * 用户的修改时间
      */
     @ApiModelProperty(name = "updateTime", value = "用户的修改时间")
-    private Long updateTime;
+    private String updateTime;
+
+    /**
+     * 用户状态  0  冻结  1 正常
+     */
+    @ApiModelProperty(name = "state", value = "当前状态")
+    private String state;
 }
+

@@ -13,8 +13,10 @@ import com.threadx.metrics.server.entity.Menu;
 import com.threadx.metrics.server.entity.Permission;
 import com.threadx.metrics.server.mapper.PermissionMapper;
 import com.threadx.metrics.server.service.PermissionService;
-import com.threadx.metrics.server.service.UserPermissionService;
-import com.threadx.metrics.server.vo.UserVo;
+import com.threadx.metrics.server.service.RolePermissionService;
+import com.threadx.metrics.server.dto.UserDto;
+import com.threadx.metrics.server.vo.MenuVo;
+import com.threadx.metrics.server.vo.PermissionVo;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
@@ -22,7 +24,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 /**
  * 权限实现
@@ -36,16 +40,16 @@ import java.util.concurrent.TimeUnit;
 public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permission> implements PermissionService {
 
     private final StringRedisTemplate redisTemplate;
-    private final UserPermissionService userPermissionService;
+    private final RolePermissionService rolePermissionService;
 
-    public PermissionServiceImpl(StringRedisTemplate redisTemplate, UserPermissionService userPermissionService) {
+    public PermissionServiceImpl(StringRedisTemplate redisTemplate, RolePermissionService rolePermissionService) {
         this.redisTemplate = redisTemplate;
-        this.userPermissionService = userPermissionService;
+        this.rolePermissionService = rolePermissionService;
     }
 
     @Override
     public List<Permission> findThisUserPermission() {
-        UserVo userData = LoginContext.getUserData();
+        UserDto userData = LoginContext.getUserData();
         if(userData == null) {
             throw new LoginException(LoginExceptionCode.USER_NOT_LOGIN_ERROR);
         }
@@ -58,10 +62,10 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             permissions = JSONUtil.toList(permissionData, Permission.class);
         }else {
             //查询中间表
-            List<Long> permissionServiceByUserId = userPermissionService.findByUserId(userId);
-            if(CollUtil.isNotEmpty(permissionServiceByUserId)) {
+            Set<Long> permissionIds = rolePermissionService.findByRoleIds(userData.getRoleIds());
+            if(CollUtil.isNotEmpty(permissionIds)) {
                 QueryWrapper<Permission> queryWrapper = new QueryWrapper<>();
-                queryWrapper.in("id", permissionServiceByUserId);
+                queryWrapper.in("id", permissionIds);
                 permissions = baseMapper.selectList(queryWrapper);
             }
         }
@@ -69,5 +73,46 @@ public class PermissionServiceImpl extends ServiceImpl<PermissionMapper, Permiss
             redisTemplate.opsForValue().set(permissionCacheKey, JSONUtil.toJsonStr(permissions), 1, TimeUnit.HOURS);
         }
         return permissions;
+    }
+
+    @Override
+    public List<PermissionVo> findAllPermission() {
+        if (redisTemplate.hasKey(RedisCacheKey.PERMISSION_ALL_CACHE)) {
+            //先查询缓存
+            String permissionAllStr = redisTemplate.opsForValue().get(RedisCacheKey.PERMISSION_ALL_CACHE);
+            //格式化数据
+            List<PermissionVo> permissionVo = JSONUtil.toList(permissionAllStr, PermissionVo.class);
+            //数据续约
+            redisTemplate.expire(RedisCacheKey.PERMISSION_ALL_CACHE, 1, TimeUnit.DAYS);
+            return permissionVo;
+        }else {
+            //查询所有的菜单数据
+            List<Permission> permissions = baseMapper.selectList(new QueryWrapper<>());
+            //菜单转换
+            if (CollUtil.isNotEmpty(permissions)) {
+                List<PermissionVo> permissionVos = permissions.stream().map(permission -> {
+                    PermissionVo permissionVo = new PermissionVo();
+                    permissionVo.setId(permission.getId());
+                    permissionVo.setName(permission.getPermissionName());
+                    permissionVo.setPermissionDesc(permission.getPermissionDesc());
+                    return permissionVo;
+                }).collect(Collectors.toList());
+
+                redisTemplate.opsForValue().set(RedisCacheKey.PERMISSION_ALL_CACHE, JSONUtil.toJsonStr(permissionVos), 1, TimeUnit.DAYS);
+                return permissionVos;
+            }
+            return null;
+
+        }
+    }
+
+    @Override
+    public List<Permission> findByIds(Set<Long> permissionIds) {
+        if(CollUtil.isEmpty(permissionIds)) {
+            return new ArrayList<>();
+        }
+        QueryWrapper<Permission> queryWrapper = new QueryWrapper<>();
+        queryWrapper.in("id", permissionIds);
+        return baseMapper.selectList(queryWrapper);
     }
 }
