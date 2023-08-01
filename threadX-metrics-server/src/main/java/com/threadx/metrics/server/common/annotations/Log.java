@@ -22,4 +22,11 @@ public @interface Log {
      * @return 标记信息
      */
     LogEnum value();
+
+    /**
+     * 目前只支持简单类型以及String
+     *
+     * @return 参数替换  {"fieldName=******"}
+     */
+    String[] paramReplace() default {};
 }

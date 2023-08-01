@@ -65,7 +65,7 @@
                     <el-divider>角色菜单</el-divider>
                     <el-row>
                         <el-col :span="24">
-                            <el-form-item label="用户菜单权限:" prop="selectMenuList" >
+                            <el-form-item label="菜单权限:" prop="selectMenuList" >
                                 <el-checkbox-group v-model="createRoleFormModel.selectMenuList">
                                     <el-checkbox v-for="menu in menus" :key="menu.id" :label="menu.id">
                                         <el-tooltip
@@ -84,7 +84,7 @@
                     <el-divider>角色权限</el-divider>
                     <el-row>
                         <el-col :span="24">
-                            <el-form-item label="用户菜单权限:" prop="selectPermissionList" >
+                            <el-form-item label="操作权限:" prop="selectPermissionList" >
                                 <el-checkbox-group v-model="createRoleFormModel.selectPermissionList">
                                     <el-checkbox v-for="permission in permissions" :key="permission.id" :label="permission.id">
                                         <el-tooltip
@@ -237,6 +237,14 @@
                     message: '角色介绍不允许为空', 
                     trigger: 'blur' 
                 }
+            ],
+            selectMenuList: [
+                {
+                    type: 'array',
+                    required: true,
+                    message: '至少选择一个菜单权限',
+                    trigger: 'change',
+                },
             ]
         }
     )

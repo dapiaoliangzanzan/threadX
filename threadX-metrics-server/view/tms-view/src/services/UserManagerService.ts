@@ -66,7 +66,7 @@ class UserManagerService {
         return ApiUtils.post("/manager/user/saveUser", userRoleVo).catch((error: any) => {
             // 处理错误情况
             console.error("保存用户信息失败", error);
-            return {}
+            Promise.reject(new Error(error));
         });
     }
 

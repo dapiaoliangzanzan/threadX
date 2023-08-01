@@ -91,6 +91,7 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
             throw new GeneralException(CurrencyRequestEnum.PARAMETER_MISSING);
         }
         User newUser = new User();
+        newUser.init();
         Long id = userRoleVo.getId();
         if (id != null) {
             User user = baseMapper.selectById(id);
@@ -98,7 +99,7 @@ public class UserManagerServiceImpl extends ServiceImpl<UserMapper, User> implem
                 throw new UserException(UserExceptionCode.NOT_EXIST_USER);
             }
             BeanUtil.copyProperties(user, newUser);
-            user.setUpdateTime(System.currentTimeMillis());
+            newUser.setUpdateTime(System.currentTimeMillis());
             ((UserManagerService) AopContext.currentProxy()).deleteUser(user.getId());
         }
         //开始更新数据

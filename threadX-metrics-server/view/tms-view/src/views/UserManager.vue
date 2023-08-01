@@ -4,7 +4,7 @@
             <el-input :prefix-icon="Search" @keyup.enter="searchMethod" v-model="searchValue" placeholder="请输入要搜索的用户名或昵称" clearable />
             <el-button type="primary" @click="searchMethod">搜索用户</el-button>
 
-            <el-button type="success" @click="searchMethod" class="create-user-button-class" :icon="Plus">新建用户</el-button>
+            <el-button type="success" @click="createUser" class="create-user-button-class" :icon="Plus">新建用户</el-button>
         </div>
         <div class="user-data-class">
             <el-table :data="userDataTable" style="width: 100%" height="79.5vh">
@@ -52,7 +52,7 @@
                     ref="createUserFormRef"
                     :model="createUserFormModel"
                     label-position="right"
-                    rules="rules"
+                    :rules="rules"
                     label-width="100px"
                     status-icon
                 >
@@ -86,7 +86,7 @@
                     <el-divider>用户角色</el-divider>
                     <el-row>
                         <el-col :span="24">
-                            <el-form-item label="用户角色分配:" prop="selectRoleList" >
+                            <el-form-item label="用户角色:" prop="selectRoleList" >
                                 <el-checkbox-group v-model="createUserFormModel.selectRoleList">
                                     <el-checkbox v-for="role in roles" :key="role.roleId" :label="role.roleId">
                                         <el-tooltip
@@ -108,7 +108,7 @@
             <template #footer>
                 <span class="dialog-footer">
                     <el-button @click="createUserDialogVisible = false">取消</el-button>
-                    <el-button type="primary" @click="createUserDialogVisible = false">确认</el-button>
+                    <el-button type="primary" @click="saveUserDesc(createUserFormRef)">确认</el-button>
                 </span>
             </template>
         </el-dialog>
@@ -122,7 +122,7 @@
     import { Search,Plus } from '@element-plus/icons-vue'
     import UserManagerService from '@/services/UserManagerService'
     import RoleService from '@/services/RoleService'
-    import type { FormInstance } from 'element-plus'
+    import type { FormInstance, FormRules } from 'element-plus'
 
 
     interface Role {
@@ -300,6 +300,87 @@
             createUserDialogVisible.value = true
         })
     }
+
+    const saveUserDesc = (formEl: FormInstance | undefined)=>{
+
+
+        if (!formEl) return
+        formEl.validate((valid, fields) => {
+                if (valid) {
+                    
+                    UserManagerService.saveUser(createUserFormModel.value).then(()=>{
+                        createUserDialogVisible.value = false;
+                        loadAllUserData();
+                    }).catch(error =>{
+                        console.log(error)
+                    })
+                } else {
+                    console.log('error submit!', fields)
+                }
+        })
+
+
+    }
+
+    const createUser  = () =>{
+        createUserFormModel.value = {
+            id: null,
+            nickName:'',
+            userName:'',
+            password:'',
+            email:'',
+            selectRoleList: []
+        }
+        createUserDialogVisible.value = true
+    }
+
+    //表单规则
+    const rules = ref<FormRules>(
+        {
+            nickName: [
+                { 
+                    required: true, 
+                    message: '用户昵称不能为空', 
+                    trigger: 'blur' 
+                }
+            ],
+            email: [
+                { 
+                    required: true, 
+                    message: '邮箱不能为空', 
+                    trigger: 'blur' 
+                }
+            ],
+            userName: [
+                { 
+                    required: true, 
+                    message: '用户名不能为空', 
+                    trigger: 'blur' 
+                }
+            ],
+            password: [
+                { 
+                    required: true, 
+                    message: '密码不能为空', 
+                    trigger: 'blur' 
+                },
+                { 
+                    min: 6, 
+                    message: '密码最少为6位', 
+                    trigger: 'blur' 
+                }
+            ],
+            selectRoleList: [
+                {
+                    type: 'array',
+                    required: true,
+                    message: '至少选择一个角色',
+                    trigger: 'change',
+                },
+            ]
+            
+        }
+    )
 
 </script>
 

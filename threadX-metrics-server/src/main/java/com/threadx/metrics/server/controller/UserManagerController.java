@@ -57,7 +57,7 @@ public class UserManagerController {
      * @param userId 用户的id
      */
     @Login
-    @Log(LogEnum.MANAGER_FREEZE_USER)
+    @Log(value = LogEnum.MANAGER_FREEZE_USER)
     @UserPermission(PermissionValue.USER_DISABLE)
     @ApiOperation(value = "冻结用户")
     @GetMapping("freezeUser")
@@ -70,7 +70,7 @@ public class UserManagerController {
      * @param userId 用户的id
      */
     @Login
-    @Log(LogEnum.MANAGER_ENABLE_USER)
+    @Log(value = LogEnum.MANAGER_ENABLE_USER)
     @UserPermission(PermissionValue.USER_ENABLE)
     @ApiOperation(value = "解封用户")
     @GetMapping("unsealUser")
@@ -83,7 +83,7 @@ public class UserManagerController {
      * @param userId 用户的id
      */
     @Login
-    @Log(LogEnum.FORCE_DELETE_USER)
+    @Log(value = LogEnum.FORCE_DELETE_USER)
     @UserPermission(PermissionValue.FORCE_DELETE_USER)
     @ApiOperation(value = "强制删除用户 包含删除所有的依赖关系以及操作日志")
     @GetMapping("forceDeleteUser")
@@ -96,7 +96,7 @@ public class UserManagerController {
      * @param userRoleVo 用户关系
      */
     @Login
-    @Log(LogEnum.SAVE_USER)
+    @Log(value = LogEnum.SAVE_USER, paramReplace = {"password=******"})
     @UserPermission(PermissionValue.USER_SAVE)
     @ApiOperation(value = "保存用户 包括修改  新增")
     @PostMapping("saveUser")

@@ -31,7 +31,7 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Log(LogEnum.USER_LOGIN)
+    @Log(value = LogEnum.USER_LOGIN)
     @ApiOperation(value = "用户登录")
     @PostMapping("login")
     public LoginUserVo login(@RequestBody UserLoginDto userLoginDto) {
@@ -40,7 +40,7 @@ public class UserController {
 
 
     @Login
-    @Log(LogEnum.USER_LOGOUT)
+    @Log(value = LogEnum.USER_LOGOUT)
     @ApiOperation(value = "用户登出")
     @GetMapping("logout")
     public void logout() {

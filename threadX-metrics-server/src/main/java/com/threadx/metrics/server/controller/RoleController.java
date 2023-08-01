@@ -65,7 +65,7 @@ public class RoleController {
     @Login
     @PostMapping("save")
     @UserPermission(PermissionValue.SAVE_ROLE_AUTHORITY)
-    @Log(LogEnum.CREATE_ROLE)
+    @Log(value = LogEnum.CREATE_ROLE)
     @ApiOperation(value = "保存角色信息")
     public void save(@RequestBody RoleAuthorityVo roleAuthorityVo) {
         roleService.saveOrUpdate(roleAuthorityVo);
@@ -74,7 +74,7 @@ public class RoleController {
     @Login
     @GetMapping("deleteRole")
     @UserPermission(PermissionValue.DELETE_ROLE_AUTHORITY)
-    @Log(LogEnum.DELETE_ROLE)
+    @Log(value = LogEnum.DELETE_ROLE)
     @ApiOperation(value = "删除角色数据")
     public void deleteRole(@RequestParam("roleId") Long roleId) {
         roleService.deleteRoleById(roleId);
@@ -83,7 +83,7 @@ public class RoleController {
     @Login
     @GetMapping("untieUserRole")
     @UserPermission(PermissionValue.DELETE_ROLE_AUTHORITY)
-    @Log(LogEnum.UNTIE_USER_ROLE)
+    @Log(value = LogEnum.UNTIE_USER_ROLE)
     @ApiOperation(value = "解绑用户与角色")
     public void untieUserRole(@RequestParam("roleId") Long roleId, @RequestParam("userId") Long userId) {
         roleService.untieUserRole(roleId, userId);
